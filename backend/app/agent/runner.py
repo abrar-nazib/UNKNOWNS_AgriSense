@@ -34,6 +34,7 @@ from .tools import (
     build_kb_tools,
     build_memory_tools,
     build_patterns_tool,
+    build_plan_tool,
     build_soil_tool,
     build_static_tools,
     build_weather_tool,
@@ -196,6 +197,7 @@ async def stream_agent_turn(
         czis_tools = build_czis_tools(user)
         memory_tools = build_memory_tools(user.id, db)
         kb_tools = build_kb_tools()
+        plan_tool = build_plan_tool(user)
         tool_groups = {
             "intake": static_tools + farm_tools + [soil_tool],
             # KB retrieval is an advisor tool (D1 Rev 3: capabilities land as
@@ -206,6 +208,7 @@ async def stream_agent_turn(
             + [soil_tool, patterns_tool]
             + czis_tools
             + kb_tools
+            + [plan_tool]
             + memory_tools,
             # Dedicated crop-recommendation specialist: everything needed to
             # ground a ranked shortlist (profile + soil survey + recorded
@@ -216,7 +219,8 @@ async def stream_agent_turn(
             + farm_tools
             + [soil_tool, patterns_tool]
             + czis_tools
-            + kb_tools,
+            + kb_tools
+            + [plan_tool],
         }
         all_tool_names = sorted(
             {t.name for group in tool_groups.values() for t in group}

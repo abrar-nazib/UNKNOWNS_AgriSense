@@ -1,0 +1,108 @@
+{
+  "source": "DAE BAMIS crop-weather calendars (bamis.gov.bd) + BARC FRG 2024 — bundled reference snapshot 2026-07; regional guide dates, confirm locally",
+  "crops": {
+    "mustard": {
+      "czis_crop_id": 22,
+      "display_name": "Mustard (Sarisha)",
+      "season": "rabi",
+      "establishment": "sowing",
+      "window": {"start": "10-15", "end": "11-30"},
+      "default_duration_days": 90,
+      "stages": [
+        {"key": "land_prep", "label": "Land preparation (2-3 ploughings + laddering to fine tilth)", "offset_days": -7, "weather_sensitive": false},
+        {"key": "sowing", "label": "Sowing (broadcast or line sowing)", "offset_days": 0, "weather_sensitive": true, "note": "avoid sowing just before heavy rain"},
+        {"key": "fertilizer_basal", "label": "Basal fertilizer: all TSP/MoP/Gypsum/Zn + half of Urea", "offset_days": 0, "weather_sensitive": true},
+        {"key": "weeding_thinning", "label": "Weeding and thinning", "offset_days": 18, "weather_sensitive": false},
+        {"key": "irrigation_1", "label": "1st irrigation", "offset_days": 25, "weather_sensitive": true, "note": "skip if adequate rain within 3 days"},
+        {"key": "fertilizer_topdress", "label": "Top-dress remaining Urea (with irrigation, on moist soil)", "offset_days": 25, "weather_sensitive": true},
+        {"key": "pest_aphid", "label": "Aphid scouting (spray only if threshold crossed)", "offset_days": 40, "weather_sensitive": false},
+        {"key": "irrigation_2", "label": "2nd irrigation at flowering/siliqua", "offset_days": 52, "weather_sensitive": true},
+        {"key": "harvest", "label": "Harvest (when ~80% siliquae turn brown)", "offset_days": "duration", "weather_sensitive": false}
+      ]
+    },
+    "wheat": {
+      "czis_crop_id": 3,
+      "display_name": "Wheat (Gom)",
+      "season": "rabi",
+      "establishment": "sowing",
+      "window": {"start": "11-15", "end": "12-10"},
+      "default_duration_days": 110,
+      "stages": [
+        {"key": "land_prep", "label": "Land preparation and levelling", "offset_days": -10, "weather_sensitive": false},
+        {"key": "sowing", "label": "Sowing (optimum 15-30 Nov)", "offset_days": 0, "weather_sensitive": true},
+        {"key": "fertilizer_basal", "label": "Basal: all P/K/S/Zn + one-third Urea", "offset_days": 0, "weather_sensitive": true},
+        {"key": "irrigation_1", "label": "1st irrigation at CRI (crown root initiation)", "offset_days": 20, "weather_sensitive": true},
+        {"key": "fertilizer_topdress_1", "label": "Top-dress one-third Urea after 1st irrigation", "offset_days": 21, "weather_sensitive": true},
+        {"key": "weeding", "label": "Weeding", "offset_days": 25, "weather_sensitive": false},
+        {"key": "pest_check", "label": "Aphid / rust scouting", "offset_days": 45, "weather_sensitive": false},
+        {"key": "irrigation_2", "label": "2nd irrigation at booting", "offset_days": 55, "weather_sensitive": true},
+        {"key": "fertilizer_topdress_2", "label": "Top-dress remaining Urea", "offset_days": 55, "weather_sensitive": true},
+        {"key": "irrigation_3", "label": "3rd irrigation at grain filling", "offset_days": 80, "weather_sensitive": true},
+        {"key": "harvest", "label": "Harvest (grain hard, ~110 days)", "offset_days": "duration", "weather_sensitive": false}
+      ]
+    },
+    "potato": {
+      "czis_crop_id": 12,
+      "display_name": "Potato (Alu)",
+      "season": "rabi",
+      "establishment": "planting",
+      "window": {"start": "11-01", "end": "12-15"},
+      "default_duration_days": 100,
+      "stages": [
+        {"key": "land_prep", "label": "Land preparation (deep tilth, ridges)", "offset_days": -10, "weather_sensitive": false},
+        {"key": "planting", "label": "Planting of seed tubers", "offset_days": 0, "weather_sensitive": true},
+        {"key": "fertilizer_basal", "label": "Basal fertilizer at planting", "offset_days": 0, "weather_sensitive": true},
+        {"key": "irrigation_1", "label": "1st light irrigation", "offset_days": 15, "weather_sensitive": true},
+        {"key": "earthing_topdress", "label": "Earthing up + Urea top-dress", "offset_days": 30, "weather_sensitive": true},
+        {"key": "irrigation_2", "label": "2nd irrigation", "offset_days": 35, "weather_sensitive": true},
+        {"key": "lateblight_scout", "label": "Late blight scouting (foggy/humid spells) + preventive spray", "offset_days": 40, "weather_sensitive": true, "note": "high risk in cool humid weather"},
+        {"key": "irrigation_3", "label": "3rd irrigation", "offset_days": 55, "weather_sensitive": true},
+        {"key": "haulm_cut", "label": "Stop irrigation / haulm cutting (~10 days before lifting)", "offset_days": "duration-12", "weather_sensitive": false},
+        {"key": "harvest", "label": "Harvest / lifting", "offset_days": "duration", "weather_sensitive": false}
+      ]
+    },
+    "maize": {
+      "czis_crop_id": 6,
+      "display_name": "Maize (Bhutta, Rabi)",
+      "season": "rabi",
+      "establishment": "sowing",
+      "window": {"start": "11-15", "end": "12-20"},
+      "default_duration_days": 150,
+      "stages": [
+        {"key": "land_prep", "label": "Land preparation and levelling", "offset_days": -10, "weather_sensitive": false},
+        {"key": "sowing", "label": "Sowing (line sowing, proper spacing)", "offset_days": 0, "weather_sensitive": true},
+        {"key": "fertilizer_basal", "label": "Basal fertilizer at sowing", "offset_days": 0, "weather_sensitive": true},
+        {"key": "thinning", "label": "Thinning to one plant per hill", "offset_days": 18, "weather_sensitive": false},
+        {"key": "irrigation_1", "label": "1st irrigation (V8 stage)", "offset_days": 25, "weather_sensitive": true},
+        {"key": "fertilizer_topdress_1", "label": "1st Urea top-dress (knee-high)", "offset_days": 30, "weather_sensitive": true},
+        {"key": "pest_faw", "label": "Fall armyworm scouting", "offset_days": 35, "weather_sensitive": false},
+        {"key": "irrigation_2", "label": "2nd irrigation at tasseling", "offset_days": 50, "weather_sensitive": true},
+        {"key": "fertilizer_topdress_2", "label": "2nd Urea top-dress", "offset_days": 55, "weather_sensitive": true},
+        {"key": "irrigation_3", "label": "3rd irrigation at grain filling", "offset_days": 80, "weather_sensitive": true},
+        {"key": "harvest", "label": "Harvest (cobs mature, ~150 days)", "offset_days": "duration", "weather_sensitive": false}
+      ]
+    },
+    "boro_rice": {
+      "czis_crop_id": 1,
+      "display_name": "Boro Rice (Boro dhan)",
+      "season": "rabi",
+      "establishment": "transplanting",
+      "window": {"start": "01-10", "end": "02-15"},
+      "default_duration_days": 150,
+      "stages": [
+        {"key": "seedbed_sowing", "label": "Raise seedbed (sow sprouted seed)", "offset_days": -35, "weather_sensitive": false},
+        {"key": "land_prep_puddling", "label": "Final land preparation and puddling", "offset_days": -5, "weather_sensitive": false},
+        {"key": "transplanting", "label": "Transplanting of seedlings", "offset_days": 0, "weather_sensitive": true},
+        {"key": "fertilizer_basal", "label": "Basal: all P/K/S/Zn + one-third Urea", "offset_days": 0, "weather_sensitive": true},
+        {"key": "water_regime", "label": "Maintain 2-5 cm standing water through the season", "offset_days": 0, "weather_sensitive": false, "note": "Boro is irrigation-driven; keep the field flooded"},
+        {"key": "weeding_1", "label": "1st weeding", "offset_days": 15, "weather_sensitive": false},
+        {"key": "fertilizer_topdress_1", "label": "1st Urea top-dress", "offset_days": 15, "weather_sensitive": true},
+        {"key": "weeding_2", "label": "2nd weeding", "offset_days": 35, "weather_sensitive": false},
+        {"key": "fertilizer_topdress_2", "label": "2nd Urea top-dress at panicle initiation", "offset_days": 40, "weather_sensitive": true},
+        {"key": "pest_scout", "label": "Stem borer / BPH scouting", "offset_days": 50, "weather_sensitive": false},
+        {"key": "drain_field", "label": "Drain field (~10 days before harvest)", "offset_days": "duration-10", "weather_sensitive": false},
+        {"key": "harvest", "label": "Harvest (80-85% grains mature, ~150 days)", "offset_days": "duration", "weather_sensitive": false}
+      ]
+    }
+  }
+}

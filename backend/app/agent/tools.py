@@ -12,6 +12,7 @@ from typing import Optional
 from langchain_core.tools import tool
 from sqlalchemy import select
 
+from .. import crop_calendar as crop_cal_mod
 from .. import geo as geo_mod
 from .. import patterns as patterns_mod
 from .. import soil as soil_mod
@@ -19,6 +20,7 @@ from ..adapters import czis as czis_mod
 from ..adapters import weather as weather_mod
 from ..config import settings
 from ..database import AsyncSessionLocal
+from ..engines import season_plan as season_plan_mod
 from ..engines import units as units_mod
 from ..models import Farm
 from . import memory as memory_mod
@@ -1093,6 +1095,131 @@ def build_czis_tools(user):
         czis_crop_context,
         czis_fertilizer_recommendation,
     ]
+
+
+# --------------------------------------------------------------------------- #
+# Season plan tool (Tier 0 #4 / Task 6 — dated calendar from bundled BAMIS/FRG
+# snapshot + live Open-Meteo overlay; all math in the deterministic engine)
+# --------------------------------------------------------------------------- #
+def _rain_by_date(forecast_payload) -> dict:
+    """Extract {ISO date -> rain_mm} from a weather-adapter forecast payload.
+
+    Defensive across the adapter's row-list key names; PAST rows are ignored
+    (the overlay only cares about the forecast horizon). Returns {} on anything
+    unexpected so a plan is never blocked by weather shape changes.
+    """
+    out: dict = {}
+    if not isinstance(forecast_payload, dict):
+        return out
+    for key in ("days", "forecast", "rows", "daily"):
+        rows = forecast_payload.get(key)
+        if isinstance(rows, list):
+            for r in rows:
+                if (
+                    isinstance(r, dict)
+                    and r.get("date") is not None
+                    and r.get("kind", "forecast") != "past"
+                    and r.get("rain_mm") is not None
+                ):
+                    out[str(r["date"])] = r["rain_mm"]
+            if out:
+                return out
+    return out
+
+
+def build_plan_tool(user):
+    """``build_season_plan`` — deterministic dated season plan for the active farm.
+
+    Bundled DAE BAMIS + BARC FRG 2024 calendar (labelled reference) turned into
+    concrete dates by ``engines/season_plan.py``, with a best-effort live
+    Open-Meteo overlay that shifts only near-term weather-sensitive tasks. The
+    weather overlay never blocks the plan — on any outage the calendar dates
+    stand and ``weather_overlay`` is reported as ``none``.
+    """
+
+    @tool
+    async def build_season_plan(
+        crop: str, sowing_date: str = "", area_decimal: float = 0.0
+    ) -> str:
+        """Generate a DATED season plan (land prep -> sowing/transplant ->
+        fertilizer splits -> irrigation -> weeding -> pest checks -> harvest) for
+        one supported crop at the active farm.
+
+        Args:
+            crop: crop name — mustard, wheat, potato, maize or boro rice
+                (Bangla/Banglish accepted, e.g. sarisha/gom/alu/bhutta/boro dhan).
+            sowing_date: optional YYYY-MM-DD establishment date the farmer gave.
+                Omit to let the engine assume the earliest day of the official
+                sowing/transplant window (clearly labelled as an assumption).
+            area_decimal: optional plot area; 0 uses the farm's saved area.
+
+        Returns structured JSON: establishment date + source, per-task dates with
+        any weather adjustments (original date + reason), assumptions, cited
+        sources and a disclaimer. Dates are BAMIS/FRG guides anchored to the
+        sowing date — relay them WITH the sources; never present as exact and
+        never invent dates the engine did not produce.
+        """
+        from datetime import date as _date
+
+        key = crop_cal_mod.resolve_key(crop)
+        if key is None:
+            return json.dumps(
+                {
+                    "error": "CROP_UNSUPPORTED",
+                    "message": (
+                        f"No bundled season calendar for '{crop}'. Supported: "
+                        f"{', '.join(crop_cal_mod.list_crops())}."
+                    ),
+                },
+                ensure_ascii=False,
+            )
+        entry = crop_cal_mod.get(key)
+        _emit("plan", f"building dated season plan for {entry.get('display_name')}")
+
+        parsed_date = None
+        if sowing_date:
+            try:
+                parsed_date = _date.fromisoformat(sowing_date.strip())
+            except ValueError:
+                return json.dumps(
+                    {
+                        "error": "BAD_DATE",
+                        "message": "sowing_date must be YYYY-MM-DD.",
+                    },
+                    ensure_ascii=False,
+                )
+
+        # Best-effort live weather overlay (enrichment only — never blocks).
+        rain_map: dict = {}
+        overlay = "none"
+        try:
+            point = await _farm_point(user)
+            if point:
+                _emit("plan", "overlaying 16-day Open-Meteo forecast on the plan")
+                forecast = await weather_mod.fetch_forecast(
+                    point["latitude"], point["longitude"], 16
+                )
+                rain_map = _rain_by_date(forecast)
+                overlay = "open-meteo_16day" if rain_map else "none"
+        except Exception as exc:  # pragma: no cover - overlay is optional
+            log.info("season plan weather overlay skipped: %s", exc)
+
+        plan = season_plan_mod.build_plan(
+            entry,
+            today=_date.today(),
+            sowing_date=parsed_date,
+            rain_by_date=rain_map,
+        )
+        plan["weather_overlay"] = overlay
+        plan["sources"] = [
+            crop_cal_mod.source(),
+            "Open-Meteo 16-day forecast (live)"
+            if rain_map
+            else "no live forecast overlay",
+        ]
+        return json.dumps(plan, ensure_ascii=False)
+
+    return build_season_plan
 
 
 # --------------------------------------------------------------------------- #

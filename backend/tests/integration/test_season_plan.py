@@ -133,6 +133,20 @@ async def test_season_plan_combines_bamis_frg_czis_weather_and_rag(
     assert payload["selected_variety"]["variety_id"] == 1001
     assert payload["calendar"]["planting_date"] == "2026-11-15"
     assert payload["calendar"]["harvest_date"] == "2027-03-14"
+    assert payload["pest_disease_risk"]["status"] == "ok"
+    assert "Sowing" in payload["pest_disease_risk"]["forecast_stages"]
+    assert payload["mandatory_follow_up_tool"] == {
+        "name": "assess_pest_disease_risk",
+        "arguments": {
+            "crop_name": "Wheat",
+            "planting_date": "2026-11-15",
+            "growth_stage": "",
+        },
+        "reason": (
+            "Season plans must run the dedicated pest/disease risk tool for "
+            "traceable forecast scouting warnings."
+        ),
+    }
     categories = {event["category"] for event in payload["calendar"]["events"]}
     assert {"sowing", "fertilizer", "irrigation", "weed", "pest", "harvest"} <= categories
     assert payload["knowledge_evidence"][0]["source"] == "FRG 2024"

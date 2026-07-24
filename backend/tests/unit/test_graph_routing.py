@@ -44,6 +44,9 @@ pytestmark = pytest.mark.unit
         ("Calculate ROI and break-even for wheat", "finance"),
         ("Show me a cost breakdown for mustard", "finance"),
         ("If wheat sells at 42 taka, recalculate the profit", "finance"),
+        ("Find suppliers for 100 kg urea near my farm", "market_researcher"),
+        ("What is the current potato market price?", "market_researcher"),
+        ("Should I sell my wheat now or store it?", "market_researcher"),
     ],
 )
 def test_classify_heuristic(text, expected):
@@ -69,7 +72,7 @@ def test_recommend_beats_intake_and_weather():
 
 
 def test_agents_registry():
-    assert set(AGENTS) == {"intake", "advisor", "recommender", "planner", "finance"}
+    assert set(AGENTS) == {"intake", "advisor", "recommender", "planner", "finance", "market_researcher"}
 
 
 def test_crop_choice_beats_plan_when_crop_is_not_selected_yet():
@@ -81,6 +84,23 @@ def test_crop_choice_beats_plan_when_crop_is_not_selected_yet():
 
 def test_crop_choice_beats_finance_when_farmer_has_not_selected_a_crop():
     assert classify_heuristic("What should I grow to make profit?") == "recommender"
+
+
+@pytest.mark.asyncio
+async def test_explicit_market_intent_does_not_allow_llm_to_downgrade_to_advisor(monkeypatch):
+    async def advisor_reply(*_args, **_kwargs):
+        class Reply:
+            content = "advisor"
+        return Reply()
+
+    class Model:
+        async def ainvoke(self, *_args, **_kwargs):
+            return await advisor_reply()
+
+    monkeypatch.setattr("app.agent.graph.build_chat_model", lambda _model: Model())
+    from app.agent.graph import _classify
+
+    assert await _classify("Find suppliers for 100 kg urea near my farm") == "market_researcher"
 
 
 def test_full_plan_beats_finance_for_a_selected_crop():

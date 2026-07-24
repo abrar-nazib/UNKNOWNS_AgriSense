@@ -23,6 +23,9 @@ from ..adapters import weather as weather_mod
 from ..config import settings
 from ..engines import crop_ranker as crop_ranker_mod
 from ..engines import finance as finance_mod
+from ..engines import market_research as market_research_mod
+from .. import market_repository as market_repo
+from ..engines import pest_risk as pest_risk_mod
 from ..engines import season_planner as season_planner_mod
 from ..database import AsyncSessionLocal
 from ..engines import units as units_mod
@@ -838,6 +841,94 @@ async def search_knowledge_base(query: str, crop: str = "") -> str:
 
 def build_kb_tools():
     return [search_knowledge_base]
+
+
+# --------------------------------------------------------------------------- #
+# Forecast-driven pest and disease risk (factory — active farm scoped)
+# --------------------------------------------------------------------------- #
+def build_pest_risk_tool(user):
+    """Return the farmer-scoped deterministic pest/disease risk tool."""
+
+    @tool
+    async def assess_pest_disease_risk(
+        crop_name: str,
+        planting_date: str = "",
+        growth_stage: str = "",
+    ) -> str:
+        """Assess forecast-driven pest and disease risk for a growing crop.
+
+        Call this when a farmer names a crop they are growing, reports a crop
+        stage, or asks about pests/diseases. Pass ``planting_date`` as ISO
+        YYYY-MM-DD whenever known; otherwise pass the farmer's stated
+        ``growth_stage``. The result is a weather-and-stage scouting warning,
+        not a diagnosis. It never recommends pesticide products or doses.
+        """
+        _emit("pest_risk", f"checking pest and disease risk for {crop_name}")
+        try:
+            canonical = season_planner_mod.canonical_crop_name(crop_name)
+        except ValueError as exc:
+            return json.dumps(
+                {"status": "UNSUPPORTED_CROP", "message": str(exc)},
+                ensure_ascii=False,
+            )
+        parsed_planting_date = None
+        if planting_date.strip():
+            try:
+                parsed_planting_date = date.fromisoformat(planting_date.strip())
+            except ValueError:
+                return json.dumps(
+                    {
+                        "status": "INVALID_PLANTING_DATE",
+                        "message": "planting_date must be YYYY-MM-DD",
+                    },
+                    ensure_ascii=False,
+                )
+
+        async with AsyncSessionLocal() as session:
+            farm = await _get_or_create_active_farm(session, user)
+            lat, lon = farm.latitude, farm.longitude
+            if lat is None or lon is None:
+                resolved = geo_mod.resolve_coords(
+                    union_code=farm.union_geocode or "",
+                    upazila_code=farm.upazila_code or "",
+                    district_code=farm.district_code or "",
+                )
+                if resolved:
+                    lat, lon = resolved["lat"], resolved["lon"]
+            location = farm.union_name or farm.upazila_name or farm.district_name
+
+        if lat is None or lon is None:
+            return json.dumps(
+                {
+                    "status": "LOCATION_UNRESOLVED",
+                    "crop": canonical,
+                    "instruction": "Save the farm location before calculating a local forecast risk.",
+                },
+                ensure_ascii=False,
+            )
+        try:
+            weather = await weather_mod.fetch_forecast(lat, lon, 16)
+        except weather_mod.WeatherError as exc:
+            weather = {"status": "WEATHER_UNAVAILABLE", "days": [], "error": str(exc)}
+
+        result = pest_risk_mod.assess_risk(
+            crop_name=canonical,
+            weather=weather,
+            as_of=datetime.now(ZoneInfo("Asia/Dhaka")).date(),
+            planting_date=parsed_planting_date,
+            growth_stage=growth_stage,
+        )
+        return json.dumps(
+            {
+                **result,
+                "farm_location": location or "farm",
+                "weather_source": weather.get("source"),
+                "weather_status": weather.get("status", "ok"),
+            },
+            ensure_ascii=False,
+        )
+
+    return assess_pest_disease_risk
 
 
 # --------------------------------------------------------------------------- #
@@ -1796,6 +1887,12 @@ def build_season_plan_tool(user):
             soil_texture=farm_inputs["soil_texture"] or "",
             land_type=farm_inputs["land_type"] or "",
         )
+        pest_disease_risk = pest_risk_mod.assess_risk(
+            crop_name=canonical,
+            weather=weather,
+            as_of=today,
+            planting_date=date.fromisoformat(calendar["planting_date"]),
+        )
         if any(
             "does not cover planting date" in warning.casefold()
             for warning in calendar["warnings"]
@@ -1836,6 +1933,19 @@ def build_season_plan_tool(user):
                 "knowledge_evidence": knowledge_hits,
                 "knowledge_claims": knowledge_claims,
                 "calendar": calendar,
+                "pest_disease_risk": pest_disease_risk,
+                "mandatory_follow_up_tool": {
+                    "name": "assess_pest_disease_risk",
+                    "arguments": {
+                        "crop_name": canonical,
+                        "planting_date": calendar["planting_date"],
+                        "growth_stage": "",
+                    },
+                    "reason": (
+                        "Season plans must run the dedicated pest/disease "
+                        "risk tool for traceable forecast scouting warnings."
+                    ),
+                },
                 "grounding_rule": (
                     "Calendar stages/weather risks come from BAMIS; fertilizer "
                     "timing from FRG 2024; displayed fertilizer amounts only from "
@@ -1987,6 +2097,81 @@ def build_memory_tools(user_id: int, db=None):
 
 def build_static_tools():
     return [get_current_time, calculator]
+
+
+def build_market_research_tools(user):
+    """Tier 2 seeded supplier and crop-market tools for one active farm."""
+
+    async def farm_location(session):
+        farm = await _get_or_create_active_farm(session, user)
+        if farm.latitude is not None and farm.longitude is not None:
+            return {"latitude": farm.latitude, "longitude": farm.longitude, "source": "farm_profile", "farm": farm}
+        resolved = geo_mod.resolve_coords(
+            union_code=farm.union_geocode or getattr(user, "union_code", ""),
+            upazila_code=farm.upazila_code or getattr(user, "upazila_code", ""),
+            district_code=farm.district_code or getattr(user, "district_code", ""),
+        )
+        if not resolved:
+            return {"farm": farm}
+        return {"latitude": resolved["lat"], "longitude": resolved["lon"], "source": f"gazetteer_{resolved['level']}_centroid", "farm": farm}
+
+    async def fallback(query: str, farm) -> dict:
+        location = " ".join(filter(None, [farm.upazila_name, farm.district_name, "Bangladesh"]))
+        try:
+            raw = await research_mod.search_web(f"{query} {location}", max_results=3)
+        except research_mod.ResearchError as exc:
+            return {"status": "RESEARCH_UNAVAILABLE", "message": str(exc), "source_label": "unverified_external_reference"}
+        results = []
+        for row in raw.get("results", []):
+            text = " ".join(str(row.get(k, "")) for k in ("url", "title", "snippet"))
+            if ".bd" in text.lower() or "bangladesh" in text.lower() or any("\u0980" <= char <= "\u09ff" for char in text):
+                results.append({key: row.get(key, "") for key in ("url", "title", "snippet")})
+        return {"status": "ok", "source_label": "unverified_external_reference", "results": results, "disclaimer": "External references are unverified and do not change seeded scores or market actions."}
+
+    @tool
+    async def find_input_suppliers(input_name: str, quantity: float, unit: str) -> str:
+        """Find seeded input suppliers ranked by price, distance, delivery, rating and stock."""
+        _emit("market", f"finding suppliers for {input_name}")
+        if quantity <= 0:
+            return json.dumps({"status": "INVALID_QUANTITY", "message": "Quantity must be greater than zero."})
+        async with AsyncSessionLocal() as session:
+            loc = await farm_location(session)
+            farm = loc["farm"]
+            if "latitude" not in loc:
+                return json.dumps({"status": "LOCATION_REQUIRED", "message": "Save a farm address or coordinates before comparing supplier distances."})
+            key = market_research_mod.canonical_input_name(input_name)
+            offers = await market_repo.find_input_offers(session, key, unit.strip().lower())
+            ranked, exclusions = market_research_mod.rank_supplier_offers(offers, quantity, loc["latitude"], loc["longitude"])
+            if not ranked:
+                return json.dumps({"status": "NO_MATCHING_SUPPLIERS", "input_key": key, "external_reference": await fallback(input_name, farm), "disclosure": "No structured seeded supplier matched; external references are unverified."}, ensure_ascii=False)
+            nearest = min(ranked, key=lambda row: row["distance_km"])
+            return json.dumps({"status": "ok", "input_key": key, "quantity": quantity, "unit": unit, "location_source": loc["source"], "results": ranked[:3], "nearest_eligible_supplier": nearest, "exclusions": exclusions, "source_label": market_research_mod.SOURCE_LABEL, "disclosure": "Seeded demo supplier data, not live quotes. Distances are straight-line estimates; delivery is heuristic."}, ensure_ascii=False, default=str)
+
+    @tool
+    async def analyze_crop_market(crop_name: str, quantity_kg: float = 0) -> str:
+        """Analyze seeded farmgate/wholesale crop history and return sell, store or wait guidance."""
+        _emit("market", f"analyzing crop market for {crop_name}")
+        crop = market_research_mod.canonical_crop(crop_name)
+        async with AsyncSessionLocal() as session:
+            loc = await farm_location(session)
+            farm = loc["farm"]
+            if not crop:
+                return json.dumps({"status": "NO_STRUCTURED_MARKET_DATA", "external_reference": await fallback(crop_name, farm), "recommendation": {"action": "WAIT", "reason_code": "UNKNOWN_CROP"}}, ensure_ascii=False)
+            quotes = await market_repo.crop_quotes(
+                session, int(crop["crop_id"]), farm.district_name
+            )
+            analysis = market_research_mod.analyze_price_history(quotes)
+            latest_by_buyer = {}
+            for quote in quotes:
+                latest_by_buyer[quote["merchant_key"]] = quote
+            buyers = list(latest_by_buyer.values())
+            if "latitude" in loc:
+                for buyer in buyers:
+                    buyer["distance_km"] = round(market_research_mod.haversine_km(loc["latitude"], loc["longitude"], buyer["latitude"], buyer["longitude"]), 1)
+                buyers.sort(key=lambda row: row["distance_km"])
+            return json.dumps({"status": "ok", "crop": crop["name"], "quantity_kg": quantity_kg, "recommendation": analysis, "nearby_buyers": buyers[:3], "source_label": market_research_mod.SOURCE_LABEL, "recommendation_disclaimer": "Seeded demo market history is a decision aid, not a live quote or future-price guarantee."}, ensure_ascii=False, default=str)
+
+    return [find_input_suppliers, analyze_crop_market]
 
 
 # --------------------------------------------------------------------------- #

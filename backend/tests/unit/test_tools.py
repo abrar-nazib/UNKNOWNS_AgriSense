@@ -8,7 +8,7 @@ import pytest
 
 from app.agent import tools as tools_mod
 from app.agent import runner as runner_mod
-from app.agent.tools import build_research_tools, calculator, get_current_time
+from app.agent.tools import build_market_research_tools, build_pest_risk_tool, build_research_tools, calculator, get_current_time
 
 pytestmark = pytest.mark.unit
 
@@ -86,8 +86,29 @@ async def test_research_tool_returns_honest_unavailable_status(monkeypatch):
     assert "Wikipedia is unavailable" in result
 
 
-def test_research_tools_are_not_exposed_to_any_agent_specialist_yet():
-    """They remain reviewed/tested capabilities until explicitly enabled."""
+def test_research_tools_are_exposed_to_the_advisor_only():
+    """External references are available to advice turns, not planning tools."""
     runner_source = inspect.getsource(runner_mod)
 
-    assert "build_research_tools" not in runner_source
+    assert "research_tools = build_research_tools()" in runner_source
+    assert '"advisor": static_tools' in runner_source
+    assert "+ research_tools" in runner_source
+
+
+def test_pest_risk_tool_is_exposed_to_advisor_and_planner():
+    """Crop-stage risk is traceable in advisory turns and season plans."""
+    runner_source = inspect.getsource(runner_mod)
+
+    assert "pest_risk_tool = build_pest_risk_tool(user)" in runner_source
+    assert "+ [pest_risk_tool]" in runner_source
+    assert "+ [soil_tool, season_plan_tool, pest_risk_tool, financial_tool]" in runner_source
+    assert "assess_pest_disease_risk" in inspect.getsource(build_pest_risk_tool)
+
+
+def test_market_tools_are_exposed_only_to_market_researcher():
+    runner_source = inspect.getsource(runner_mod)
+    assert "market_tools = build_market_research_tools(user)" in runner_source
+    assert '"market_researcher": static_tools + farm_tools + market_tools' in runner_source
+    assert {tool.name for tool in build_market_research_tools(None)} == {
+        "find_input_suppliers", "analyze_crop_market"
+    }

@@ -399,4 +399,4 @@ Live smoke (manual, pre-demo checklist):
 Real/live: Open-Meteo weather, CZIS admin/variety/fertilizer endpoints (or dated
 official cached snapshot, disclosed), FRG 2024 corpus + verified tables, all
 arithmetic, memory, auth. Seeded/mock (labeled in UI + README): input cost
-catalog, market price catalog, any farmer-provided estimates.
+catalog, 22-merchant supplier catalog, 129-crop market price history, any farmer-provided estimates.

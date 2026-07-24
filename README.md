@@ -43,6 +43,10 @@ The database lives **only** in docker-compose (pgvector image). Backend and fron
 
 ## Hackathon Tier 0 path
 
+## Tier 2 market research
+
+The dedicated `market_researcher` compares 22 seeded Bangladesh merchants for inputs and analyzes 60-day farmgate/wholesale histories for all 129 bundled CZIS crops. Supplier results include straight-line distance from the saved farm/address centroid and identify the nearest eligible merchant. All prices, stock and delivery values are deterministic demo data, not live quotes or ordering/payment services. Missing local records may return URL-cited, unverified Bangladesh web references only.
+
 The focused demo path is: targeted six-field farm intake → live weather and
 official point-suitability crop ranking → selected-crop dated calendar → an
 itemized financial projection. The planner combines BAMIS crop calendars, the

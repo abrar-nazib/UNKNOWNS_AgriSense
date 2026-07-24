@@ -279,3 +279,65 @@ class LongTermMemory(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, server_default=func.now()
     )
+
+
+class MarketMerchant(Base):
+    """Reviewed mock merchant used only by Tier 2 market research."""
+
+    __tablename__ = "market_merchants"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    merchant_key: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    name: Mapped[str] = mapped_column(String(160))
+    role: Mapped[str] = mapped_column(String(24), index=True)
+    district_name: Mapped[str] = mapped_column(String(80))
+    upazila_name: Mapped[str] = mapped_column(String(80), default="")
+    latitude: Mapped[float] = mapped_column(Float)
+    longitude: Mapped[float] = mapped_column(Float)
+    rating: Mapped[float] = mapped_column(Float)
+    base_delivery_days: Mapped[int] = mapped_column(Integer)
+    service_radius_km: Mapped[float] = mapped_column(Float)
+    source_label: Mapped[str] = mapped_column(
+        String(48), default="seeded_demo_market_data"
+    )
+
+
+class MarketInputOffer(Base):
+    __tablename__ = "market_input_offers"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    merchant_id: Mapped[int] = mapped_column(
+        ForeignKey("market_merchants.id", ondelete="CASCADE"), index=True
+    )
+    input_key: Mapped[str] = mapped_column(String(64), index=True)
+    unit: Mapped[str] = mapped_column(String(24))
+    unit_price_bdt: Mapped[float] = mapped_column(Float)
+    available_quantity: Mapped[float] = mapped_column(Float)
+    minimum_order_quantity: Mapped[float] = mapped_column(Float)
+    in_stock: Mapped[bool] = mapped_column(Boolean, default=True)
+    source_label: Mapped[str] = mapped_column(
+        String(48), default="seeded_demo_market_data"
+    )
+
+
+class MarketCropQuote(Base):
+    __tablename__ = "market_crop_quotes"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    merchant_id: Mapped[int] = mapped_column(
+        ForeignKey("market_merchants.id", ondelete="CASCADE"), index=True
+    )
+    crop_id: Mapped[int] = mapped_column(Integer, index=True)
+    crop_name: Mapped[str] = mapped_column(String(120))
+    quote_date: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    price_basis: Mapped[str] = mapped_column(String(24))
+    price_per_kg_bdt: Mapped[float] = mapped_column(Float)
+    confidence: Mapped[float] = mapped_column(Float)
+    source_label: Mapped[str] = mapped_column(
+        String(48), default="seeded_demo_market_data"
+    )
+
+    __table_args__ = (
+        Index("ix_market_crop_quotes_crop_date", "crop_id", "quote_date"),
+        Index("ix_market_crop_quotes_merchant_date", "merchant_id", "quote_date"),
+    )

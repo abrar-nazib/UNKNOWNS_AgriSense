@@ -86,6 +86,10 @@ def test_crop_choice_beats_finance_when_farmer_has_not_selected_a_crop():
     assert classify_heuristic("What should I grow to make profit?") == "recommender"
 
 
+def test_hypothetical_crop_choice_is_not_misrouted_as_finance_scenario():
+    assert classify_heuristic("What if I plant wheat this rabi season?") == "recommender"
+
+
 @pytest.mark.asyncio
 async def test_explicit_market_intent_does_not_allow_llm_to_downgrade_to_advisor(monkeypatch):
     async def advisor_reply(*_args, **_kwargs):

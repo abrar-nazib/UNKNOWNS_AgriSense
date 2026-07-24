@@ -166,7 +166,8 @@ NODE_DIRECTIVES = {
         "both break-even values exactly. Always distinguish live CZIS yield, "
         "farmer estimates, and seeded_demo_value assumptions. Never describe "
         "a demo price or cost as current/live. If the crop is not selected, "
-        "ask which crop before calculating."
+        "ask which crop before calculating. For a WHAT-IF scenario, call simulate_scenario "
+        "and relay baseline-vs-revised figures exactly."
     ),
     "market_researcher": (
         "CURRENT NODE: MARKET RESEARCHER. YOU MUST CALL A MARKET TOOL BEFORE ANSWERING. "
@@ -216,6 +217,11 @@ _MARKET_WORDS = re.compile(
     r"(supplier|merchant|buyer|market price|price history|sell now|store|wait|wholesale|farmgate|urea|tsp|mop|seed price|সাপ্লায়ার|বাজার দর|বিক্রি|সংরক্ষণ)",
     re.IGNORECASE,
 )
+_SCENARIO_WORDS = re.compile(
+    r"(scenario|simulate|(?:what[ -]?if|if).{0,32}(?:rainfall|rain|budget|price|cost|yield)|"
+    r"(?:rainfall|rain|budget|price|cost).{0,20}(?:drops?|falls?|cut|reduced?|less|more|down|up)|যদি.{0,20}(?:কমে|বাড়ে))",
+    re.IGNORECASE,
+)
 
 _BARE_SELECTED_CROPS = {
     "wheat", "গম", "mustard", "sarisha", "সরিষা", "potato", "alu", "আলু",
@@ -232,6 +238,7 @@ _CLASSIFY_PROMPT = (
     "season plan/calendar/schedule\n"
     "- finance : itemized cost, profit, ROI, break-even or a financial what-if "
     "for an already-selected crop\n"
+    "- market_researcher : suppliers, input prices, crop market prices, buyers, or sell/store/wait\n"
     "- market_researcher : suppliers, input prices, crop market prices, buyers, or sell/store/wait\n"
     "- intake  : stating or correcting farm facts (land size, budget, "
     "irrigation, soil, season, location)\n"
@@ -250,6 +257,8 @@ def classify_heuristic(text: str) -> str:
     if _PLAN_WORDS.search(text or ""):
         return "planner"
     if _FINANCE_WORDS.search(text or ""):
+        return "finance"
+    if _SCENARIO_WORDS.search(text or ""):
         return "finance"
     if _MARKET_WORDS.search(text or ""):
         return "market_researcher"

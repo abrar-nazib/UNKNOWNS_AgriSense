@@ -134,6 +134,54 @@ async def test_finance_tool_czis_outage_fails_closed_without_inventing_yield(
 
 
 @pytest.mark.asyncio
+async def test_finance_tool_supports_a_crop_outside_the_five_season_plan_crops(
+    auth_client, db_session, monkeypatch
+):
+    """Lentil has no BAMIS season-plan calendar (generate_season_plan can't
+    build a dated calendar for it) but is one of the 50 seeded Rabi crops the
+    standalone finance tool covers, so it should still produce a projection."""
+    user = await _complete_farm(db_session)
+
+    async def forbidden(*args, **kwargs):
+        pytest.fail("CZIS is unnecessary when the farmer supplies expected yield")
+
+    monkeypatch.setattr(tools_mod.czis_mod, "get_varieties", forbidden)
+    payload = json.loads(
+        await build_financial_tool(user).ainvoke(
+            {
+                "crop_name": "Lentil",
+                "expected_yield_t_ha": 1.3,
+                "sale_price_bdt_per_kg": 110,
+            }
+        )
+    )
+
+    assert payload["status"] == "ok"
+    assert payload["selected_crop"]["name"] == "Lentil"
+    projection = payload["financial_projection"]
+    assert projection["total_cost_bdt"] == sum(
+        item["amount_bdt"] for item in projection["cost_items"]
+    )
+
+
+@pytest.mark.asyncio
+async def test_finance_tool_keeps_existing_focused_crop_aliases(
+    auth_client, db_session
+):
+    """Broad catalog support must not break the existing Banglish aliases."""
+    user = await _complete_farm(db_session)
+
+    payload = json.loads(
+        await build_financial_tool(user).ainvoke(
+            {"crop_name": "sarisha", "expected_yield_t_ha": 2.0}
+        )
+    )
+
+    assert payload["status"] == "ok"
+    assert payload["selected_crop"]["name"] == "Mustard"
+
+
+@pytest.mark.asyncio
 async def test_finance_tool_rejects_crop_season_mismatch_before_network(
     auth_client, db_session, monkeypatch
 ):

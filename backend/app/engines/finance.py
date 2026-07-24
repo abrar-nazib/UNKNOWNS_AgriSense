@@ -4,6 +4,7 @@ The engine performs no I/O and uses ``Decimal`` for every calculation.  Yield
 comes from the caller (normally the live CZIS variety table).  Farmer-provided
 price and item costs override the bundled, prominently labelled demo values.
 """
+
 from __future__ import annotations
 
 import json
@@ -12,7 +13,6 @@ from decimal import Decimal, ROUND_HALF_UP
 from functools import lru_cache
 from pathlib import Path
 from typing import Any, Optional
-
 
 DECIMAL_PER_HECTARE = Decimal("247.105")
 _MONEY = Decimal("0.01")
@@ -92,6 +92,12 @@ def seeded_crop_rough_projection(crop_name: str, area_decimal: float) -> dict:
     if crop is None:
         raise ValueError("unsupported crop for seeded rough projection")
     yield_ref = crop["reference_yield_t_ha"]
+    source_name = str(yield_ref["source"])
+    source_type = (
+        "seeded_demo_value"
+        if source_name.casefold().startswith("agrisense seeded demo")
+        else "official_reference_yield_goal"
+    )
     return build_financial_projection(
         crop_name=crop_name,
         area_decimal=area_decimal,
@@ -101,7 +107,12 @@ def seeded_crop_rough_projection(crop_name: str, area_decimal: float) -> dict:
             "source": yield_ref["source"],
             "pages": yield_ref["pages"],
             "basis": yield_ref["basis"],
-            "source_type": "official_reference_yield_goal",
+            "source_type": source_type,
+            **(
+                {"source_url": yield_ref["source_url"]}
+                if yield_ref.get("source_url")
+                else {}
+            ),
         },
     )
 

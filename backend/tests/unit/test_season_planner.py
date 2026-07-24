@@ -1,11 +1,16 @@
 """Gold-date and quantity invariants for deterministic season calendars."""
+
 from __future__ import annotations
 
 from datetime import date, timedelta
 
 import pytest
 
-from app.engines.season_planner import build_season_calendar, next_sowing_date
+from app.engines.season_planner import (
+    build_season_calendar,
+    next_sowing_date,
+    supports_dated_calendar,
+)
 
 
 def test_next_sowing_date_uses_next_official_window_not_stale_model_year():
@@ -48,9 +53,13 @@ def test_calendar_covers_every_pdf_required_stage(crop, expected_duration):
         "harvest",
     } <= categories
     assert plan["duration_days"] == expected_duration
-    assert plan["harvest_date"] == (
-        date.fromisoformat(plan["planting_date"]) + timedelta(days=expected_duration)
-    ).isoformat()
+    assert (
+        plan["harvest_date"]
+        == (
+            date.fromisoformat(plan["planting_date"])
+            + timedelta(days=expected_duration)
+        ).isoformat()
+    )
     assert [e["date"] for e in plan["events"]] == sorted(
         e["date"] for e in plan["events"]
     )
@@ -214,9 +223,7 @@ def test_rainfed_mustard_uses_frg_all_basal_rule_and_no_irrigation_schedule():
     assert "rainfed" in fertilizer_events[0]["action"].lower()
     assert fertilizer_events[0]["fertilizer_doses"][0]["amount"]["value"] == 20
     assert not any(event["category"] == "irrigation" for event in plan["events"])
-    assert any(
-        event["category"] == "moisture_monitoring" for event in plan["events"]
-    )
+    assert any(event["category"] == "moisture_monitoring" for event in plan["events"])
     assert plan["farm_context"]["irrigation_available"] is False
 
 
@@ -228,3 +235,9 @@ def test_unsupported_crop_is_rejected_instead_of_inventing_calendar():
             fertilizer_products=[],
             weather={"days": []},
         )
+
+
+def test_dated_calendar_support_is_explicitly_crop_and_season_bound():
+    assert supports_dated_calendar("Maize", "rabi") is True
+    assert supports_dated_calendar("Maize", "kharif-1") is False
+    assert supports_dated_calendar("Brinjal", "kharif-2") is False

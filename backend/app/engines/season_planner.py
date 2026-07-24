@@ -5,6 +5,7 @@ focused Rabi profiles are structured from the Rajshahi-region BAMIS crop-weather
 calendars and the BARC Fertilizer Recommendation Guide 2024.  External adapters
 provide weather and farm-scaled fertilizer products before calling this engine.
 """
+
 from __future__ import annotations
 
 from datetime import date, timedelta
@@ -41,11 +42,39 @@ CROP_PLANS: dict[str, dict[str, Any]] = {
         "frg": _frg("90-91"),
         "water_requirement": {"phase_mm": [47, 128, 77, 137, 39], "total_mm": 428},
         "weather_warning": {"rain_mm_day": 50, "max_temp_c": 30, "min_temp_c": 15},
-        "stages": [(0, "Sowing"), (7, "Germination"), (21, "Vegetative growth"), (55, "Flowering"), (75, "Grain formation"), (105, "Maturity")],
-        "fertilizer": [(0, "Apply basal fertilizer during final land preparation", {"urea": 2 / 3}), (19, "Apply remaining nitrogen after first irrigation (FRG window: 17-21 DAS)", {"urea": 1 / 3})],
-        "irrigation": [(19, "First irrigation at crown-root/early vegetative stage"), (55, "Irrigate at flowering if soil moisture is low"), (78, "Irrigate during grain formation if needed")],
-        "weeds": [(20, "Inspect and control weeds after crop establishment"), (40, "Second weed inspection before flowering")],
-        "pests": [(52, "Scout for blast, leaf rust and loose smut around flowering"), (88, "Check black point risk; rain during ripening raises risk")],
+        "stages": [
+            (0, "Sowing"),
+            (7, "Germination"),
+            (21, "Vegetative growth"),
+            (55, "Flowering"),
+            (75, "Grain formation"),
+            (105, "Maturity"),
+        ],
+        "fertilizer": [
+            (
+                0,
+                "Apply basal fertilizer during final land preparation",
+                {"urea": 2 / 3},
+            ),
+            (
+                19,
+                "Apply remaining nitrogen after first irrigation (FRG window: 17-21 DAS)",
+                {"urea": 1 / 3},
+            ),
+        ],
+        "irrigation": [
+            (19, "First irrigation at crown-root/early vegetative stage"),
+            (55, "Irrigate at flowering if soil moisture is low"),
+            (78, "Irrigate during grain formation if needed"),
+        ],
+        "weeds": [
+            (20, "Inspect and control weeds after crop establishment"),
+            (40, "Second weed inspection before flowering"),
+        ],
+        "pests": [
+            (52, "Scout for blast, leaf rust and loose smut around flowering"),
+            (88, "Check black point risk; rain during ripening raises risk"),
+        ],
     },
     "mustard": {
         "display": "Mustard",
@@ -56,14 +85,48 @@ CROP_PLANS: dict[str, dict[str, Any]] = {
             "https://www.bamis.gov.bd/res/public/calendars/2019/12/30/10986.pdf"
         ),
         "frg": _frg("101-102"),
-        "water_requirement": {"phase_mm": None, "total_mm": None, "note": "BAMIS calendar does not publish a phase-wise total for mustard."},
+        "water_requirement": {
+            "phase_mm": None,
+            "total_mm": None,
+            "note": "BAMIS calendar does not publish a phase-wise total for mustard.",
+        },
         "weather_warning": {"rain_mm_day": 50, "max_temp_c": 30, "min_temp_c": 10},
-        "stages": [(0, "Sowing"), (7, "Germination"), (18, "Vegetative growth"), (30, "Flowering"), (50, "Pod initiation"), (78, "Maturity")],
-        "fertilizer": [(0, "Apply half nitrogen and all other prescribed fertilizers as basal", {"urea": 0.5}), (25, "Topdress remaining nitrogen at flower initiation", {"urea": 0.5})],
-        "rainfed_fertilizer": [(0, "Under the FRG rainfed rule, apply all prescribed fertilizers as basal during final land preparation", {})],
-        "irrigation": [(1, "Light irrigation only if seedbed moisture is inadequate"), (25, "Irrigate at flower initiation when soil is dry"), (50, "Check moisture at pod initiation; avoid waterlogging")],
-        "weeds": [(18, "Inspect and control weeds before flower initiation"), (35, "Second weed inspection after flowering starts")],
-        "pests": [(28, "Scout for Alternaria leaf blight and stem rot"), (42, "Scout for aphids, especially in cloudy weather")],
+        "stages": [
+            (0, "Sowing"),
+            (7, "Germination"),
+            (18, "Vegetative growth"),
+            (30, "Flowering"),
+            (50, "Pod initiation"),
+            (78, "Maturity"),
+        ],
+        "fertilizer": [
+            (
+                0,
+                "Apply half nitrogen and all other prescribed fertilizers as basal",
+                {"urea": 0.5},
+            ),
+            (25, "Topdress remaining nitrogen at flower initiation", {"urea": 0.5}),
+        ],
+        "rainfed_fertilizer": [
+            (
+                0,
+                "Under the FRG rainfed rule, apply all prescribed fertilizers as basal during final land preparation",
+                {},
+            )
+        ],
+        "irrigation": [
+            (1, "Light irrigation only if seedbed moisture is inadequate"),
+            (25, "Irrigate at flower initiation when soil is dry"),
+            (50, "Check moisture at pod initiation; avoid waterlogging"),
+        ],
+        "weeds": [
+            (18, "Inspect and control weeds before flower initiation"),
+            (35, "Second weed inspection after flowering starts"),
+        ],
+        "pests": [
+            (28, "Scout for Alternaria leaf blight and stem rot"),
+            (42, "Scout for aphids, especially in cloudy weather"),
+        ],
     },
     "potato": {
         "display": "Potato",
@@ -76,11 +139,39 @@ CROP_PLANS: dict[str, dict[str, Any]] = {
         "frg": _frg("106-107"),
         "water_requirement": {"seasonal_range_mm": [400, 600]},
         "weather_warning": {"rain_mm_day": 25, "max_temp_c": 30, "min_temp_c": 10},
-        "stages": [(0, "Planting"), (10, "Sprouting/seedling"), (24, "Vegetative growth"), (38, "Tuber initiation"), (62, "Tuber bulking"), (92, "Maturity")],
-        "fertilizer": [(0, "Apply basal fertilizers during final land preparation", {"urea": 0.5, "mop": 0.5}), (33, "Side-dress remaining nitrogen and potassium during earthing-up (FRG window: 30-35 DAP)", {"urea": 0.5, "mop": 0.5})],
-        "irrigation": [(12, "Light irrigation for crop establishment if soil is dry"), (35, "Irrigate at tuber initiation; do not waterlog"), (62, "Maintain moisture during tuber bulking")],
-        "weeds": [(20, "First weed control before canopy closes"), (33, "Weed and earth up with the side-dressing operation")],
-        "pests": [(32, "Scout for late blight; cold, humid, foggy weather increases risk"), (58, "Scout for bacterial/fusarium wilt and potato leaf-roll symptoms")],
+        "stages": [
+            (0, "Planting"),
+            (10, "Sprouting/seedling"),
+            (24, "Vegetative growth"),
+            (38, "Tuber initiation"),
+            (62, "Tuber bulking"),
+            (92, "Maturity"),
+        ],
+        "fertilizer": [
+            (
+                0,
+                "Apply basal fertilizers during final land preparation",
+                {"urea": 0.5, "mop": 0.5},
+            ),
+            (
+                33,
+                "Side-dress remaining nitrogen and potassium during earthing-up (FRG window: 30-35 DAP)",
+                {"urea": 0.5, "mop": 0.5},
+            ),
+        ],
+        "irrigation": [
+            (12, "Light irrigation for crop establishment if soil is dry"),
+            (35, "Irrigate at tuber initiation; do not waterlog"),
+            (62, "Maintain moisture during tuber bulking"),
+        ],
+        "weeds": [
+            (20, "First weed control before canopy closes"),
+            (33, "Weed and earth up with the side-dressing operation"),
+        ],
+        "pests": [
+            (32, "Scout for late blight; cold, humid, foggy weather increases risk"),
+            (58, "Scout for bacterial/fusarium wilt and potato leaf-roll symptoms"),
+        ],
     },
     "maize": {
         "display": "Maize",
@@ -93,11 +184,44 @@ CROP_PLANS: dict[str, dict[str, Any]] = {
         "frg": _frg("91"),
         "water_requirement": {"phase_mm": [76, 120, 190, 145, 100], "total_mm": 631},
         "weather_warning": {"rain_mm_day": 50, "min_temp_c": 10},
-        "stages": [(0, "Sowing"), (7, "Germination"), (20, "Vegetative growth"), (55, "Tasseling/silking"), (72, "Cob formation"), (100, "Maturity")],
-        "fertilizer": [(0, "Apply one-third nitrogen and all other prescribed fertilizers in sowing furrows", {"urea": 1 / 3}), (52, "Side-dress one-third nitrogen (FRG window: 50-55 DAS)", {"urea": 1 / 3}), (82, "Side-dress final one-third nitrogen at tasseling (FRG window: 80-85 DAS)", {"urea": 1 / 3})],
-        "irrigation": [(20, "Irrigate during vegetative growth if rainfall is inadequate"), (55, "Irrigate at tasseling/silking; this is a critical stage"), (75, "Maintain moisture during cob formation")],
-        "weeds": [(18, "First weed control around early vegetative growth"), (38, "Second weed inspection before tasseling")],
-        "pests": [(18, "Scout whorls for fall armyworm damage"), (48, "Repeat fall-armyworm and seed/stalk-rot scouting before tasseling")],
+        "stages": [
+            (0, "Sowing"),
+            (7, "Germination"),
+            (20, "Vegetative growth"),
+            (55, "Tasseling/silking"),
+            (72, "Cob formation"),
+            (100, "Maturity"),
+        ],
+        "fertilizer": [
+            (
+                0,
+                "Apply one-third nitrogen and all other prescribed fertilizers in sowing furrows",
+                {"urea": 1 / 3},
+            ),
+            (
+                52,
+                "Side-dress one-third nitrogen (FRG window: 50-55 DAS)",
+                {"urea": 1 / 3},
+            ),
+            (
+                82,
+                "Side-dress final one-third nitrogen at tasseling (FRG window: 80-85 DAS)",
+                {"urea": 1 / 3},
+            ),
+        ],
+        "irrigation": [
+            (20, "Irrigate during vegetative growth if rainfall is inadequate"),
+            (55, "Irrigate at tasseling/silking; this is a critical stage"),
+            (75, "Maintain moisture during cob formation"),
+        ],
+        "weeds": [
+            (18, "First weed control around early vegetative growth"),
+            (38, "Second weed inspection before tasseling"),
+        ],
+        "pests": [
+            (18, "Scout whorls for fall armyworm damage"),
+            (48, "Repeat fall-armyworm and seed/stalk-rot scouting before tasseling"),
+        ],
     },
     "boro dhan": {
         "display": "Boro dhan",
@@ -110,11 +234,46 @@ CROP_PLANS: dict[str, dict[str, Any]] = {
         "frg": _frg("87-88"),
         "water_requirement": {"phase_mm": [76, 120, 190, 145, 100], "total_mm": 631},
         "weather_warning": {"rain_mm_day": 50, "min_temp_c": 10},
-        "stages": [(0, "Seedbed/transplanting"), (15, "Seedling establishment"), (30, "Tillering"), (55, "Panicle initiation"), (80, "Heading/flowering"), (105, "Grain filling"), (140, "Maturity")],
-        "fertilizer": [(0, "Apply first nitrogen split and basal P, K, S and Zn at final land preparation/establishment", {"urea": 1 / 3}), (30, "Apply second nitrogen split at early tillering", {"urea": 1 / 3}), (49, "Apply final nitrogen split 5-7 days before panicle initiation", {"urea": 1 / 3})],
-        "irrigation": [(5, "Maintain shallow water for establishment"), (30, "Manage water at tillering; avoid unnecessary continuous deep flooding"), (55, "Ensure water at panicle initiation"), (82, "Ensure water through flowering"), (125, "Reduce irrigation as crop approaches maturity")],
-        "weeds": [(20, "First weed inspection before active tillering"), (42, "Second weed inspection before panicle initiation")],
-        "pests": [(48, "Scout for bacterial leaf blight, sheath blight and blast"), (78, "Repeat blast and sheath-blight scouting around heading")],
+        "stages": [
+            (0, "Seedbed/transplanting"),
+            (15, "Seedling establishment"),
+            (30, "Tillering"),
+            (55, "Panicle initiation"),
+            (80, "Heading/flowering"),
+            (105, "Grain filling"),
+            (140, "Maturity"),
+        ],
+        "fertilizer": [
+            (
+                0,
+                "Apply first nitrogen split and basal P, K, S and Zn at final land preparation/establishment",
+                {"urea": 1 / 3},
+            ),
+            (30, "Apply second nitrogen split at early tillering", {"urea": 1 / 3}),
+            (
+                49,
+                "Apply final nitrogen split 5-7 days before panicle initiation",
+                {"urea": 1 / 3},
+            ),
+        ],
+        "irrigation": [
+            (5, "Maintain shallow water for establishment"),
+            (
+                30,
+                "Manage water at tillering; avoid unnecessary continuous deep flooding",
+            ),
+            (55, "Ensure water at panicle initiation"),
+            (82, "Ensure water through flowering"),
+            (125, "Reduce irrigation as crop approaches maturity"),
+        ],
+        "weeds": [
+            (20, "First weed inspection before active tillering"),
+            (42, "Second weed inspection before panicle initiation"),
+        ],
+        "pests": [
+            (48, "Scout for bacterial leaf blight, sheath blight and blast"),
+            (78, "Repeat blast and sheath-blight scouting around heading"),
+        ],
     },
 }
 
@@ -132,6 +291,22 @@ def _profile(crop_name: str) -> dict[str, Any]:
 def canonical_crop_name(crop_name: str) -> str:
     """Return the canonical supported crop name or raise ``ValueError``."""
     return str(_profile(crop_name)["display"])
+
+
+def supports_dated_calendar(crop_name: str, season: str) -> bool:
+    """Whether this exact crop-season has a sourced deterministic calendar.
+
+    The profiles in this module are Rajshahi Rabi calendars.  A crop name can
+    occur in another CZIS season (for example Kharif-1 maize), but that does
+    not make the Rabi dates safe to reuse there.
+    """
+    if str(season or "").strip().casefold() != "rabi":
+        return False
+    try:
+        _profile(crop_name)
+    except ValueError:
+        return False
+    return True
 
 
 def next_sowing_date(crop_name: str, today: date) -> date:
@@ -176,11 +351,15 @@ def _weather_adjusted_date(
             coverage = f"{min(rows)} through {max(rows)}"
         else:
             coverage = "no daily dates"
-        return requested, [], [
-            f"The live forecast ({coverage}) does not cover planting date "
-            f"{requested.isoformat()}; no weather date adjustment was made. "
-            "Recheck within 16 days of planting."
-        ]
+        return (
+            requested,
+            [],
+            [
+                f"The live forecast ({coverage}) does not cover planting date "
+                f"{requested.isoformat()}; no weather date adjustment was made. "
+                "Recheck within 16 days of planting."
+            ],
+        )
     rain = current.get("rain_mm") if current else None
     if rain is None or float(rain) < float(rain_threshold_mm):
         return requested, [], []
@@ -210,13 +389,19 @@ def _weather_adjusted_date(
                 ],
                 [],
             )
-    return requested, [], [
-        "Heavy rain is forecast on the planting date and no dry day appears in "
-        "the available forecast; confirm a new date when the forecast updates."
-    ]
+    return (
+        requested,
+        [],
+        [
+            "Heavy rain is forecast on the planting date and no dry day appears in "
+            "the available forecast; confirm a new date when the forecast updates."
+        ],
+    )
 
 
-def _split_fertilizers(events: list[tuple], products: list[dict]) -> dict[int, list[dict]]:
+def _split_fertilizers(
+    events: list[tuple], products: list[dict]
+) -> dict[int, list[dict]]:
     doses: dict[int, list[dict]] = {offset: [] for offset, _, _ in events}
     for product in products:
         if product.get("is_alternative"):
@@ -310,9 +495,21 @@ def build_season_calendar(
         "Prepare the field and drainage; incorporate prescribed organic and basal inputs as directed.",
         profile["frg"],
     )
-    add(0, "sowing", profile["stages"][0][1], f"Plant {profile['display']} in the prepared field.", profile["bamis"])
+    add(
+        0,
+        "sowing",
+        profile["stages"][0][1],
+        f"Plant {profile['display']} in the prepared field.",
+        profile["bamis"],
+    )
     for offset, stage in profile["stages"][1:]:
-        add(offset, "crop_stage", stage, f"Confirm the crop has reached {stage.lower()} and update the plan if development differs.", profile["bamis"])
+        add(
+            offset,
+            "crop_stage",
+            stage,
+            f"Confirm the crop has reached {stage.lower()} and update the plan if development differs.",
+            profile["bamis"],
+        )
     for offset, action, _shares in fertilizer_events:
         add(
             offset,
@@ -339,7 +536,13 @@ def build_season_calendar(
         add(offset, "weed", "Weed checkpoint", action, profile["bamis"])
     for offset, action in profile["pests"]:
         add(offset, "pest", "Pest and disease checkpoint", action, profile["bamis"])
-    add(profile["duration"], "harvest", "Harvest", "Harvest when crop-specific maturity indicators are confirmed; avoid harvesting during rain.", profile["bamis"])
+    add(
+        profile["duration"],
+        "harvest",
+        "Harvest",
+        "Harvest when crop-specific maturity indicators are confirmed; avoid harvesting during rain.",
+        profile["bamis"],
+    )
 
     events.sort(key=lambda event: (event["date"], event["category"], event["title"]))
     return {
@@ -352,7 +555,10 @@ def build_season_calendar(
         "weather_adjustments": weather_adjustments,
         "warnings": warnings,
         "events": events,
-        "sources": {"crop_calendar": profile["bamis"], "fertilizer_timing": profile["frg"]},
+        "sources": {
+            "crop_calendar": profile["bamis"],
+            "fertilizer_timing": profile["frg"],
+        },
         "agronomic_reference": {
             "water_requirement": profile["water_requirement"],
             "weather_warning_thresholds": profile["weather_warning"],

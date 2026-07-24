@@ -5,13 +5,18 @@ official suitability, live weather, farm constraints and recorded local
 rotation economics into inspectable scores.  The LLM may explain this output;
 it must not replace the arithmetic.
 """
+
 from __future__ import annotations
 
 from datetime import date
 from typing import Any, Optional
 
-from .finance import seeded_crop_cost, seeded_crop_rough_projection
-from .season_planner import CROP_PLANS, next_sowing_date
+from .finance import (
+    seeded_crop_cost,
+    seeded_crop_rough_projection,
+    supported_finance_crops,
+)
+from .season_planner import CROP_PLANS, next_sowing_date, supports_dated_calendar
 
 
 def _bamis_source(url: str) -> dict[str, str]:
@@ -23,16 +28,76 @@ def _bamis_source(url: str) -> dict[str, str]:
 # quantities.  Farmer-facing quantities are produced only by later scheduler
 # tools.  Source references are carried into every candidate.
 CROP_TRAITS: dict[str, dict[str, Any]] = {
-    "boro dhan": {"water": "high", "max_temp_c": 35, "heavy_rain_mm": 50, "profile": "boro dhan"},
-    "wheat": {"water": "medium", "max_temp_c": 30, "heavy_rain_mm": 50, "profile": "wheat"},
-    "maize": {"water": "high", "max_temp_c": 35, "heavy_rain_mm": 50, "profile": "maize"},
-    "mustard": {"water": "low", "max_temp_c": 30, "heavy_rain_mm": 50, "profile": "mustard"},
-    "potato": {"water": "medium", "max_temp_c": 30, "heavy_rain_mm": 25, "profile": "potato"},
-    "lentil": {"water": "low", "max_temp_c": 32, "heavy_rain_mm": 35, "source": _bamis_source("https://www.bamis.gov.bd/res/public/calendars/2019/11/14/8725.pdf")},
-    "tomato": {"water": "medium", "max_temp_c": 32, "heavy_rain_mm": 35, "source": _bamis_source("https://www.bamis.gov.bd/res/public/calendars/2023/03/16/26464.pdf")},
-    "onion": {"water": "medium", "max_temp_c": 32, "heavy_rain_mm": 35, "source": _bamis_source("https://www.bamis.gov.bd/res/public/calendars/2023/03/16/26482.pdf")},
-    "garlic": {"water": "medium", "max_temp_c": 32, "heavy_rain_mm": 35, "source": _bamis_source("https://www.bamis.gov.bd/res/public/calendars/2023/03/17/26526.pdf")},
-    "brinjal": {"water": "medium", "max_temp_c": 35, "heavy_rain_mm": 40, "source": _bamis_source("https://www.bamis.gov.bd/res/public/calendars/2023/04/17/27419.pdf")},
+    "boro dhan": {
+        "water": "high",
+        "max_temp_c": 35,
+        "heavy_rain_mm": 50,
+        "profile": "boro dhan",
+    },
+    "wheat": {
+        "water": "medium",
+        "max_temp_c": 30,
+        "heavy_rain_mm": 50,
+        "profile": "wheat",
+    },
+    "maize": {
+        "water": "high",
+        "max_temp_c": 35,
+        "heavy_rain_mm": 50,
+        "profile": "maize",
+    },
+    "mustard": {
+        "water": "low",
+        "max_temp_c": 30,
+        "heavy_rain_mm": 50,
+        "profile": "mustard",
+    },
+    "potato": {
+        "water": "medium",
+        "max_temp_c": 30,
+        "heavy_rain_mm": 25,
+        "profile": "potato",
+    },
+    "lentil": {
+        "water": "low",
+        "max_temp_c": 32,
+        "heavy_rain_mm": 35,
+        "source": _bamis_source(
+            "https://www.bamis.gov.bd/res/public/calendars/2019/11/14/8725.pdf"
+        ),
+    },
+    "tomato": {
+        "water": "medium",
+        "max_temp_c": 32,
+        "heavy_rain_mm": 35,
+        "source": _bamis_source(
+            "https://www.bamis.gov.bd/res/public/calendars/2023/03/16/26464.pdf"
+        ),
+    },
+    "onion": {
+        "water": "medium",
+        "max_temp_c": 32,
+        "heavy_rain_mm": 35,
+        "source": _bamis_source(
+            "https://www.bamis.gov.bd/res/public/calendars/2023/03/16/26482.pdf"
+        ),
+    },
+    "garlic": {
+        "water": "medium",
+        "max_temp_c": 32,
+        "heavy_rain_mm": 35,
+        "source": _bamis_source(
+            "https://www.bamis.gov.bd/res/public/calendars/2023/03/17/26526.pdf"
+        ),
+    },
+    "brinjal": {
+        "water": "medium",
+        "max_temp_c": 35,
+        "heavy_rain_mm": 40,
+        "source": _bamis_source(
+            "https://www.bamis.gov.bd/res/public/calendars/2023/04/17/27419.pdf"
+        ),
+    },
 }
 
 for _trait in CROP_TRAITS.values():
@@ -57,6 +122,22 @@ _SUITABILITY_POINTS = {
 }
 
 _SEASON_FIELD = {"rabi": "rabi", "kharif-1": "kharif1", "kharif-2": "kharif2"}
+
+
+def recommendation_capability(crop_name: str, season: str) -> Optional[str]:
+    """Return the safe action depth for a crop-season pair.
+
+    Kharif crops can be short-listed from their own CZIS catalog/suitability,
+    local rotation context and disclosed finance assumptions.  They must not
+    inherit a Rabi calendar, water requirement or forecast threshold until an
+    exact crop-season source has been added.
+    """
+    if supports_dated_calendar(crop_name, season):
+        return "dated_plan"
+    key = str(crop_name or "").strip().casefold()
+    if season in {"kharif-1", "kharif-2"} and key in set(supported_finance_crops()):
+        return "shortlist_only"
+    return None
 
 
 def _number(value: Any) -> Optional[float]:
@@ -152,9 +233,7 @@ def _weather_component(
         if (value := _number(row.get("rain_mm"))) is not None
     ]
     max_daily_rain = (
-        max(daily_rain)
-        if daily_rain
-        else _number(summary.get("max_daily_rain_mm"))
+        max(daily_rain) if daily_rain else _number(summary.get("max_daily_rain_mm"))
     )
     if max_temp is None and max_daily_rain is None:
         # Unknown is neither safe nor catastrophic: keep a neutral half-score
@@ -166,10 +245,7 @@ def _weather_component(
             f"forecast maximum {max_temp:g}°C exceeds {traits['max_temp_c']}°C risk threshold"
         )
         score -= 5.0
-    if (
-        max_daily_rain is not None
-        and max_daily_rain > traits["heavy_rain_mm"]
-    ):
+    if max_daily_rain is not None and max_daily_rain > traits["heavy_rain_mm"]:
         warnings.append(
             f"forecast daily rain {max_daily_rain:g} mm exceeds "
             f"{traits['heavy_rain_mm']} mm/day risk threshold"
@@ -203,8 +279,7 @@ def rank_candidates(
     ordered_catalog = sorted(
         catalog,
         key=lambda item: (
-            str(item.get("variety_group") or "").lower()
-            != "favourable environment",
+            str(item.get("variety_group") or "").lower() != "favourable environment",
             int(item.get("crop_id") or 0),
         ),
     )
@@ -212,9 +287,12 @@ def rank_candidates(
     for item in ordered_catalog:
         name = str(item.get("name") or "").strip()
         key = name.lower()
-        if not name or key in excluded or key not in CROP_PLANS:
+        if not name or key in excluded:
             continue
         if str(item.get("season") or "").strip().lower() != season:
+            continue
+        plan_capability = recommendation_capability(name, season)
+        if plan_capability is None:
             continue
         pattern = pattern_by_crop.get(key)
         if not pattern or key in seen_names:
@@ -235,22 +313,33 @@ def rank_candidates(
         suitability_score = _SUITABILITY_POINTS.get(suite_code, 40.0)
         suitability_component = round(suitability_score * 0.5, 2)
 
-        water_level = CROP_TRAITS[key]["water"]
-        water_raw = (
-            {"low": 100.0, "medium": 90.0, "high": 75.0}[water_level]
-            if irrigation
-            else {"low": 100.0, "medium": 50.0, "high": 0.0}[water_level]
+        traits = CROP_TRAITS.get(key)
+        water_level = (
+            traits.get("water") if traits and plan_capability == "dated_plan" else None
         )
-        water_component = round(water_raw * 0.2, 2)
+        if water_level is None:
+            water_component = 0.0
+            weather_component = 0.0
+            weather_warnings = [
+                "crop-season water need and forecast risk are not assessed; "
+                "confirm Kharif extension guidance before planting"
+            ]
+        else:
+            water_raw = (
+                {"low": 100.0, "medium": 90.0, "high": 75.0}[water_level]
+                if irrigation
+                else {"low": 100.0, "medium": 50.0, "high": 0.0}[water_level]
+            )
+            water_component = round(water_raw * 0.2, 2)
+            weather_component, weather_warnings = _weather_component(
+                traits, weather, crop_name=name, today=today
+            )
 
         crop_cost = seeded_crop_cost(name, area)
         crop_projection = seeded_crop_rough_projection(name, area)
         required = int(round(crop_cost["total_cost_bdt"]))
         fit_ratio = min(1.0, budget / required) if required > 0 else 0.0
         budget_component = round(fit_ratio * 20.0, 2)
-        weather_component, weather_warnings = _weather_component(
-            CROP_TRAITS[key], weather, crop_name=name, today=today
-        )
 
         reasons: list[str] = []
         high_risk = False
@@ -274,13 +363,17 @@ def rank_candidates(
             high_risk = high_risk or fit_ratio < 0.5
             medium_risk = True
         if economics["net_return_tk"] < 0:
-            reasons.append("recorded rotation has a negative net return over total cost")
+            reasons.append(
+                "recorded rotation has a negative net return over total cost"
+            )
             high_risk = True
         if weather_warnings:
             reasons.extend(weather_warnings)
             medium_risk = True
         if not reasons:
-            reasons.append("no major constraint conflict detected from retrieved inputs")
+            reasons.append(
+                "no major constraint conflict detected from retrieved inputs"
+            )
 
         risk_level = "high" if high_risk else "medium" if medium_risk else "low"
         components = {
@@ -304,10 +397,28 @@ def rank_candidates(
                 },
                 "water_need": {
                     "level": water_level,
+                    "status": "ASSESSED" if water_level else "NOT_ASSESSED",
                     "irrigation_available": irrigation,
-                    "published_requirement": CROP_TRAITS[key].get("water_requirement"),
-                    "source": CROP_TRAITS[key].get("source", TRAITS_SOURCE),
+                    "published_requirement": (
+                        traits.get("water_requirement")
+                        if traits and water_level
+                        else None
+                    ),
+                    "source": (
+                        traits.get("source", TRAITS_SOURCE)
+                        if traits and water_level
+                        else None
+                    ),
                 },
+                "forecast_risk": {
+                    "status": "ASSESSED" if water_level else "NOT_ASSESSED",
+                    "reason": (
+                        None
+                        if water_level
+                        else "No exact crop-season calendar or weather threshold is bundled."
+                    ),
+                },
+                "plan_capability": plan_capability,
                 "risk": {"level": risk_level, "reasons": reasons},
                 "budget_fit": {
                     "farmer_budget_tk": int(budget),
@@ -324,16 +435,22 @@ def rank_candidates(
                     ),
                     "basis": "candidate_crop_projection",
                     "warning": (
-                        "Yield is an official FRG reference goal, but price and "
-                        "costs are seeded demo values—not live quotes or a "
-                        "guaranteed return. Confirm them locally."
+                        "Yield, price and costs are seeded demo values—not live "
+                        "quotes or a guaranteed return. Confirm them locally."
+                        if crop_projection["yield_assumption"]["source"].get(
+                            "source_type"
+                        )
+                        == "seeded_demo_value"
+                        else "Yield is an official reference goal, but price and costs are seeded demo values—not live quotes or a guaranteed return. Confirm them locally."
                     ),
                     "expected_yield_kg": crop_projection["expected"]["yield_kg"],
                     "gross_revenue_tk": crop_projection["expected"]["revenue_bdt"],
                     "total_cost_tk": crop_projection["total_cost_bdt"],
                     "yield_assumption": crop_projection["yield_assumption"],
                     "price_assumption": crop_projection["price_assumption"],
-                    "catalog_version": crop_projection["assumptions"]["catalog_version"],
+                    "catalog_version": crop_projection["assumptions"][
+                        "catalog_version"
+                    ],
                 },
                 "local_rotation_reference": {
                     "warning": (

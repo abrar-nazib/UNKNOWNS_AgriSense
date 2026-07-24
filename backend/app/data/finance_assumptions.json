@@ -1,10 +1,16 @@
 {
-  "version": "demo-v1",
-  "disclosure": "Seeded demo assumptions for an inspectable prototype; these are not live supplier quotes or market-board prices. Farmer-provided values override them.",
+  "version": "demo-v3-kharif",
+  "disclosure": "Seeded demo assumptions for an inspectable prototype covering the Rabi-season focused path; these are not live supplier quotes or market-board prices. Farmer-provided values override them. The original 5 focused-path crops (wheat, mustard, potato, maize, boro dhan) cite specific BARC FRG 2024 pages; the remaining crops are illustrative Bangladesh Rabi-crop estimates without a specific page citation, clearly labelled as such via reference_yield_t_ha.source.",
   "crops": {
     "wheat": {
       "price_bdt_per_kg": 36,
-      "reference_yield_t_ha": {"low": 4.05, "high": 4.95, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "90", "basis": "published 4.5 +/- 0.45 t/ha irrigated yield goal"},
+      "reference_yield_t_ha": {
+        "low": 4.05,
+        "high": 4.95,
+        "source": "BARC Fertilizer Recommendation Guide 2024",
+        "pages": "90",
+        "basis": "published 4.5 +/- 0.45 t/ha irrigated yield goal"
+      },
       "cost_bdt_per_decimal": {
         "land_preparation": 100,
         "seed": 80,
@@ -18,7 +24,13 @@
     },
     "mustard": {
       "price_bdt_per_kg": 75,
-      "reference_yield_t_ha": {"low": 1.8, "high": 2.2, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "101", "basis": "published 2.0 +/- 0.2 t/ha yield goal"},
+      "reference_yield_t_ha": {
+        "low": 1.8,
+        "high": 2.2,
+        "source": "BARC Fertilizer Recommendation Guide 2024",
+        "pages": "101",
+        "basis": "published 2.0 +/- 0.2 t/ha yield goal"
+      },
       "cost_bdt_per_decimal": {
         "land_preparation": 70,
         "seed": 30,
@@ -32,7 +44,13 @@
     },
     "potato": {
       "price_bdt_per_kg": 25,
-      "reference_yield_t_ha": {"low": 27.0, "high": 33.0, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "106", "basis": "published 30.0 +/- 3.0 t/ha yield goal"},
+      "reference_yield_t_ha": {
+        "low": 27.0,
+        "high": 33.0,
+        "source": "BARC Fertilizer Recommendation Guide 2024",
+        "pages": "106",
+        "basis": "published 30.0 +/- 3.0 t/ha yield goal"
+      },
       "cost_bdt_per_decimal": {
         "land_preparation": 150,
         "seed": 500,
@@ -46,7 +64,13 @@
     },
     "maize": {
       "price_bdt_per_kg": 30,
-      "reference_yield_t_ha": {"low": 9.9, "high": 12.1, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "91", "basis": "published 11.0 +/- 1.1 t/ha yield goal"},
+      "reference_yield_t_ha": {
+        "low": 9.9,
+        "high": 12.1,
+        "source": "BARC Fertilizer Recommendation Guide 2024",
+        "pages": "91",
+        "basis": "published 11.0 +/- 1.1 t/ha yield goal"
+      },
       "cost_bdt_per_decimal": {
         "land_preparation": 100,
         "seed": 110,
@@ -60,7 +84,13 @@
     },
     "boro dhan": {
       "price_bdt_per_kg": 28,
-      "reference_yield_t_ha": {"low": 6.75, "high": 8.25, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "87", "basis": "published 7.5 +/- 0.75 t/ha yield goal for the listed varieties"},
+      "reference_yield_t_ha": {
+        "low": 6.75,
+        "high": 8.25,
+        "source": "BARC Fertilizer Recommendation Guide 2024",
+        "pages": "87",
+        "basis": "published 7.5 +/- 0.75 t/ha yield goal for the listed varieties"
+      },
       "cost_bdt_per_decimal": {
         "land_preparation": 130,
         "seed": 70,
@@ -70,6 +100,991 @@
         "crop_protection": 70,
         "harvest": 100,
         "transport_and_other": 50
+      }
+    },
+    "aroid": {
+      "price_bdt_per_kg": 22,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 14,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 200,
+        "fertilizer": 130,
+        "irrigation": 60,
+        "labor_and_weeding": 140,
+        "crop_protection": 40,
+        "harvest": 80,
+        "transport_and_other": 30
+      }
+    },
+    "barley": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {
+        "low": 2.0,
+        "high": 2.6,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 70,
+        "fertilizer": 100,
+        "irrigation": 50,
+        "labor_and_weeding": 80,
+        "crop_protection": 20,
+        "harvest": 55,
+        "transport_and_other": 20
+      }
+    },
+    "bitter gourd": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 14,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 70,
+        "fertilizer": 150,
+        "irrigation": 70,
+        "labor_and_weeding": 190,
+        "crop_protection": 60,
+        "harvest": 100,
+        "transport_and_other": 35
+      }
+    },
+    "black gram": {
+      "price_bdt_per_kg": 90,
+      "reference_yield_t_ha": {
+        "low": 0.9,
+        "high": 1.2,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 40,
+        "fertilizer": 30,
+        "irrigation": 15,
+        "labor_and_weeding": 50,
+        "crop_protection": 15,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "black cumin": {
+      "price_bdt_per_kg": 350,
+      "reference_yield_t_ha": {
+        "low": 0.5,
+        "high": 0.7,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 70,
+        "seed": 90,
+        "fertilizer": 40,
+        "irrigation": 25,
+        "labor_and_weeding": 90,
+        "crop_protection": 20,
+        "harvest": 55,
+        "transport_and_other": 20
+      }
+    },
+    "bottle gourd": {
+      "price_bdt_per_kg": 15,
+      "reference_yield_t_ha": {
+        "low": 20,
+        "high": 26,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 50,
+        "fertilizer": 140,
+        "irrigation": 70,
+        "labor_and_weeding": 170,
+        "crop_protection": 50,
+        "harvest": 90,
+        "transport_and_other": 35
+      }
+    },
+    "brinjal": {
+      "price_bdt_per_kg": 22,
+      "reference_yield_t_ha": {
+        "low": 16,
+        "high": 20,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 60,
+        "fertilizer": 160,
+        "irrigation": 80,
+        "labor_and_weeding": 190,
+        "crop_protection": 70,
+        "harvest": 90,
+        "transport_and_other": 35
+      }
+    },
+    "broccoli": {
+      "price_bdt_per_kg": 60,
+      "reference_yield_t_ha": {
+        "low": 12,
+        "high": 16,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 200,
+        "fertilizer": 180,
+        "irrigation": 85,
+        "labor_and_weeding": 180,
+        "crop_protection": 60,
+        "harvest": 90,
+        "transport_and_other": 35
+      }
+    },
+    "cabbage": {
+      "price_bdt_per_kg": 15,
+      "reference_yield_t_ha": {
+        "low": 28,
+        "high": 34,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 90,
+        "fertilizer": 170,
+        "irrigation": 80,
+        "labor_and_weeding": 160,
+        "crop_protection": 55,
+        "harvest": 80,
+        "transport_and_other": 35
+      }
+    },
+    "carrot": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {
+        "low": 18,
+        "high": 22,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 120,
+        "fertilizer": 160,
+        "irrigation": 80,
+        "labor_and_weeding": 150,
+        "crop_protection": 40,
+        "harvest": 80,
+        "transport_and_other": 35
+      }
+    },
+    "cauliflower": {
+      "price_bdt_per_kg": 20,
+      "reference_yield_t_ha": {
+        "low": 20,
+        "high": 26,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 120,
+        "fertilizer": 180,
+        "irrigation": 85,
+        "labor_and_weeding": 170,
+        "crop_protection": 60,
+        "harvest": 85,
+        "transport_and_other": 35
+      }
+    },
+    "chilli": {
+      "price_bdt_per_kg": 60,
+      "reference_yield_t_ha": {
+        "low": 6,
+        "high": 8,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 60,
+        "fertilizer": 150,
+        "irrigation": 75,
+        "labor_and_weeding": 200,
+        "crop_protection": 80,
+        "harvest": 100,
+        "transport_and_other": 35
+      }
+    },
+    "colocasia": {
+      "price_bdt_per_kg": 25,
+      "reference_yield_t_ha": {
+        "low": 12,
+        "high": 16,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 200,
+        "fertilizer": 130,
+        "irrigation": 60,
+        "labor_and_weeding": 140,
+        "crop_protection": 40,
+        "harvest": 80,
+        "transport_and_other": 30
+      }
+    },
+    "coriander": {
+      "price_bdt_per_kg": 130,
+      "reference_yield_t_ha": {
+        "low": 1.2,
+        "high": 1.6,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 70,
+        "seed": 60,
+        "fertilizer": 60,
+        "irrigation": 30,
+        "labor_and_weeding": 80,
+        "crop_protection": 20,
+        "harvest": 45,
+        "transport_and_other": 20
+      }
+    },
+    "country bean": {
+      "price_bdt_per_kg": 25,
+      "reference_yield_t_ha": {
+        "low": 8,
+        "high": 10,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 60,
+        "fertilizer": 150,
+        "irrigation": 80,
+        "labor_and_weeding": 200,
+        "crop_protection": 60,
+        "harvest": 120,
+        "transport_and_other": 40
+      }
+    },
+    "cowpea": {
+      "price_bdt_per_kg": 70,
+      "reference_yield_t_ha": {
+        "low": 1.0,
+        "high": 1.4,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 45,
+        "fertilizer": 40,
+        "irrigation": 20,
+        "labor_and_weeding": 55,
+        "crop_protection": 15,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "cucumber (khira)": {
+      "price_bdt_per_kg": 20,
+      "reference_yield_t_ha": {
+        "low": 12,
+        "high": 16,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 85,
+        "seed": 55,
+        "fertilizer": 130,
+        "irrigation": 70,
+        "labor_and_weeding": 160,
+        "crop_protection": 50,
+        "harvest": 85,
+        "transport_and_other": 30
+      }
+    },
+    "garden pea": {
+      "price_bdt_per_kg": 40,
+      "reference_yield_t_ha": {
+        "low": 6,
+        "high": 8,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 150,
+        "fertilizer": 130,
+        "irrigation": 60,
+        "labor_and_weeding": 150,
+        "crop_protection": 50,
+        "harvest": 90,
+        "transport_and_other": 30
+      }
+    },
+    "garlic": {
+      "price_bdt_per_kg": 90,
+      "reference_yield_t_ha": {
+        "low": 6,
+        "high": 8,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 140,
+        "seed": 600,
+        "fertilizer": 200,
+        "irrigation": 90,
+        "labor_and_weeding": 220,
+        "crop_protection": 60,
+        "harvest": 90,
+        "transport_and_other": 35
+      }
+    },
+    "gram / chickpea": {
+      "price_bdt_per_kg": 85,
+      "reference_yield_t_ha": {
+        "low": 1.0,
+        "high": 1.4,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 70,
+        "seed": 60,
+        "fertilizer": 40,
+        "irrigation": 20,
+        "labor_and_weeding": 55,
+        "crop_protection": 20,
+        "harvest": 45,
+        "transport_and_other": 15
+      }
+    },
+    "grass pea": {
+      "price_bdt_per_kg": 65,
+      "reference_yield_t_ha": {
+        "low": 1.0,
+        "high": 1.3,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 50,
+        "seed": 35,
+        "fertilizer": 25,
+        "irrigation": 10,
+        "labor_and_weeding": 45,
+        "crop_protection": 10,
+        "harvest": 35,
+        "transport_and_other": 10
+      }
+    },
+    "ground nut": {
+      "price_bdt_per_kg": 90,
+      "reference_yield_t_ha": {
+        "low": 1.6,
+        "high": 2.0,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 200,
+        "fertilizer": 100,
+        "irrigation": 60,
+        "labor_and_weeding": 130,
+        "crop_protection": 40,
+        "harvest": 90,
+        "transport_and_other": 30
+      }
+    },
+    "indian spinach": {
+      "price_bdt_per_kg": 18,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 14,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 25,
+        "fertilizer": 60,
+        "irrigation": 40,
+        "labor_and_weeding": 100,
+        "crop_protection": 20,
+        "harvest": 55,
+        "transport_and_other": 20
+      }
+    },
+    "kaon": {
+      "price_bdt_per_kg": 45,
+      "reference_yield_t_ha": {
+        "low": 1.0,
+        "high": 1.4,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 20,
+        "fertilizer": 40,
+        "irrigation": 20,
+        "labor_and_weeding": 60,
+        "crop_protection": 10,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "knol khol (kohlrabi)": {
+      "price_bdt_per_kg": 22,
+      "reference_yield_t_ha": {
+        "low": 14,
+        "high": 18,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 90,
+        "fertilizer": 140,
+        "irrigation": 70,
+        "labor_and_weeding": 140,
+        "crop_protection": 45,
+        "harvest": 75,
+        "transport_and_other": 30
+      }
+    },
+    "ladys finger": {
+      "price_bdt_per_kg": 25,
+      "reference_yield_t_ha": {
+        "low": 8,
+        "high": 11,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 80,
+        "seed": 50,
+        "fertilizer": 130,
+        "irrigation": 65,
+        "labor_and_weeding": 150,
+        "crop_protection": 50,
+        "harvest": 80,
+        "transport_and_other": 30
+      }
+    },
+    "lentil": {
+      "price_bdt_per_kg": 110,
+      "reference_yield_t_ha": {
+        "low": 1.1,
+        "high": 1.5,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 70,
+        "seed": 55,
+        "fertilizer": 45,
+        "irrigation": 20,
+        "labor_and_weeding": 60,
+        "crop_protection": 20,
+        "harvest": 45,
+        "transport_and_other": 15
+      }
+    },
+    "linseed": {
+      "price_bdt_per_kg": 90,
+      "reference_yield_t_ha": {
+        "low": 0.9,
+        "high": 1.2,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 40,
+        "fertilizer": 45,
+        "irrigation": 20,
+        "labor_and_weeding": 55,
+        "crop_protection": 15,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "mungbean": {
+      "price_bdt_per_kg": 95,
+      "reference_yield_t_ha": {
+        "low": 1.0,
+        "high": 1.3,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 65,
+        "seed": 45,
+        "fertilizer": 35,
+        "irrigation": 20,
+        "labor_and_weeding": 55,
+        "crop_protection": 20,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "musk melon": {
+      "price_bdt_per_kg": 35,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 14,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 90,
+        "fertilizer": 140,
+        "irrigation": 80,
+        "labor_and_weeding": 150,
+        "crop_protection": 55,
+        "harvest": 80,
+        "transport_and_other": 35
+      }
+    },
+    "onion": {
+      "price_bdt_per_kg": 35,
+      "reference_yield_t_ha": {
+        "low": 12,
+        "high": 16,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 130,
+        "seed": 350,
+        "fertilizer": 220,
+        "irrigation": 100,
+        "labor_and_weeding": 220,
+        "crop_protection": 70,
+        "harvest": 100,
+        "transport_and_other": 40
+      }
+    },
+    "pointed gourd": {
+      "price_bdt_per_kg": 28,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 13,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 250,
+        "fertilizer": 140,
+        "irrigation": 70,
+        "labor_and_weeding": 180,
+        "crop_protection": 55,
+        "harvest": 90,
+        "transport_and_other": 35
+      }
+    },
+    "proso millet": {
+      "price_bdt_per_kg": 45,
+      "reference_yield_t_ha": {
+        "low": 0.9,
+        "high": 1.3,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 60,
+        "seed": 20,
+        "fertilizer": 40,
+        "irrigation": 20,
+        "labor_and_weeding": 60,
+        "crop_protection": 10,
+        "harvest": 40,
+        "transport_and_other": 15
+      }
+    },
+    "pumpkin (sweet gourd)": {
+      "price_bdt_per_kg": 18,
+      "reference_yield_t_ha": {
+        "low": 20,
+        "high": 26,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 45,
+        "fertilizer": 130,
+        "irrigation": 65,
+        "labor_and_weeding": 150,
+        "crop_protection": 45,
+        "harvest": 85,
+        "transport_and_other": 30
+      }
+    },
+    "radish": {
+      "price_bdt_per_kg": 15,
+      "reference_yield_t_ha": {
+        "low": 18,
+        "high": 24,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 40,
+        "fertilizer": 130,
+        "irrigation": 70,
+        "labor_and_weeding": 110,
+        "crop_protection": 30,
+        "harvest": 60,
+        "transport_and_other": 30
+      }
+    },
+    "red amaranth": {
+      "price_bdt_per_kg": 20,
+      "reference_yield_t_ha": {
+        "low": 6,
+        "high": 9,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 55,
+        "seed": 20,
+        "fertilizer": 55,
+        "irrigation": 35,
+        "labor_and_weeding": 90,
+        "crop_protection": 15,
+        "harvest": 45,
+        "transport_and_other": 18
+      }
+    },
+    "snake gourd": {
+      "price_bdt_per_kg": 25,
+      "reference_yield_t_ha": {
+        "low": 10,
+        "high": 13,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 60,
+        "fertilizer": 140,
+        "irrigation": 70,
+        "labor_and_weeding": 170,
+        "crop_protection": 50,
+        "harvest": 90,
+        "transport_and_other": 32
+      }
+    },
+    "soybean": {
+      "price_bdt_per_kg": 60,
+      "reference_yield_t_ha": {
+        "low": 1.8,
+        "high": 2.4,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 80,
+        "seed": 70,
+        "fertilizer": 90,
+        "irrigation": 40,
+        "labor_and_weeding": 90,
+        "crop_protection": 30,
+        "harvest": 60,
+        "transport_and_other": 25
+      }
+    },
+    "spinach": {
+      "price_bdt_per_kg": 20,
+      "reference_yield_t_ha": {
+        "low": 8,
+        "high": 11,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 55,
+        "seed": 30,
+        "fertilizer": 55,
+        "irrigation": 35,
+        "labor_and_weeding": 90,
+        "crop_protection": 15,
+        "harvest": 45,
+        "transport_and_other": 18
+      }
+    },
+    "stem amaranth": {
+      "price_bdt_per_kg": 18,
+      "reference_yield_t_ha": {
+        "low": 7,
+        "high": 10,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 55,
+        "seed": 20,
+        "fertilizer": 55,
+        "irrigation": 35,
+        "labor_and_weeding": 90,
+        "crop_protection": 15,
+        "harvest": 45,
+        "transport_and_other": 18
+      }
+    },
+    "sunflower": {
+      "price_bdt_per_kg": 65,
+      "reference_yield_t_ha": {
+        "low": 1.5,
+        "high": 1.9,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 120,
+        "fertilizer": 100,
+        "irrigation": 60,
+        "labor_and_weeding": 100,
+        "crop_protection": 40,
+        "harvest": 70,
+        "transport_and_other": 25
+      }
+    },
+    "sweet potato": {
+      "price_bdt_per_kg": 22,
+      "reference_yield_t_ha": {
+        "low": 14,
+        "high": 18,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 130,
+        "seed": 300,
+        "fertilizer": 180,
+        "irrigation": 100,
+        "labor_and_weeding": 160,
+        "crop_protection": 60,
+        "harvest": 90,
+        "transport_and_other": 40
+      }
+    },
+    "tomato": {
+      "price_bdt_per_kg": 20,
+      "reference_yield_t_ha": {
+        "low": 22,
+        "high": 28,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 90,
+        "fertilizer": 190,
+        "irrigation": 90,
+        "labor_and_weeding": 200,
+        "crop_protection": 80,
+        "harvest": 100,
+        "transport_and_other": 40
+      }
+    },
+    "water melon": {
+      "price_bdt_per_kg": 18,
+      "reference_yield_t_ha": {
+        "low": 25,
+        "high": 32,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 100,
+        "seed": 130,
+        "fertilizer": 160,
+        "irrigation": 90,
+        "labor_and_weeding": 170,
+        "crop_protection": 60,
+        "harvest": 90,
+        "transport_and_other": 40
+      }
+    },
+    "ash gourd": {
+      "price_bdt_per_kg": 18,
+      "reference_yield_t_ha": {"low": 54, "high": 66, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Kharif-1 crop-pattern tables", "basis": "published Kharif-1 yield goal 60 +/- 6 t/ha", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 90, "seed": 75, "fertilizer": 140, "irrigation": 45, "labor_and_weeding": 150, "crop_protection": 45, "harvest": 80, "transport_and_other": 35}
+    },
+    "b. aman dhan": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {"low": 4, "high": 5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative broadcast-Aman yield range; BAMIS confirms Aman calendar but variety, stress class and local yield must be confirmed before spending", "source_url": "https://www.bamis.gov.bd/calendar/1/74/"},
+      "cost_bdt_per_decimal": {"land_preparation": 120, "seed": 65, "fertilizer": 180, "irrigation": 45, "labor_and_weeding": 150, "crop_protection": 55, "harvest": 100, "transport_and_other": 45}
+    },
+    "b. aus dhan": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {"low": 4.5, "high": 5.5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "T. Aus is published at 5 +/- 0.5 t/ha in FRG; this separate broadcast-AUS catalog row remains a visibly illustrative estimate pending variety-specific evidence", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 115, "seed": 65, "fertilizer": 170, "irrigation": 55, "labor_and_weeding": 145, "crop_protection": 50, "harvest": 95, "transport_and_other": 40}
+    },
+    "cotton": {
+      "price_bdt_per_kg": 55,
+      "reference_yield_t_ha": {"low": 1.8, "high": 2.4, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif cotton yield; BAMIS confirms a July-December calendar, but this is not a localized yield or farmgate-price quote", "source_url": "https://www.bamis.gov.bd/calendar/1/96/"},
+      "cost_bdt_per_decimal": {"land_preparation": 100, "seed": 95, "fertilizer": 165, "irrigation": 35, "labor_and_weeding": 140, "crop_protection": 95, "harvest": 105, "transport_and_other": 35}
+    },
+    "cucumber": {
+      "price_bdt_per_kg": 22,
+      "reference_yield_t_ha": {"low": 22.5, "high": 27.5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif cucumber yield; kept distinct from the existing cucumber (khira) row because CZIS uses distinct names", "source_url": "https://www.bamis.gov.bd/calendar/1/19/"},
+      "cost_bdt_per_decimal": {"land_preparation": 90, "seed": 70, "fertilizer": 150, "irrigation": 60, "labor_and_weeding": 180, "crop_protection": 60, "harvest": 100, "transport_and_other": 35}
+    },
+    "ginger": {
+      "price_bdt_per_kg": 90,
+      "reference_yield_t_ha": {"low": 27, "high": 33, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Ginger crop tables", "basis": "published yield goal 30 +/- 3 t/ha; price and costs remain seeded demo values", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 130, "seed": 380, "fertilizer": 220, "irrigation": 80, "labor_and_weeding": 190, "crop_protection": 75, "harvest": 120, "transport_and_other": 50}
+    },
+    "jute (deshi)": {
+      "price_bdt_per_kg": 50,
+      "reference_yield_t_ha": {"low": 3.15, "high": 3.85, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Jute-C crop tables", "basis": "published fibre yield goal 3.5 +/- 0.35 t/ha; price and costs remain seeded demo values", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 100, "seed": 55, "fertilizer": 125, "irrigation": 20, "labor_and_weeding": 150, "crop_protection": 30, "harvest": 120, "transport_and_other": 55}
+    },
+    "jute (tosa)": {
+      "price_bdt_per_kg": 52,
+      "reference_yield_t_ha": {"low": 3.6, "high": 4.4, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Jute-O crop tables", "basis": "published fibre yield goal 4.0 +/- 0.4 t/ha; price and costs remain seeded demo values", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 100, "seed": 55, "fertilizer": 130, "irrigation": 20, "labor_and_weeding": 155, "crop_protection": 30, "harvest": 125, "transport_and_other": 55}
+    },
+    "kenaf": {
+      "price_bdt_per_kg": 40,
+      "reference_yield_t_ha": {"low": 2.5, "high": 3.5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif fibre-crop yield; no official numeric field-yield anchor was located in this research pass", "source_url": "https://bjri.gov.bd/"},
+      "cost_bdt_per_decimal": {"land_preparation": 95, "seed": 50, "fertilizer": 115, "irrigation": 20, "labor_and_weeding": 135, "crop_protection": 25, "harvest": 110, "transport_and_other": 50}
+    },
+    "mesta": {
+      "price_bdt_per_kg": 38,
+      "reference_yield_t_ha": {"low": 2.5, "high": 3.5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif mesta fibre yield; BJRI variety evidence must be matched to location before it becomes a production assumption", "source_url": "https://bjri.gov.bd/site/page/39921b84-7a96-4905-a6af-f073e98fa935/"},
+      "cost_bdt_per_decimal": {"land_preparation": 95, "seed": 50, "fertilizer": 115, "irrigation": 20, "labor_and_weeding": 135, "crop_protection": 25, "harvest": 110, "transport_and_other": 50}
+    },
+    "ridge gourd": {
+      "price_bdt_per_kg": 25,
+      "reference_yield_t_ha": {"low": 15, "high": 22, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif ridge-gourd yield; research-trial ranges are not used as a generic farm default", "source_url": "https://www.bamis.gov.bd/res/bulletins/2019/08/19/4900.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 90, "seed": 70, "fertilizer": 150, "irrigation": 60, "labor_and_weeding": 180, "crop_protection": 60, "harvest": 100, "transport_and_other": 35}
+    },
+    "sesame": {
+      "price_bdt_per_kg": 85,
+      "reference_yield_t_ha": {"low": 1.35, "high": 1.65, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Kharif-1 crop-pattern tables", "basis": "published Kharif-1 yield goal 1.5 +/- 0.15 t/ha; price and costs remain seeded demo values", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 75, "seed": 45, "fertilizer": 70, "irrigation": 15, "labor_and_weeding": 85, "crop_protection": 20, "harvest": 65, "transport_and_other": 25}
+    },
+    "sponge gourd": {
+      "price_bdt_per_kg": 24,
+      "reference_yield_t_ha": {"low": 14, "high": 20, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif sponge-gourd yield; BAMIS advisory confirms seasonal cultivation, not a local financial quote", "source_url": "https://www.bamis.gov.bd/res/bulletins/2019/08/19/4900.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 90, "seed": 70, "fertilizer": 145, "irrigation": 60, "labor_and_weeding": 175, "crop_protection": 55, "harvest": 100, "transport_and_other": 35}
+    },
+    "t. aman dhan": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {"low": 4, "high": 5.5, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative transplanted-Aman yield range; use variety- and stress-class-specific BRRI data before treating yield as production-ready", "source_url": "https://www.bamis.gov.bd/calendar/1/74/"},
+      "cost_bdt_per_decimal": {"land_preparation": 125, "seed": 70, "fertilizer": 185, "irrigation": 50, "labor_and_weeding": 165, "crop_protection": 60, "harvest": 105, "transport_and_other": 45}
+    },
+    "t. aus dhan": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {"low": 4.5, "high": 5.5, "source": "BARC Fertilizer Recommendation Guide 2024", "pages": "Kharif-1 crop-pattern tables", "basis": "published T. Aus yield goal 5.0 +/- 0.5 t/ha; price and costs remain seeded demo values", "source_url": "https://apps.barc.gov.bd/fertilizer_recommendation/FRG%20English%2030.10.2024.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 115, "seed": 65, "fertilizer": 170, "irrigation": 55, "labor_and_weeding": 145, "crop_protection": 50, "harvest": 95, "transport_and_other": 40}
+    },
+    "teasle gourd": {
+      "price_bdt_per_kg": 28,
+      "reference_yield_t_ha": {"low": 10, "high": 15, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative Kharif teasle-gourd yield; confirm locally before spending", "source_url": "https://www.bamis.gov.bd/calendar/"},
+      "cost_bdt_per_decimal": {"land_preparation": 90, "seed": 70, "fertilizer": 145, "irrigation": 60, "labor_and_weeding": 175, "crop_protection": 55, "harvest": 100, "transport_and_other": 35}
+    },
+    "turmeric": {
+      "price_bdt_per_kg": 80,
+      "reference_yield_t_ha": {"low": 16, "high": 22, "source": "AgriSense seeded demo estimate", "pages": "", "basis": "illustrative turmeric yield; BARI multi-location trial evidence is not treated as a nationwide financial default", "source_url": "https://bari.gov.bd/sites/default/files/files/bari.portal.gov.bd/annual_reports/7c2952eb_e99f_4951_8c31_83c80909bc8b/BARI%20Annual%20Report%202015%20%28With%20Bookmark%29%20%2833%29.pdf"},
+      "cost_bdt_per_decimal": {"land_preparation": 130, "seed": 300, "fertilizer": 200, "irrigation": 70, "labor_and_weeding": 180, "crop_protection": 55, "harvest": 110, "transport_and_other": 45}
+    },
+    "yard long bean": {
+      "price_bdt_per_kg": 30,
+      "reference_yield_t_ha": {
+        "low": 8,
+        "high": 10,
+        "source": "AgriSense seeded demo estimate",
+        "pages": "",
+        "basis": "illustrative Bangladesh Rabi-crop yield goal for an inspectable prototype; not a specific published citation"
+      },
+      "cost_bdt_per_decimal": {
+        "land_preparation": 90,
+        "seed": 60,
+        "fertilizer": 130,
+        "irrigation": 70,
+        "labor_and_weeding": 180,
+        "crop_protection": 55,
+        "harvest": 110,
+        "transport_and_other": 35
       }
     }
   }

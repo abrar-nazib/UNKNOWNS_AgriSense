@@ -1,4 +1,5 @@
 """Gold-number tests for deterministic crop ranking."""
+
 from __future__ import annotations
 
 from datetime import date
@@ -52,10 +53,34 @@ def _inputs(*, irrigation=True, budget=100_000):
             {"crop_id": 1, "suite": "Moderately Suitable", "suite_code": "MS"},
         ],
         "patterns": [
-            {"pattern": "Potato-Mungbean-T. Aman dhan", "rabi": "Potato", "bcr_vc": "1.5", "bcr_tc": "1.2", "gm_tk_per_decimal": "500"},
-            {"pattern": "Wheat-Fallow-T. Aman dhan", "rabi": "Wheat", "bcr_vc": "1.4", "bcr_tc": "1.15", "gm_tk_per_decimal": "350"},
-            {"pattern": "Mustard-Fallow-T. Aman dhan", "rabi": "Mustard", "bcr_vc": "1.6", "bcr_tc": "1.3", "gm_tk_per_decimal": "300"},
-            {"pattern": "Boro dhan-Fallow-Fallow", "rabi": "Boro dhan", "bcr_vc": "1.3", "bcr_tc": "1.1", "gm_tk_per_decimal": "150"},
+            {
+                "pattern": "Potato-Mungbean-T. Aman dhan",
+                "rabi": "Potato",
+                "bcr_vc": "1.5",
+                "bcr_tc": "1.2",
+                "gm_tk_per_decimal": "500",
+            },
+            {
+                "pattern": "Wheat-Fallow-T. Aman dhan",
+                "rabi": "Wheat",
+                "bcr_vc": "1.4",
+                "bcr_tc": "1.15",
+                "gm_tk_per_decimal": "350",
+            },
+            {
+                "pattern": "Mustard-Fallow-T. Aman dhan",
+                "rabi": "Mustard",
+                "bcr_vc": "1.6",
+                "bcr_tc": "1.3",
+                "gm_tk_per_decimal": "300",
+            },
+            {
+                "pattern": "Boro dhan-Fallow-Fallow",
+                "rabi": "Boro dhan",
+                "bcr_vc": "1.3",
+                "bcr_tc": "1.1",
+                "gm_tk_per_decimal": "150",
+            },
         ],
         "weather": {
             "summary": {"total_rain_mm": 8.0, "max_temp_c": 31.0, "min_temp_c": 17.0}
@@ -78,9 +103,10 @@ def test_ranker_returns_pdf_required_fields_and_three_candidates():
             crop["rough_profit"]["gross_revenue_tk"]
             - crop["rough_profit"]["total_cost_tk"]
         )
-        assert crop["rough_profit"]["yield_assumption"]["source"][
-            "source_type"
-        ] == "official_reference_yield_goal"
+        assert (
+            crop["rough_profit"]["yield_assumption"]["source"]["source_type"]
+            == "official_reference_yield_goal"
+        )
         assert crop["local_rotation_reference"]["rotation"]
         assert crop["score"] == pytest.approx(sum(crop["score_components"].values()))
         assert crop["water_need"]["source"]["url"].startswith(
@@ -125,9 +151,7 @@ def test_ranker_treats_missing_weather_as_visible_uncertainty_not_safe_weather()
     assert ranked
     assert all(c["score_components"]["weather"] == 5.0 for c in ranked)
     assert all(c["risk"]["level"] != "low" for c in ranked)
-    assert all(
-        "forecast" in " ".join(c["risk"]["reasons"]).lower() for c in ranked
-    )
+    assert all("forecast" in " ".join(c["risk"]["reasons"]).lower() for c in ranked)
 
 
 def test_ranker_does_not_apply_july_weather_to_future_rabi_sowing_window():
@@ -144,12 +168,9 @@ def test_ranker_does_not_apply_july_weather_to_future_rabi_sowing_window():
     assert ranked
     assert all(c["score_components"]["weather"] == 5.0 for c in ranked)
     assert all(
-        "does not cover" in " ".join(c["risk"]["reasons"]).lower()
-        for c in ranked
+        "does not cover" in " ".join(c["risk"]["reasons"]).lower() for c in ranked
     )
-    assert all(
-        "42" not in " ".join(c["risk"]["reasons"]) for c in ranked
-    )
+    assert all("42" not in " ".join(c["risk"]["reasons"]) for c in ranked)
 
 
 def test_ranker_compares_bamis_daily_rain_threshold_to_max_daily_not_weekly_total():
@@ -157,15 +178,12 @@ def test_ranker_compares_bamis_daily_rain_threshold_to_max_daily_not_weekly_tota
     inputs["weather"] = {
         "summary": {"total_rain_mm": 70, "max_temp_c": 25},
         "days": [
-            {"date": f"2026-11-{day:02d}", "rain_mm": 10}
-            for day in range(15, 22)
+            {"date": f"2026-11-{day:02d}", "rain_mm": 10} for day in range(15, 22)
         ],
     }
     ranked = rank_candidates(**inputs, today=date(2026, 11, 15))
     wheat = next(candidate for candidate in ranked if candidate["crop_name"] == "Wheat")
-    assert "forecast daily rain" not in " ".join(
-        wheat["risk"]["reasons"]
-    ).lower()
+    assert "forecast daily rain" not in " ".join(wheat["risk"]["reasons"]).lower()
     assert wheat["score_components"]["weather"] == 10.0
 
 
@@ -187,3 +205,101 @@ def test_ranker_never_recommends_crop_that_focused_planner_cannot_plan():
 
     ranked = rank_candidates(**inputs)
     assert "Lentil" not in {candidate["crop_name"] for candidate in ranked}
+
+
+def test_ranker_returns_kharif_finance_backed_crops_as_shortlist_only():
+    inputs = _inputs()
+    inputs["profile"].update({"season": "kharif-2", "irrigation_available": True})
+    inputs["catalog"] = [
+        {"crop_id": 91, "name": "Black Gram", "season": "Kharif-2"},
+        {"crop_id": 94, "name": "Bottle Gourd", "season": "Kharif-2"},
+        {"crop_id": 118, "name": "Brinjal", "season": "Kharif-2"},
+    ]
+    inputs["suitability"] = [
+        {"crop_id": 91, "suite": "Very Suitable", "suite_code": "VS"},
+        {"crop_id": 94, "suite": "Suitable", "suite_code": "S"},
+        {"crop_id": 118, "suite": "Suitable", "suite_code": "S"},
+    ]
+    inputs["patterns"] = [
+        {
+            "pattern": "Black Gram-Boro dhan-T. Aman dhan",
+            "kharif2": "Black Gram",
+            "bcr_vc": "1.5",
+            "bcr_tc": "1.2",
+            "gm_tk_per_decimal": "500",
+        },
+        {
+            "pattern": "Bottle Gourd-Boro dhan-T. Aman dhan",
+            "kharif2": "Bottle Gourd",
+            "bcr_vc": "1.4",
+            "bcr_tc": "1.1",
+            "gm_tk_per_decimal": "450",
+        },
+        {
+            "pattern": "Brinjal-Boro dhan-T. Aman dhan",
+            "kharif2": "Brinjal",
+            "bcr_vc": "1.6",
+            "bcr_tc": "1.3",
+            "gm_tk_per_decimal": "400",
+        },
+    ]
+
+    ranked = rank_candidates(**inputs)
+
+    assert len(ranked) == 3
+    assert all(candidate["plan_capability"] == "shortlist_only" for candidate in ranked)
+    assert all(
+        candidate["water_need"]["status"] == "NOT_ASSESSED" for candidate in ranked
+    )
+    assert all(
+        candidate["forecast_risk"]["status"] == "NOT_ASSESSED" for candidate in ranked
+    )
+    assert all(candidate["score_components"]["water"] == 0 for candidate in ranked)
+    assert all(candidate["score_components"]["weather"] == 0 for candidate in ranked)
+
+
+def test_ranker_does_not_apply_rabi_maize_calendar_to_kharif_one_maize():
+    inputs = _inputs()
+    inputs["profile"]["season"] = "kharif-1"
+    inputs["catalog"] = [
+        {"crop_id": 62, "name": "Maize", "season": "Kharif-1"},
+        {"crop_id": 68, "name": "Brinjal", "season": "Kharif-1"},
+        {"crop_id": 74, "name": "Bitter Gourd", "season": "Kharif-1"},
+    ]
+    inputs["suitability"] = [
+        {"crop_id": 62, "suite": "Very Suitable", "suite_code": "VS"},
+        {"crop_id": 68, "suite": "Suitable", "suite_code": "S"},
+        {"crop_id": 74, "suite": "Suitable", "suite_code": "S"},
+    ]
+    inputs["patterns"] = [
+        {
+            "pattern": "Maize-Fallow-T. Aman dhan",
+            "kharif1": "Maize",
+            "bcr_vc": "1.5",
+            "bcr_tc": "1.2",
+            "gm_tk_per_decimal": "500",
+        },
+        {
+            "pattern": "Brinjal-Fallow-T. Aman dhan",
+            "kharif1": "Brinjal",
+            "bcr_vc": "1.4",
+            "bcr_tc": "1.1",
+            "gm_tk_per_decimal": "450",
+        },
+        {
+            "pattern": "Bitter Gourd-Fallow-T. Aman dhan",
+            "kharif1": "Bitter Gourd",
+            "bcr_vc": "1.6",
+            "bcr_tc": "1.3",
+            "gm_tk_per_decimal": "400",
+        },
+    ]
+
+    maize = next(
+        candidate
+        for candidate in rank_candidates(**inputs)
+        if candidate["crop_name"] == "Maize"
+    )
+
+    assert maize["plan_capability"] == "shortlist_only"
+    assert maize["water_need"]["status"] == "NOT_ASSESSED"

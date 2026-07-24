@@ -33,15 +33,16 @@ whose crop advice ignores the weather it just fetched will be noticed.
 | 2 | Live weather grounding | Calls a **real** weather API by location; uses actual rainfall/temp, no invented forecasts | ✅ DONE (Task 1) — `get_weather` tool → Open-Meteo (keyless), 16-day daily incl. ET0, geocode w/ bundled-centroid fallback, WEATHER_UNAVAILABLE on outage (never invents) |
 | 3 | Crop recommendation | Ranks ≥3 candidate crops w/ suitability, water need, risk, rough profit | ✅ DONE — deterministic `rank_crop_candidates` hard-gates the six-field profile, batches live point suitability from the official BARC CZIS GeoServer, fetches live Open-Meteo weather, and scores local recorded rotations against irrigation and budget. Every result exposes score components, risks, and inspectable derived rotation economics; source outages are visibly degraded, never filled with invented values. |
 | 4 | Season plan | Dated calendar: sowing window, fertilizer timing, irrigation, weed/pest checkpoints, harvest | ✅ DONE — `generate_season_plan` supports the focused Rabi path (Wheat/Mustard/Potato/Maize/Boro): BAMIS Rajshahi duration/stages/water/pest-weather thresholds + FRG split timing + live CZIS farm-scaled fertilizer amounts + live Open-Meteo date adjustment + RAG evidence. It also embeds the selected crop's financial projection. Source outages produce explicit degraded plans with no invented quantities. |
-| 5 | Financial projection | Itemized cost + yield, revenue, net profit, ROI, break-even; internally consistent (change input → outputs change) | ✅ DONE — pure `Decimal` engine + `calculate_crop_financials`; live CZIS variety yield or explicit farmer override; itemized seeded demo costs/price are visibly labelled and farmer-overridable. Low/base/high, budget fit, two break-even values and math checks are returned. Area/price/yield/cost sensitivity and outage fail-closed paths are tested. |
+| 5 | Financial projection | Itemized cost + yield, revenue, net profit, ROI, break-even; internally consistent (change input → outputs change) | ✅ DONE — pure `Decimal` engine + `calculate_crop_financials`; live CZIS variety yield or explicit farmer override; itemized seeded demo costs/price are visibly labelled and farmer-overridable. Low/base/high, budget fit, two break-even values and math checks are returned. Area/price/yield/cost sensitivity and outage fail-closed paths are tested. Seeded cost/yield/price reference ([backend/app/data/finance_assumptions.json](backend/app/data/finance_assumptions.json)) covers 67 annual Rabi/Kharif crop rows; 37 of 49 Kharif-1 catalog crops and all 14 Kharif-2 crops. The 12 excluded Kharif-1 rows are perennial/orchard crops requiring a multi-year finance model. Only five focused Rabi crops have a sourced dated calendar. Finance source links and provenance labels travel with each seeded rough projection; all price and cost assumptions remain visibly non-live. |
 | 6 | Explained reasoning | Every recommendation names the specific farm inputs + retrieved data it rests on | ✅ DONE on focused Tier-0 path — deterministic tool outputs carry farm inputs, source evidence, provenance labels, warnings and score/formula components; specialist prompts must relay them. |
 | 7 | Knowledge base + RAG | Agronomic data (extension manuals, fertilizer/crop/soil refs) ingested into a KB; agent retrieves; crop/fertilizer/plan advice grounded in retrieval, not model recall | ✅ DONE (Task 4) — `backend/app/rag/` (recursive chunker w/ FRG page tracking, pgvector `knowledge_chunks` 1536-dim), embeddings via **OpenRouter** `openai/text-embedding-3-small` (same key as chat; provider switch in `llm.py`), `search_knowledge_base` tool on advisor + recommender (English query, `<retrieved_document>` untrusted delimiters, top-5). FULL FRG 2024 corpus ingested: 287 chunks from [backend/app/data/kb_corpus/frg2024.md](backend/app/data/kb_corpus/frg2024.md) (Rahi's OCR pipeline, pages 10-239 incl. tesseract'd AEZ tables). Committed vector backup [backend/app/data/kb_seed/](backend/app/data/kb_seed/) (`kb_chunks.jsonl` + row-aligned `kb_embeddings.npy`) — restore on any fresh db with `python -m scripts.seed_rag_data` (zero API calls); re-ingest only after corpus edits (`scripts.ingest_kb` then `scripts.backup_kb`). Verified live: urea-split question → KB chip → FRG 2024 pp. 61/63/87 cited answer |
 | 8 | Visible agent trace | UI exposes every tool call, params sent, raw values returned | ✅ DONE (tool-trace chips + `message_update` frames) |
 
 ### Tier 1 — Advanced (differentiators)
 Persistent memory across sessions (✅ infra done via pgvector), proactive
-weather-triggered advice, fertilizer/irrigation scheduler, pest/disease risk,
-scenario simulation ("what if rainfall drops 30%?" → revised numbers).
+weather-triggered advice (✅ DONE on the `feat/proactive_weather_sms` branch),
+**fertilizer/irrigation scheduler (✅ DONE)**, pest/disease risk,
+**scenario simulation ("what if rainfall drops 30%?" → revised numbers) (✅ DONE)**.
 
 ### Tier 2 — Bonus (only after Tier 0 solid)
 Marketplace/supplier comparison (mock catalog OK), market price intelligence
@@ -144,6 +145,29 @@ that runs end-to-end in a 4-minute demo.
   crop ranker, fertilizer split allocation, season calendar, and Decimal finance).
   Core rule: LLM never
   computes farmer-facing numbers.
+- **Fertilizer/irrigation scheduler (Tier 1)**: pure
+  [backend/app/engines/scheduler.py](backend/app/engines/scheduler.py) +
+  advisor/planner tool `generate_input_schedule`. Per-growth-stage chemical
+  fertilizer quantities (relayed from the live CZIS farm-scaled recommendation)
+  with a **seeded, clearly-labelled retail cost** (BDT/kg); **organic
+  alternatives** per product sized by transparent nutrient-equivalence (the
+  carrier's nutrient fraction ÷ typical organic-source content, FRG 2024
+  organic-manure/IPNS basis) — always emitted as an IPNS *approximation*, never
+  a precise dose; and an **irrigation water balance** = BAMIS crop-water
+  requirement − effective rainfall → net irrigation depth, application count and
+  seeded per-application cost. Crops with no published water requirement (e.g.
+  Mustard) return an explicit `unknown` instead of an invented figure. Same
+  six-field gate + Rajshahi region gate + CZIS/weather fail-closed degradation
+  as the season plan.
+- **Scenario simulation (Tier 1)**: pure reuse of the finance + scheduler
+  engines via the finance/planner tool `simulate_scenario`. Signed-percent
+  levers — `rainfall_change_percent` (→ scheduler water balance: extra
+  applications, added irrigation cost, yield-risk flag), `budget_change_percent`
+  (→ recomputed budget fit), `cost_change_percent`, `price_change_percent` (→
+  finance) — return **baseline vs revised numbers with explicit deltas**, never
+  a generic answer. Yield is live CZIS or a farmer override; additional
+  irrigation cost from a rainfall shortfall is added on top of the itemized
+  base cost. Routed via `_SCENARIO_WORDS` ("what if …") to the finance node.
 - **Memory**: long-term semantic recall via pgvector + rolling per-session summary,
   PLUS post-turn **automatic extraction** (PR #8): flash-lite pulls durable personal
   facts from every completed turn (no tool call needed), dedups by embedding
@@ -237,16 +261,22 @@ docker compose down -v && docker compose up -d --build   # full reset (wipes db)
 - **Tests** (regression guard, run before/after changes): from `backend/`,
   `docker compose exec backend sh -c "pip install -r requirements-dev.txt && \
   TEST_DATABASE_URL=postgresql+asyncpg://argi:argi_dev_password@db:5432/argi_test pytest -q"`
-  (or `make test`). 327 tests: unit (security/phone/tools/weather adapter/KB
+  (or `make test`). The suite covers unit (security/phone/tools/weather adapter/KB
   chunker/czis adapter/geo gazetteer/unit
-  conversion), integration (auth rotation/blacklist, chat ownership, farm tools +
+  conversion, plus gold-number scheduler engine: fertilizer cost/organic
+  equivalence + irrigation water balance), integration (auth rotation/blacklist,
+  chat ownership, farm tools +
   cross-user isolation), streaming (SSE tool_trace→message_update→done, weather
   chip, multi-turn intake, and six recommendation SSE journeys covering success,
   source outages, no irrigation, tight budget, and exclusions), plus selected-crop
   season-plan journeys for success, weather delay, financial composition and
   degraded sources, plus financial input-sensitivity/what-if journeys and 16
   dedicated whole-product E2E cases (five-turn PDF path + every focused crop's
-  plan, finance, and incomplete-profile gate). LLM +
+  plan, finance, and incomplete-profile gate), plus Tier-1 scheduler-tool
+  coverage (staged fertilizer cost, organic alternatives, water balance, rainfall
+  what-if, profile gate) and scenario-simulation coverage (budget-cut budget-fit,
+  rainfall-drop irrigation cost + yield risk, unknown-water no-invention,
+  cost/price levers, profile gate). LLM +
   HTTP are faked — no network. Isolated against a separate `argi_test` db.
   Realtime transport is **SSE, not WebSocket**. Add tests with any new feature.
   NOTE: the container has no source volume mount — `docker compose up -d --build

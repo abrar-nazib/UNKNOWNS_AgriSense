@@ -26,6 +26,7 @@ from ..engines import finance as finance_mod
 from ..engines import market_research as market_research_mod
 from .. import market_repository as market_repo
 from ..engines import pest_risk as pest_risk_mod
+from ..engines import scheduler as scheduler_mod
 from ..engines import season_planner as season_planner_mod
 from ..database import AsyncSessionLocal
 from ..engines import units as units_mod

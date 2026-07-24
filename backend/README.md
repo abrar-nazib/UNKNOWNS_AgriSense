@@ -86,9 +86,9 @@ See `../.env.example`. Key vars:
 | `ACCESS_TOKEN_EXPIRE_MINUTES` | `15` | access lifetime |
 | `REFRESH_TOKEN_EXPIRE_DAYS` | `7` | refresh lifetime |
 | `BILLING_PROVIDER` | `mock` | `mock` (OTP `1234`) or real `bdapps` |
-| `BDAPPS_APPLICATION_ID` / `BDAPPS_PASSWORD` | — | server-only BDApps credentials |
-| `BDAPPS_APPLICATION_HASH` | — | optional OTP application hash from the BDApps portal |
-| `BDAPPS_PLAN_ID` | `plus` | plan matching the provisioned BDApps tariff |
+| `BDAPPS_PLUS_APPLICATION_ID` / `BDAPPS_PLUS_PASSWORD` | — | server-only BDT 199 Plus app credentials |
+| `BDAPPS_PRO_APPLICATION_ID` / `BDAPPS_PRO_PASSWORD` | — | server-only BDT 499 Pro app credentials |
+| `BDAPPS_PLUS_APPLICATION_HASH` / `BDAPPS_PRO_APPLICATION_HASH` | — | optional per-app OTP hashes |
 | `OPENROUTER_API_KEY` | — | **required for chat**; agent raises without it |
 | `OPENROUTER_MODEL` / `OPENROUTER_BASE_URL` | `deepseek/deepseek-chat` / openrouter | chat LLM |
 | `EMBEDDINGS_PROVIDER` | `fake` | `fake` (offline, deterministic) or `ollama` |
@@ -120,6 +120,13 @@ Production BDApps portal callbacks:
 
 Successful OTP verification is terminal: BDApps activates the subscription and
 the frontend updates the plan immediately without a second continuation action.
+Plus and Pro use separate BDApps application credentials because each
+application owns one recurring tariff. Masked subscriber identities are
+persisted and reused with the matching application for status, notification
+and cancellation calls.
+
+Production configuration and portal field values are documented in
+`docs/BDAPPS_PRODUCTION_SETUP.md`.
 - `POST /api/billing/subscription/cancel`
 - `POST /api/chat/stream` (SSE) · `GET /api/chat/sessions`
 - `GET /api/chat/sessions/{id}/messages` · `DELETE /api/chat/sessions/{id}`

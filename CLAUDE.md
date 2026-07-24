@@ -35,7 +35,7 @@ whose crop advice ignores the weather it just fetched will be noticed.
 | 4 | Season plan | Dated calendar: sowing window, fertilizer timing, irrigation, weed/pest checkpoints, harvest | ❌ TODO (Task 6) |
 | 5 | Financial projection | Itemized cost + yield, revenue, net profit, ROI, break-even; internally consistent (change input → outputs change) | ✅ DONE (Task 7) — standalone `calculate_financials` tool (advisor + recommender), pure-`Decimal` engine [backend/app/engines/finance.py](backend/app/engines/finance.py): itemized fertilizer cost (REAL, live CZIS dose x seeded Tk/kg — skips "or"-alternative rows) + seeded seed/labor/irrigation/pesticide costs; low/base/high yield×price → revenue/profit/ROI; break-even yield & price. Seeded reference for **68 common BD crops** (cereals/oilseeds/pulses/tubers/cash crops/spices/vegetables — perennial/orchard crops out of scope) in [backend/app/data/finance_reference.json](backend/app/data/finance_reference.json)/[backend/app/finance_ref.py](backend/app/finance_ref.py), explicitly labeled `seeded_demo_value` (no live BD price feed exists — DAM's API 500s, PLAN.md D4) pending a real feed; a farmer's own stated yield/price always overrides (`farmer_estimate`, also serves what-if questions). Invariants gold-tested: itemized costs sum exactly to total, profit ≡ revenue − cost every scenario, ROI sign matches profit sign, doubling area doubles cost/revenue/profit but leaves ROI% unchanged |
 | 6 | Explained reasoning | Every recommendation names the specific farm inputs + retrieved data it rests on | ⚠️ partial (prompt enforces naming inputs; weather cites real values; full grounding lands with Tasks 3-7) |
-| 7 | Knowledge base + RAG | Agronomic data (extension manuals, fertilizer/crop/soil refs) ingested into a KB; agent retrieves; crop/fertilizer/plan advice grounded in retrieval, not model recall | ❌ TODO (Task 4 — FRG 2024 corpus; extraction sanity-checked in [docs/FRG_PDF_EXTRACTION.md](docs/FRG_PDF_EXTRACTION.md)) |
+| 7 | Knowledge base + RAG | Agronomic data (extension manuals, fertilizer/crop/soil refs) ingested into a KB; agent retrieves; crop/fertilizer/plan advice grounded in retrieval, not model recall | ✅ DONE (Task 4) — `backend/app/rag/` (recursive chunker w/ FRG page tracking, pgvector `knowledge_chunks` 1536-dim), embeddings via **OpenRouter** `openai/text-embedding-3-small` (same key as chat; provider switch in `llm.py`), `search_knowledge_base` tool on advisor + recommender (English query, `<retrieved_document>` untrusted delimiters, top-5). FULL FRG 2024 corpus ingested: 287 chunks from [backend/app/data/kb_corpus/frg2024.md](backend/app/data/kb_corpus/frg2024.md) (Rahi's OCR pipeline, pages 10-239 incl. tesseract'd AEZ tables). Committed vector backup [backend/app/data/kb_seed/](backend/app/data/kb_seed/) (`kb_chunks.jsonl` + row-aligned `kb_embeddings.npy`) — restore on any fresh db with `python -m scripts.seed_rag_data` (zero API calls); re-ingest only after corpus edits (`scripts.ingest_kb` then `scripts.backup_kb`). Verified live: urea-split question → KB chip → FRG 2024 pp. 61/63/87 cited answer |
 | 8 | Visible agent trace | UI exposes every tool call, params sent, raw values returned | ✅ DONE (tool-trace chips + `message_update` frames) |
 
 ### Tier 1 — Advanced (differentiators)
@@ -65,7 +65,9 @@ that runs end-to-end in a 4-minute demo.
   exact lat/lon, else the upazila centroid does. JWT register/login/me +
   refresh with rotation, jti blacklisting, reuse detection, logout blacklist.
   ([backend/app/routers/auth.py](backend/app/routers/auth.py), [backend/app/security.py](backend/app/security.py), [backend/app/schemas.py](backend/app/schemas.py))
-- **Chat**: SSE streaming, user-scoped sessions/messages, tool-trace display.
+- **Chat**: SSE streaming, user-scoped sessions/messages, reliable per-prompt agent trace display.
+  Every completed final reply has a persisted `Thought for …` trace, even when it used no tools;
+  tool-using turns aggregate native tool-step rows onto that final reply.
   ([backend/app/routers/chat.py](backend/app/routers/chat.py), [backend/app/agent/runner.py](backend/app/agent/runner.py))
 - **Agent**: **multi-node specialist workflow** (PLAN.md D1 rev 2):
   `classify` (flash-lite + keyword fallback; heuristic-only under TESTING) routes
@@ -141,8 +143,31 @@ that runs end-to-end in a 4-minute demo.
 - **Deterministic engines** live in [backend/app/engines/](backend/app/engines/) (units done; crop
   ranker/fertilizer/calendar/finance land in Tasks 5-7). Core rule: LLM never
   computes farmer-facing numbers.
-- **Memory**: long-term semantic recall via pgvector + rolling per-session summary.
+- **Memory**: long-term semantic recall via pgvector + rolling per-session summary,
+  PLUS post-turn **automatic extraction** (PR #8): flash-lite pulls durable personal
+  facts from every completed turn (no tool call needed), dedups by embedding
+  distance (<0.15), never breaks the reply (best-effort, TESTING-skipped). Farmer
+  identity (account username) is injected as a system message every session.
   ([backend/app/agent/memory.py](backend/app/agent/memory.py)) Farm facts belong in the farm profile, not memory.
+- **RAG KB (Task 4)**: [backend/app/rag/](backend/app/rag/) — `chunker.py` (recursive splitter,
+  keeps FRG `<!-- Page N -->` page ranges), `store.py` (idempotent per-source
+  ingest + cosine top-k over `knowledge_chunks`, 1536-dim). Embeddings:
+  OpenAI `text-embedding-3-small` via `build_kb_embeddings()` (provider switch
+  `KB_EMBEDDINGS_PROVIDER`; tests force `fake`; memory table stays 768-dim —
+  separate concerns). Default provider is **openrouter** — routes
+  `KB_EMBED_MODEL=openai/text-embedding-3-small` through the existing
+  `OPENROUTER_API_KEY` (verified live; raw-string inputs, no tiktoken
+  pre-tokenizing). Tool `search_knowledge_base(query_en, crop?)` wraps hits
+  in `<retrieved_document>` blocks (untrusted; prompt forbids obeying/quoting
+  doses as final numbers); registered on advisor AND recommender (step 5b of
+  its directive). Corpus: [backend/app/data/kb_corpus/frg2024.md](backend/app/data/kb_corpus/frg2024.md)
+  (Rahi's `frg_ocr_pipeline.py` output — embedded text + tesseract OCR,
+  pages 10-239) → 287 chunks. **Seeding a fresh db**: `docker compose exec
+  backend python -m scripts.seed_rag_data` restores from the committed
+  backup ([backend/app/data/kb_seed/](backend/app/data/kb_seed/): `kb_chunks.jsonl` + row-aligned
+  `kb_embeddings.npy`) with zero embedding calls. Only after corpus edits:
+  `python -m scripts.ingest_kb app/data/kb_corpus/frg2024.md --source "FRG
+  2024"` then `python -m scripts.backup_kb` (refresh + commit the seed).
 - **Frontend**: Next.js login/register/chat, agri-green theme, streaming + tool
   chips. ([frontend/src/](frontend/src/)) Gotcha fixed in `0b31359`: never key ChatColumn by
   session id and never abort the stream on the session-frame echo — that killed
@@ -152,8 +177,8 @@ that runs end-to-end in a 4-minute demo.
 
 - **THE ROADMAP is [docs/PLAN.md](docs/PLAN.md)** — locked architecture decisions
   (D1-D5), verified data-source matrix, and the incremental Task 1→10 sequence
-  (Task N only starts when Task N-1 is solid; Tasks 1-3 shipped). Next: Task 4
-  FRG RAG KB → Task 5 crop ranker → Task 6 season plan →
+  (Task N only starts when Task N-1 is solid; Tasks 1-4 shipped). Next: Task 5
+  crop ranker → Task 6 season plan →
   Task 7 finance (= Tier 0 complete checkpoint) → 8 polish → 9 Tier 1 → 10 Tier 2.
 - **New agent tools** (CZIS, KB retrieval, ranking, planning, finance) → add
   `@tool`/factory functions in [backend/app/agent/tools.py](backend/app/agent/tools.py); register in the
@@ -165,10 +190,10 @@ that runs end-to-end in a 4-minute demo.
   in PLAN.md D4 (plain HTTP, no auth, no Playwright).
 - **Deterministic math** → pure functions in [backend/app/engines/](backend/app/engines/) with
   gold-number unit tests; tools are thin wrappers.
-- **RAG knowledge base** → ingest FRG corpus into a new pgvector table
-  (separate from `long_term_memory`), expose a `search_knowledge_base` tool.
-  Query in ENGLISH (cross-lingual Bengali→English retrieval is weak — PLAN.md D3);
-  structured fertilizer tables go to JSON, never RAG (numbers are computed).
+- **RAG knowledge base** → ✅ built (see above). Add corpora via
+  `scripts/ingest_kb.py` with a new `--source`; query in ENGLISH (cross-lingual
+  Bengali→English retrieval is weak — PLAN.md D3); structured fertilizer tables
+  still go to JSON, never RAG (numbers are computed).
 - **Emit progress** from long tools via `get_stream_writer()` (see `_emit` in
   tools.py) → surfaces as `progress` SSE frames in the working indicator.
 - The API + SSE contract is **frozen** in [docs/API_CONTRACT.md](docs/API_CONTRACT.md); honor it so the
@@ -208,9 +233,8 @@ docker compose down -v && docker compose up -d --build   # full reset (wipes db)
 - **Tests** (regression guard, run before/after changes): from `backend/`,
   `docker compose exec backend sh -c "pip install -r requirements-dev.txt && \
   TEST_DATABASE_URL=postgresql+asyncpg://argi:argi_dev_password@db:5432/argi_test pytest -q"`
-  (or `make test`). 208 tests: unit (security/phone/tools/weather adapter/czis
-  adapter/finance engine/geo
-  gazetteer/unit
+  (or `make test`). PLACEHOLDER_TEST_COUNT tests: unit (security/phone/tools/
+  weather adapter/KB chunker/czis adapter/finance engine/geo gazetteer/unit
   conversion), integration (auth rotation/blacklist, chat ownership, farm tools +
   cross-user isolation), streaming (SSE tool_trace→message_update→done, weather
   chip, multi-turn intake via the turn-sequence fake in `tests/fakes.py`). LLM +
@@ -218,6 +242,9 @@ docker compose down -v && docker compose up -d --build   # full reset (wipes db)
   Realtime transport is **SSE, not WebSocket**. Add tests with any new feature.
   NOTE: the container has no source volume mount — `docker compose up -d --build
   backend` (or `docker cp` for a quick single file) before re-running tests.
+- Frontend trace display aggregates native tool-step rows onto the final answer
+  per user turn (`frontend/src/lib/chatTurns.ts`). Live SSE rows must win stale
+  persisted query rows, and stream frames are written through to React Query.
 - Frontend http://localhost:3000 · Backend http://localhost:8080 (docs `/docs`) ·
   Postgres localhost:5433. (Host ports 8080/5433 avoid local clashes; container
   ports are 8000/5432. `NEXT_PUBLIC_API_URL` in `.env` is baked into the frontend at

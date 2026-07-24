@@ -1,6 +1,8 @@
 """Long-term (pgvector) memory + rolling per-session summary."""
 from __future__ import annotations
 
+import json
+import logging
 from typing import List
 
 from langchain_core.messages import HumanMessage, SystemMessage
@@ -9,6 +11,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import ChatMessage, LongTermMemory
 from .llm import build_embeddings
+
+log = logging.getLogger("agrisense.agent.memory")
 
 _embeddings = None
 
@@ -101,3 +105,107 @@ async def refresh_summary(
             await db.rollback()
         except Exception:
             pass
+
+
+# --------------------------------------------------------------------------- #
+# Automatic memory extraction — no tool call required.
+#
+# ``save_memory``/``recall_memory`` remain available as explicit tools, but
+# gating ALL long-term memory on the primary model choosing to invoke one is
+# fragile (a model that never calls it means the farmer is never remembered).
+# Consumer assistants (ChatGPT/Gemini) extract durable facts from ordinary
+# conversation in the background; this mirrors that — every turn, best-effort,
+# swallowing all errors so it can never break the visible reply.
+# --------------------------------------------------------------------------- #
+_EXTRACT_PROMPT = (
+    "You extract durable, personal facts about a farmer from one turn of an "
+    "agricultural-advisor chat, for long-term memory across FUTURE sessions.\n"
+    "Extract things like: their name, family, occupation, long-term goals, "
+    "communication preferences, recurring experiences or opinions.\n"
+    "Do NOT extract: structured farm data tracked elsewhere (location, area, "
+    "soil, water source, budget, season, crop pick for the CURRENT plan), "
+    "weather values, one-off arithmetic, or anything already in the 'Known "
+    "facts' list below (even if reworded).\n"
+    "Reply with ONLY a JSON array of short third-person sentences, e.g. "
+    '["The farmer\'s name is Karim."]. If nothing new and durable, reply '
+    "with exactly []."
+)
+
+DUPLICATE_DISTANCE_THRESHOLD = 0.15
+
+
+async def _is_duplicate(db: AsyncSession, user_id: int, vector, threshold: float) -> bool:
+    stmt = (
+        select(LongTermMemory.embedding.cosine_distance(vector))
+        .where(LongTermMemory.user_id == user_id)
+        .order_by(LongTermMemory.embedding.cosine_distance(vector))
+        .limit(1)
+    )
+    nearest = (await db.execute(stmt)).scalar_one_or_none()
+    return nearest is not None and nearest < threshold
+
+
+def _parse_fact_list(raw: str) -> list[str]:
+    raw = (raw or "").strip()
+    if raw.startswith("```"):
+        raw = raw.strip("`")
+        if raw.lower().startswith("json"):
+            raw = raw[4:]
+        raw = raw.strip()
+    try:
+        facts = json.loads(raw)
+    except (json.JSONDecodeError, ValueError):
+        return []
+    if not isinstance(facts, list):
+        return []
+    return [str(f).strip() for f in facts if str(f).strip()]
+
+
+async def auto_extract_memories(
+    db: AsyncSession,
+    user_id: int,
+    model,
+    user_text: str,
+    assistant_text: str,
+    known: List[str],
+) -> List[str]:
+    """Best-effort: pull durable personal facts out of one turn and save them.
+
+    Runs unconditionally (no tool call, no farmer intent needed) so memory
+    keeps working even when the primary model never calls ``save_memory``.
+    Deduplicates against existing memories by embedding distance so the same
+    fact isn't re-saved every turn. Returns the facts actually saved; never
+    raises.
+    """
+    saved: List[str] = []
+    try:
+        known_blob = "\n".join(f"- {k}" for k in known) or "(none yet)"
+        prompt = [
+            SystemMessage(content=_EXTRACT_PROMPT),
+            HumanMessage(
+                content=(
+                    f"Known facts about this farmer so far:\n{known_blob}\n\n"
+                    f"Farmer said: {user_text}\n"
+                    f"Assistant replied: {assistant_text}"
+                )
+            ),
+        ]
+        resp = await model.ainvoke(prompt)
+        raw = resp.content if isinstance(resp.content, str) else str(resp.content)
+        for fact in _parse_fact_list(raw):
+            if len(fact) > 400:
+                continue
+            vector = await _get_embeddings().aembed_query(fact)
+            if await _is_duplicate(db, user_id, vector, DUPLICATE_DISTANCE_THRESHOLD):
+                continue
+            row = LongTermMemory(user_id=user_id, content=fact, embedding=vector)
+            db.add(row)
+            await db.commit()
+            saved.append(fact)
+    except Exception:
+        log.warning("auto_extract_memories failed", exc_info=True)
+        try:
+            await db.rollback()
+        except Exception:
+            pass
+    return saved

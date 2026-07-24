@@ -74,7 +74,14 @@ The backend is authoritative for plans, prices, subscriber phone and status.
 The browser must never send an amount or arbitrary phone number.
 
 ### GET /api/billing/plans
-Res 200: `{ "results": [BillingPlan], "provider": "mock" | "bdapps" }`
+Res 200:
+```
+{ "results": [BillingPlan], "provider": "mock" | "bdapps",
+  "subscribable_plan_ids": ["plus" | "pro"] }
+```
+In BDApps mode a plan is subscribable only when its own Plus/Pro application
+credentials are complete; the frontend must not start checkout for an
+unconfigured tariff.
 
 ### GET /api/billing/subscription
 Res 200: `Subscription`. A user without a paid record receives the Free plan.
@@ -111,8 +118,12 @@ Message content is intentionally not persisted.
 ### POST /api/bdapps/subscription/notify
 BDApps Subscription Notification URL:
 `https://agrisense.cortextech.dev/api/bdapps/subscription/notify`.
-Validates `applicationId` and `password`, then synchronizes REGISTERED /
-UNREGISTERED status into the existing subscription record.
+Matches `applicationId` and `password` to the provisioned Plus or Pro
+application, then synchronizes REGISTERED / UNREGISTERED status using that
+application's tariff. Opaque subscriber identities returned for BDApps Pro
+applications are stored verbatim and reused for callback correlation, status
+checks and cancellation. A delayed cancellation from the other application
+cannot cancel the currently active plan.
 
 ## Gazetteer (public, no auth — used by the register form)
 

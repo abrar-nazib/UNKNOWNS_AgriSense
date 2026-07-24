@@ -43,3 +43,4 @@ pgdata/
 *.log
 logs/
 backend/logs/
+scripts/data_harvest/bd_cropping_patterns.json

@@ -5,13 +5,15 @@
 // done it stays as a single "thinking finished · N tools" affordance. Clicking it
 // toggles the trace panel for THIS prompt only.
 
-import { ChevronRight, Loader2, Wrench } from "lucide-react";
+import { Brain, ChevronRight, Loader2 } from "lucide-react";
+import { formatThoughtDuration } from "@/lib/chatTurns";
 import type { ProgressFrame, ToolCall } from "@/lib/types";
 
 interface Props {
   live: boolean; // is this the currently-streaming turn?
   calls: ToolCall[];
   thinking?: ProgressFrame[]; // live turn's step frames (for the label)
+  durationMs?: number | null; // completed turn, derived from persisted timestamps
   active: boolean; // panel is currently showing this turn
   onClick: () => void;
 }
@@ -26,10 +28,21 @@ function liveLabel(calls: ToolCall[], thinking?: ProgressFrame[]): string {
   return "thinking…";
 }
 
-export function StatusPill({ live, calls, thinking, active, onClick }: Props) {
+export function StatusPill({
+  live,
+  calls,
+  thinking,
+  durationMs = null,
+  active,
+  onClick,
+}: Props) {
   const label = live
     ? liveLabel(calls, thinking)
-    : `thinking finished${calls.length ? ` · ${calls.length} tool${calls.length > 1 ? "s" : ""}` : ""}`;
+    : `Thought for ${formatThoughtDuration(durationMs)}${
+        calls.length
+          ? ` · ${calls.length} tool${calls.length > 1 ? "s" : ""}`
+          : " · no tools"
+      }`;
 
   return (
     <button
@@ -45,7 +58,7 @@ export function StatusPill({ live, calls, thinking, active, onClick }: Props) {
       {live ? (
         <Loader2 size={12} className="shrink-0 animate-spin text-primary-600" />
       ) : (
-        <Wrench size={12} className="shrink-0 text-primary-600" />
+        <Brain size={12} className="shrink-0 text-primary-600" />
       )}
       <span className="truncate">{label}</span>
       <ChevronRight size={12} className="shrink-0" />

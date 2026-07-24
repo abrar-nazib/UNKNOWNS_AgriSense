@@ -29,6 +29,9 @@ import os
 
 # --- Point the app at the test DB BEFORE importing any app module ---------- #
 os.environ.setdefault("TESTING", "1")
+# Tests must never call OpenAI/Ollama — force offline fake embeddings for the
+# knowledge base regardless of what .env/compose injected.
+os.environ["KB_EMBEDDINGS_PROVIDER"] = "fake"
 TEST_DATABASE_URL = os.environ.get(
     "TEST_DATABASE_URL",
     "postgresql+asyncpg://argi:argi_dev_password@localhost:5433/argi_test",

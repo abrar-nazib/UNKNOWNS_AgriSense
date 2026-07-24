@@ -9,33 +9,50 @@
 
 ## 0. Locked architectural decisions (with justification)
 
-### D1 — Multi-node specialist workflow (REVISED 24 Jul, implemented)
+### D1 — Multi-node specialist workflow (REVISED 24 Jul ×2, implemented)
 
 > Rev 2: the original "single ReAct loop" decision was overruled — the graph is
 > now a **supervisor-style multi-node workflow** with dedicated nodes, dedicated
 > toolsets, **a custom LLM per node**, and shared state/memory. Implemented in
 > [backend/app/agent/graph.py](../backend/app/agent/graph.py).
+>
+> Rev 3 (24 Jul): the `weather` node was REMOVED — it was one tool call plus
+> prose, i.e. routing overhead with a misroute failure mode and zero capability
+> gain. `get_weather` is a plain tool on the advisor. **Node admission rule:**
+> a capability becomes a graph node ONLY if it needs a distinct conversation
+> policy (own prompt discipline / toolset / model). If it is "call a
+> deterministic function and explain the result", it is a TOOL.
 
 ```text
-START → classify ──→ intake  ──┐
-        (lite LLM,   weather ──┼──→ tools (shared executor) ──→ back to the
-         heuristic   advisor ──┘         active agent … → END (no more calls)
-         fallback)   [future: planner / ranker / finance specialists]
+START → classify ──→ intake  ──┐──→ tools (shared executor) ──→ back to the
+        (lite LLM,   advisor ──┘         active agent … → END (no more calls)
+         heuristic
+         fallback)
 ```
 
 | Node | Model | Tools | Job |
 |---|---|---|---|
 | `classify` | **flash-lite** (+ deterministic keyword fallback; fallback-only under TESTING) | none | route the turn from the farmer's LAST message |
 | `intake` | flash | farm tools + static | slot-filling: save stated facts, ask 1-2 targeted questions (flash-lite tried and rejected: ignored language directive, skipped saves) |
-| `weather` | flash | weather + farm + static | forecast grounding, cites tool values only |
-| `advisor` | flash | full set (incl. memory) | general agronomy; graceful catch-all for misroutes |
+| `advisor` | flash | full set (get_weather, farm, static, memory; Tasks 4-7 add search_knowledge_base, rank_crops, build_season_plan, calculate_financials) | general agronomy + weather grounding (cites tool values only); graceful catch-all for misroutes |
 | `tools` | — | union of all groups | ONE shared ToolNode; returns control to `state.active_agent` |
 
 Shared state ([state.py](../backend/app/agent/state.py)): `messages` (full
 conversation memory every node sees), `intent`, `active_agent`, `farm_context`
-(profile snapshot preloaded each turn). Tier 0 Tasks 5-7 add **planner /
-ranker / finance specialist nodes** the same way — each with its
-deterministic-engine tools.
+(profile snapshot preloaded each turn).
+
+**Tier 0 Tasks 5-7 land as TOOLS on the advisor, not nodes** (see the Rev 3
+task-sequence note): ranking, season planning and finance are deterministic
+computations — the agent's job is choosing when to call them and explaining
+the result. This is also the Tier-1 enabler: proactive weather-triggered
+re-planning, the fertilizer/irrigation scheduler and scenario simulation
+("what if rainfall drops 30%?") all re-invoke the same engines/tools from
+outside the chat turn — logic trapped inside a chat-graph node would have to
+be duplicated. A `planner` node may be added LATER under the admission rule
+if planning conversations prove to need their own policy (phase-gated
+refusal until the profile is complete, plan-version discipline) — that is a
+prompt-scoping decision, not a capability one, and needs evidence of advisor
+prompt overload first.
 
 Still true (and still verified against code):
 
@@ -59,7 +76,7 @@ policy, "LLM never invents numbers".
 
 | Role | Model (OpenRouter id) | Why |
 |---|---|---|
-| Specialist nodes (intake/weather/advisor) | `google/gemini-2.5-flash` ($0.30/$2.50 per 1M) | Strongest documented Bengali investment (Gemini ships Bengali natively; IndicGenBench authors); reliable tool calling via OpenRouter. Env: `OPENROUTER_MODEL` |
+| Specialist nodes (intake/advisor) | `google/gemini-2.5-flash` ($0.30/$2.50 per 1M) | Strongest documented Bengali investment (Gemini ships Bengali natively; IndicGenBench authors); reliable tool calling via OpenRouter. Env: `OPENROUTER_MODEL` |
 | Intent classification (classify node) | `google/gemini-2.5-flash-lite` ($0.10/$0.40) | Same family/tokenizer, reasoning-off → fastest TTFT; deterministic keyword fallback on failure. Env: `OPENROUTER_MODEL_LITE`. NOTE: tested for intake extraction and REJECTED (ignored language directive, skipped profile saves) — lite is routing-only |
 
 - **No language-detection routing.** Banglish code-switches *mid-sentence*
@@ -124,12 +141,15 @@ graceful-degradation fallback (scenario #29) in one move.
 Estimated wall-clock in parentheses; ~20h remain. Tests accompany each task
 (regression rule), run `make test` before/after.
 
-> Rev 2 note: Tasks 5-7 deliverables land as a dedicated **`planner`
-> specialist node** in the multi-node graph (flash model) whose tools are the
-> deterministic engines (`rank_crops`, `build_season_plan`,
-> `calculate_financials`); the classify node gains a `plan` intent for
-> "কী চাষ করব / plan বানান / what-if" requests. Engines stay pure and
-> gold-tested exactly as specified below.
+> Rev 3 note (supersedes Rev 2's "planner node" plan): Tasks 5-7 deliverables
+> land as **tools on the advisor** (`rank_crops`, `build_season_plan`,
+> `calculate_financials`) wrapping pure, gold-tested engines — same doctrine
+> as `get_weather` after the weather-node removal (D1 Rev 3). One ReAct loop
+> chains rank → plan → finance fine: each tool returns structured JSON that
+> feeds the next call, and every step still surfaces as a trace chip. No new
+> classify intent needed ("কী চাষ করব / plan বানান / what-if" → advisor).
+> Split a `planner` node out ONLY if live testing shows the advisor's prompt
+> overloading (skipped saves, premature planning) — the D1 admission rule.
 
 ### Task 1 — Model switch + real weather tool (≈1.5h) — Tier 0 #2
 
@@ -353,6 +373,9 @@ Streaming (SSE):
   tool_trace chips (≥4 tools) → message_updates fill results → done.
 - S2 Tool failure mid-turn → progress + graceful assistant text, no `error` frame crash, no invented numbers in final text.
 - S3 Bengali content intact through SSE (already safe: `ensure_ascii` full-frame JSON; asserted anyway).
+- S4 Frontend final reply retains the complete per-turn tool trace when a stale message fetch races
+  a later `message_update`; redundant empty tool-step bubbles collapse only after the answer exists.
+  Every completed prompt exposes a persisted-duration trace, including `no tools` turns.
 
 Live smoke (manual, pre-demo checklist):
 - L1 Open-Meteo reachable from venue network; L2 CZIS reachable else snapshot

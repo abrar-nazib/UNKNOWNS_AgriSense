@@ -69,6 +69,7 @@ export interface BillingPlan {
 export interface BillingPlansResponse {
   results: BillingPlan[];
   provider: "mock" | "bdapps";
+  subscribable_plan_ids: Array<"plus" | "pro">;
 }
 
 export interface Subscription {

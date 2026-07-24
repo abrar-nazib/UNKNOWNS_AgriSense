@@ -5,6 +5,12 @@ import { Sprout, Square } from "lucide-react";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { TracePanel, type FocusedTurn } from "@/components/trace/TracePanel";
 import { useChat } from "@/lib/chat/ChatProvider";
+import {
+  isLastAssistantInTurn,
+  isSupersededToolStep,
+  toolTraceForTurn,
+  turnDurationMs,
+} from "@/lib/chatTurns";
 import { qk } from "@/lib/hooks";
 import type { Message } from "@/lib/types";
 import { Composer, type ComposerHandle } from "./Composer";
@@ -64,7 +70,12 @@ export function ChatColumn() {
     focusedTurnId != null ? messages.find((m) => m.id === focusedTurnId) : undefined;
   const isLive = streaming && (focusedTurnId == null || focusedTurnId === streamingTurnId);
   const focusedTurn: FocusedTurn | null = focusedMsg
-    ? { id: focusedMsg.id, prompt: promptFor(messages, focusedMsg.id), calls: focusedMsg.tool_trace }
+    ? {
+        id: focusedMsg.id,
+        prompt: promptFor(messages, focusedMsg.id),
+        calls: toolTraceForTurn(messages, focusedMsg.id),
+        durationMs: turnDurationMs(messages, focusedMsg.id),
+      }
     : null;
   const model = useMemo(() => {
     for (let i = messages.length - 1; i >= 0; i--) {
@@ -86,16 +97,34 @@ export function ChatColumn() {
               <EmptyState onPick={handlePick} />
             ) : (
               <div className="flex flex-col gap-5 px-4 py-6">
-                {messages.map((m) => (
-                  <MessageBubble
-                    key={m.id}
-                    message={m}
-                    live={streaming && m.id === streamingTurnId}
-                    thinking={m.id === streamingTurnId ? thinking : undefined}
-                    activeTrace={traceOpen && focusedTurnId === m.id}
-                    onToggleTrace={toggleTrace}
-                  />
-                ))}
+                {messages.map((m) => {
+                  if (isSupersededToolStep(messages, m.id)) return null;
+                  const calls =
+                    m.role === "assistant" &&
+                    isLastAssistantInTurn(messages, m.id)
+                      ? toolTraceForTurn(messages, m.id)
+                      : m.tool_trace;
+                  const displayMessage =
+                    calls === m.tool_trace ? m : { ...m, tool_trace: calls };
+                  return (
+                    <MessageBubble
+                      key={m.id}
+                      message={displayMessage}
+                      live={streaming && m.id === streamingTurnId}
+                      thinking={
+                        m.id === streamingTurnId ? thinking : undefined
+                      }
+                      durationMs={
+                        m.role === "assistant" &&
+                        isLastAssistantInTurn(messages, m.id)
+                          ? turnDurationMs(messages, m.id)
+                          : null
+                      }
+                      activeTrace={traceOpen && focusedTurnId === m.id}
+                      onToggleTrace={toggleTrace}
+                    />
+                  );
+                })}
                 {/* Live pill before the assistant bubble exists (initial thinking). */}
                 {streaming && !hasLiveBubble && (
                   <div className="flex animate-fade-in gap-3">

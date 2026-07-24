@@ -28,7 +28,11 @@ import { useChat } from "@/lib/chat/ChatProvider";
 import { useSessions } from "@/lib/hooks";
 import { formatBdPhone } from "@/lib/phone";
 import { getAccess } from "@/lib/tokens";
-import type { Session, Subscription } from "@/lib/types";
+import type {
+  BillingPlansResponse,
+  Session,
+  Subscription,
+} from "@/lib/types";
 
 type ProfileTab = "info" | "history" | "billing";
 
@@ -99,6 +103,11 @@ function ProfileContent() {
   const [tier, setTier] = useState<TierId>("free");
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [serverPrices, setServerPrices] = useState<Record<string, number>>({});
+  const [billingProvider, setBillingProvider] =
+    useState<BillingPlansResponse["provider"]>("mock");
+  const [subscribablePlanIds, setSubscribablePlanIds] = useState<
+    Array<"plus" | "pro">
+  >(["plus", "pro"]);
   const [billingBusy, setBillingBusy] = useState(false);
   const [billingMsg, setBillingMsg] = useState("");
   const [checkout, setCheckout] = useState<{
@@ -127,6 +136,8 @@ function ProfileContent() {
             catalog.results.map((plan) => [plan.id, plan.amount_bdt]),
           ),
         );
+        setBillingProvider(catalog.provider);
+        setSubscribablePlanIds(catalog.subscribable_plan_ids);
       })
       .catch((error) => {
         if (active) {
@@ -294,6 +305,11 @@ function ProfileContent() {
                 const current = t.id === tier;
                 const canUpgrade = RANK[t.id] > RANK[tier];
                 const included = RANK[t.id] < RANK[tier];
+                const availableForCheckout =
+                  t.id === "free" ||
+                  subscribablePlanIds.includes(t.id as "plus" | "pro");
+                const switchRequiresCancellation =
+                  tier !== "free" && canUpgrade && availableForCheckout;
                 return (
                   <div
                     key={t.id}
@@ -319,7 +335,12 @@ function ProfileContent() {
                         <span className="block rounded-xl bg-primary-100 py-2.5 text-center text-sm font-medium text-primary-700">
                           Current plan
                         </span>
-                      ) : canUpgrade ? (
+                      ) : switchRequiresCancellation ? (
+                        <span className="block rounded-xl border border-border px-3 py-2.5 text-center text-xs text-text-muted">
+                          Cancel {TIERS.find((plan) => plan.id === tier)?.name}{" "}
+                          before switching
+                        </span>
+                      ) : canUpgrade && availableForCheckout ? (
                         <button
                           type="button"
                           onClick={() =>
@@ -333,6 +354,10 @@ function ProfileContent() {
                         >
                           Upgrade to {t.name}
                         </button>
+                      ) : canUpgrade ? (
+                        <span className="block rounded-xl border border-border px-3 py-2.5 text-center text-xs text-text-muted">
+                          Not provisioned for this BDApps application
+                        </span>
                       ) : included ? (
                         <span className="block rounded-xl border border-border py-2.5 text-center text-sm text-text-muted">
                           Included
@@ -384,6 +409,7 @@ function ProfileContent() {
           tierName={checkout.name}
           amount={checkout.amount}
           mobile={user.phone}
+          provider={billingProvider}
           onClose={() => setCheckout(null)}
           onSuccess={(activeSubscription) => {
             setSubscription(activeSubscription);

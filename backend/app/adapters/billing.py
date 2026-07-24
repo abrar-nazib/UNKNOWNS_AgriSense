@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import logging
 from uuid import uuid4
 
 import httpx
 
 from ..config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class BillingProviderError(RuntimeError):
@@ -31,6 +34,63 @@ class SubscriptionResult:
     @property
     def ok(self) -> bool:
         return self.status_code == "S1000"
+
+
+@dataclass(frozen=True)
+class BdAppsCredentials:
+    plan_id: str
+    application_id: str
+    password: str
+    application_hash: str = ""
+
+    @property
+    def is_complete(self) -> bool:
+        return bool(self.application_id and self.password)
+
+
+def bdapps_credentials_for_plan(plan_id: str) -> BdAppsCredentials:
+    """Resolve one provisioned BDApps application for an internal plan."""
+
+    if plan_id == "plus":
+        configured = BdAppsCredentials(
+            plan_id="plus",
+            application_id=settings.BDAPPS_PLUS_APPLICATION_ID.strip(),
+            password=settings.BDAPPS_PLUS_PASSWORD,
+            application_hash=settings.BDAPPS_PLUS_APPLICATION_HASH.strip(),
+        )
+    elif plan_id == "pro":
+        configured = BdAppsCredentials(
+            plan_id="pro",
+            application_id=settings.BDAPPS_PRO_APPLICATION_ID.strip(),
+            password=settings.BDAPPS_PRO_PASSWORD,
+            application_hash=settings.BDAPPS_PRO_APPLICATION_HASH.strip(),
+        )
+    else:
+        return BdAppsCredentials(plan_id=plan_id, application_id="", password="")
+
+    if (
+        configured.application_id
+        or configured.password
+        or configured.application_hash
+    ):
+        return configured
+
+    if settings.BDAPPS_PLAN_ID.strip() == plan_id:
+        return BdAppsCredentials(
+            plan_id=plan_id,
+            application_id=settings.BDAPPS_APPLICATION_ID.strip(),
+            password=settings.BDAPPS_PASSWORD,
+            application_hash=settings.BDAPPS_APPLICATION_HASH.strip(),
+        )
+    return configured
+
+
+def configured_bdapps_plan_ids() -> list[str]:
+    return [
+        plan_id
+        for plan_id in ("plus", "pro")
+        if bdapps_credentials_for_plan(plan_id).is_complete
+    ]
 
 
 def bdapps_subscriber_id(phone: str) -> str:
@@ -84,17 +144,19 @@ class MockBillingProvider:
 class BdAppsBillingProvider:
     name = "bdapps"
 
-    def __init__(self) -> None:
-        if not settings.BDAPPS_APPLICATION_ID or not settings.BDAPPS_PASSWORD:
+    def __init__(self, credentials: BdAppsCredentials) -> None:
+        self.credentials = credentials
+        if not credentials.is_complete:
             raise BillingProviderError(
-                "BDApps is enabled but its application credentials are missing."
+                f"BDApps credentials for the {credentials.plan_id} plan "
+                "are missing."
             )
 
     async def _post(self, path: str, payload: dict) -> dict:
         url = f"{settings.BDAPPS_BASE_URL.rstrip('/')}{path}"
         body = {
-            "applicationId": settings.BDAPPS_APPLICATION_ID,
-            "password": settings.BDAPPS_PASSWORD,
+            "applicationId": self.credentials.application_id,
+            "password": self.credentials.password,
             **payload,
         }
         try:
@@ -106,20 +168,47 @@ class BdAppsBillingProvider:
                     json=body,
                     headers={"Content-Type": "application/json;charset=utf-8"},
                 )
-                response.raise_for_status()
-                data = response.json()
-        except (httpx.HTTPError, ValueError) as exc:
+        except httpx.RequestError as exc:
+            logger.warning(
+                "BDApps request failed (path=%s, error=%s)",
+                path,
+                type(exc).__name__,
+            )
             raise BillingProviderError(
                 "BDApps is temporarily unavailable. Please try again."
             ) from exc
+
+        try:
+            data = response.json()
+        except ValueError as exc:
+            logger.warning(
+                "BDApps returned non-JSON data (path=%s, status=%s)",
+                path,
+                response.status_code,
+            )
+            raise BillingProviderError(
+                "BDApps returned an invalid response."
+            ) from exc
+
         if not isinstance(data, dict):
             raise BillingProviderError("BDApps returned an invalid response.")
+        if response.is_error:
+            detail = str(
+                data.get("statusDetail") or "BDApps rejected the request."
+            )
+            logger.warning(
+                "BDApps rejected request (path=%s, status=%s, code=%s)",
+                path,
+                response.status_code,
+                data.get("statusCode", "unknown"),
+            )
+            raise BillingProviderError(detail)
         return data
 
     async def request_otp(self, subscriber_id: str) -> OtpStartResult:
         payload = {"subscriberId": subscriber_id}
-        if settings.BDAPPS_APPLICATION_HASH:
-            payload["applicationHash"] = settings.BDAPPS_APPLICATION_HASH
+        if self.credentials.application_hash:
+            payload["applicationHash"] = self.credentials.application_hash
         data = await self._post("/otp/request", payload)
         code = str(data.get("statusCode", ""))
         if code != "S1000" or not data.get("referenceNo"):
@@ -175,12 +264,16 @@ class BdAppsBillingProvider:
         )
 
 
-def get_billing_provider():
+def get_billing_provider(plan_id: str | None = None):
     provider = settings.BILLING_PROVIDER.strip().lower()
     if provider == "mock":
         return MockBillingProvider()
     if provider == "bdapps":
-        return BdAppsBillingProvider()
+        if not plan_id:
+            raise BillingProviderError(
+                "A billing plan is required for BDApps."
+            )
+        return BdAppsBillingProvider(bdapps_credentials_for_plan(plan_id))
     raise BillingProviderError(
         "BILLING_PROVIDER must be either 'mock' or 'bdapps'."
     )

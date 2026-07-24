@@ -170,7 +170,12 @@ class Subscription(Base):
     status: Mapped[str] = mapped_column(String(24), default="inactive")
     provider: Mapped[str] = mapped_column(String(24), default="mock")
     provider_status: Mapped[str] = mapped_column(String(64), default="")
-    subscriber_id: Mapped[str] = mapped_column(String(32), default="")
+    # BDApps Pro applications may return an opaque/masked subscriber token
+    # instead of the MSISDN. Keep the provider value verbatim so subsequent
+    # status, cancellation and notification calls can be correlated.
+    subscriber_id: Mapped[str] = mapped_column(
+        String(255), default="", index=True
+    )
     amount_bdt: Mapped[int] = mapped_column(Integer, default=0)
     billing_cycle: Mapped[str] = mapped_column(String(24), default="monthly")
     started_at: Mapped[datetime | None] = mapped_column(
@@ -235,6 +240,31 @@ class ChatMessage(Base):
     session: Mapped["ChatSession"] = relationship(back_populates="messages")
 
     __table_args__ = (Index("ix_chat_messages_session_id_id", "session_id", "id"),)
+
+
+class KnowledgeChunk(Base):
+    """RAG knowledge base (FRG 2024 corpus + hand-curated agronomy notes).
+
+    Separate from ``long_term_memory`` on purpose: different embedding
+    provider/dimension (PLAN.md D3) and global (not user-scoped) content.
+    """
+
+    __tablename__ = "knowledge_chunks"
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    # Document identity — re-ingesting the same source replaces its chunks.
+    source: Mapped[str] = mapped_column(String(120), index=True)
+    chunk_index: Mapped[int] = mapped_column(Integer, default=0)
+    page_start: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    page_end: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    # Optional facets for filtered retrieval (e.g. crop="mustard").
+    crop: Mapped[str] = mapped_column(String(60), default="", index=True)
+    topic: Mapped[str] = mapped_column(String(120), default="")
+    content: Mapped[str] = mapped_column(Text)
+    embedding = mapped_column(Vector(settings.KB_EMBEDDING_DIM))
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=_utcnow, server_default=func.now()
+    )
 
 
 class LongTermMemory(Base):

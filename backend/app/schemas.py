@@ -141,6 +141,7 @@ class BillingPlanOut(BaseModel):
 class BillingPlansOut(BaseModel):
     results: list[BillingPlanOut]
     provider: str
+    subscribable_plan_ids: list[str]
 
 
 class SubscriptionOut(BaseModel):

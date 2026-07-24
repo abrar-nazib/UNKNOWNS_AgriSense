@@ -6,6 +6,7 @@
 
 import {
   Activity,
+  Brain,
   Check,
   ChevronRight,
   Copy,
@@ -14,6 +15,7 @@ import {
   Wrench,
 } from "lucide-react";
 import { useState } from "react";
+import { formatThoughtDuration } from "@/lib/chatTurns";
 import type { ProgressFrame, ToolCall } from "@/lib/types";
 
 // Pretty-print a raw tool result: JSON if parseable, otherwise the raw string.
@@ -131,6 +133,7 @@ export interface FocusedTurn {
   id: number;
   prompt: string;
   calls: ToolCall[];
+  durationMs: number | null;
 }
 
 interface Props {
@@ -203,6 +206,13 @@ export function TracePanel({ turn, thinking, isLive, model, collapsed, onToggle 
             )}
 
             {isLive && <ThinkingTimeline thinking={thinking} streaming={isLive} />}
+
+            {!isLive && (
+              <p className="flex items-center gap-2 rounded-lg border border-hairline bg-panel-2 px-2.5 py-2 font-mono text-xs text-ink">
+                <Brain size={13} className="shrink-0 text-signal" />
+                Thought for {formatThoughtDuration(turn.durationMs)}
+              </p>
+            )}
 
             {turn.calls.length === 0 ? (
               <p className="px-1 font-mono text-xs text-ink-dim">

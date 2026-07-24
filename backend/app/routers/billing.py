@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..adapters.billing import (
     BillingProviderError,
     bdapps_subscriber_id,
+    configured_bdapps_plan_ids,
     get_billing_provider,
 )
 from ..config import settings
@@ -91,7 +92,8 @@ def _subscription_out(
         status=subscription.status,
         provider=subscription.provider,
         provider_status=subscription.provider_status,
-        subscriber_id=subscription.subscriber_id or phone,
+        # Provider-issued masked identities stay server-only.
+        subscriber_id=phone,
         amount_bdt=subscription.amount_bdt,
         billing_cycle=subscription.billing_cycle,
         started_at=subscription.started_at,
@@ -108,9 +110,20 @@ async def _subscription_for(
     return result.scalar_one_or_none()
 
 
-def _provider_or_502():
+def _provider_subscriber_id(
+    subscription: Subscription, user_phone: str
+) -> str:
+    """Return the provider identity, upgrading legacy local-phone records."""
+
+    stored = (subscription.subscriber_id or "").strip()
+    if not stored or stored == user_phone:
+        return bdapps_subscriber_id(user_phone)
+    return stored
+
+
+def _provider_or_502(plan_id: str):
     try:
-        return get_billing_provider()
+        return get_billing_provider(plan_id)
     except BillingProviderError as exc:
         raise HTTPException(status_code=503, detail=str(exc)) from exc
 
@@ -118,9 +131,17 @@ def _provider_or_502():
 @router.get("/plans", response_model=BillingPlansOut)
 async def plans(user: User = Depends(get_current_user)):
     del user
+    provider = settings.BILLING_PROVIDER.strip().lower()
+    if provider == "bdapps":
+        subscribable_plan_ids = configured_bdapps_plan_ids()
+    else:
+        subscribable_plan_ids = [
+            plan.id for plan in PLANS.values() if plan.id != "free"
+        ]
     return BillingPlansOut(
         results=list(PLANS.values()),
-        provider=settings.BILLING_PROVIDER.strip().lower(),
+        provider=provider,
+        subscribable_plan_ids=subscribable_plan_ids,
     )
 
 
@@ -136,8 +157,10 @@ async def subscription_status(
         and subscription.status == "active"
     ):
         try:
-            result = await get_billing_provider().get_status(
-                bdapps_subscriber_id(user.phone)
+            result = await get_billing_provider(
+                subscription.plan_id
+            ).get_status(
+                _provider_subscriber_id(subscription, user.phone)
             )
             if result.ok:
                 registered = (
@@ -167,17 +190,38 @@ async def request_billing_otp(
     if plan is None or plan.id == "free":
         raise HTTPException(status_code=400, detail="Choose a paid plan.")
 
-    provider_name = settings.BILLING_PROVIDER.strip().lower()
-    if provider_name == "bdapps" and plan.id != settings.BDAPPS_PLAN_ID:
+    current_subscription = await _subscription_for(db, user.id)
+    if current_subscription is not None and current_subscription.status == "active":
+        if current_subscription.plan_id == plan.id:
+            detail = "This plan is already active."
+        else:
+            detail = (
+                "Cancel your active plan before subscribing to another plan."
+            )
+        raise HTTPException(status_code=409, detail=detail)
+
+    cooldown_started_at = _now() - timedelta(
+        seconds=settings.OTP_REQUEST_COOLDOWN_SECONDS
+    )
+    recent_challenge_result = await db.execute(
+        select(OtpChallenge.id)
+        .where(
+            OtpChallenge.user_id == user.id,
+            OtpChallenge.purpose == "billing_subscription",
+            OtpChallenge.created_at >= cooldown_started_at,
+        )
+        .limit(1)
+    )
+    if recent_challenge_result.scalar_one_or_none() is not None:
         raise HTTPException(
-            status_code=400,
+            status_code=429,
             detail=(
-                f"This BDApps application is provisioned for the "
-                f"{settings.BDAPPS_PLAN_ID} plan."
+                "An OTP was requested recently. Wait a minute before "
+                "requesting another."
             ),
         )
 
-    provider = _provider_or_502()
+    provider = _provider_or_502(plan.id)
     subscriber_id = bdapps_subscriber_id(user.phone)
     try:
         result = await provider.request_otp(subscriber_id)
@@ -246,7 +290,14 @@ async def verify_billing_otp(
         await db.commit()
         raise HTTPException(status_code=400, detail="Invalid OTP.")
 
-    provider = _provider_or_502()
+    details = challenge.details or {}
+    plan_id = str(details.get("plan_id", ""))
+    if plan_id not in PLANS or plan_id == "free":
+        raise HTTPException(
+            status_code=400, detail="OTP request has an invalid billing plan."
+        )
+
+    provider = _provider_or_502(plan_id)
     if provider.name != challenge.provider:
         raise HTTPException(
             status_code=409,
@@ -270,7 +321,6 @@ async def verify_billing_otp(
         )
 
     challenge.verified_at = _now()
-    details = challenge.details or {}
     subscription = await _subscription_for(db, user.id)
     if subscription is None:
         subscription = Subscription(user_id=user.id)
@@ -279,7 +329,13 @@ async def verify_billing_otp(
     subscription.status = "active"
     subscription.provider = challenge.provider
     subscription.provider_status = verified.subscription_status
-    subscription.subscriber_id = user.phone
+    if challenge.provider == "bdapps":
+        subscription.subscriber_id = (
+            verified.subscriber_id.strip()
+            or str(details["subscriber_id"])
+        )
+    else:
+        subscription.subscriber_id = user.phone
     subscription.amount_bdt = int(details["amount_bdt"])
     subscription.billing_cycle = str(details["billing_cycle"])
     subscription.started_at = _now()
@@ -298,14 +354,16 @@ async def cancel_subscription(
     if subscription is None or subscription.status != "active":
         raise HTTPException(status_code=400, detail="No active paid subscription.")
 
-    provider = _provider_or_502()
+    provider = _provider_or_502(subscription.plan_id)
     if provider.name != subscription.provider:
         raise HTTPException(
             status_code=409,
             detail="Billing provider changed; cancellation could not be confirmed.",
         )
     try:
-        result = await provider.unsubscribe(bdapps_subscriber_id(user.phone))
+        result = await provider.unsubscribe(
+            _provider_subscriber_id(subscription, user.phone)
+        )
     except BillingProviderError as exc:
         raise HTTPException(status_code=502, detail=str(exc)) from exc
     if not result.ok:

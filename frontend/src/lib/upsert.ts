@@ -14,10 +14,12 @@ export function upsertMessage(list: Message[], msg: Message): Message[] {
 
 /**
  * Merge a fetched (persisted) list with any live-buffer messages, deduping by
- * id and preserving chronological order. Persisted rows win on conflict.
+ * id and preserving chronological order. Live SSE rows win on conflict: a
+ * background fetch can contain the initial empty tool result while a later
+ * `message_update` already carries the completed trace.
  */
 export function mergeById(persisted: Message[], live: Message[]): Message[] {
-  const seen = new Set(persisted.map((m) => m.id));
-  const extra = live.filter((m) => !seen.has(m.id));
-  return [...persisted, ...extra].sort((a, b) => a.id - b.id);
+  const byId = new Map(persisted.map((message) => [message.id, message]));
+  for (const message of live) byId.set(message.id, message);
+  return [...byId.values()].sort((a, b) => a.id - b.id);
 }

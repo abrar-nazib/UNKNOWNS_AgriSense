@@ -63,6 +63,7 @@ def build_system_messages(
     summary: str | None,
     recalled: list[str],
     now: datetime | None = None,
+    farmer_name: str | None = None,
 ) -> list[SystemMessage]:
     """Assemble the per-turn system context in one place."""
     now = now or datetime.now(DHAKA_TZ)
@@ -86,6 +87,21 @@ def build_system_messages(
         messages.append(
             SystemMessage(
                 content=f"Relevant long-term memories about this user:\n{joined}"
+            )
+        )
+    if farmer_name:
+        # DB-sourced, not conversation-recalled — always present, every
+        # session, regardless of what has (or hasn't) been said or saved to
+        # long-term memory. Fixes the class of bug where identity depended on
+        # the model choosing to remember/recall a name.
+        messages.append(
+            SystemMessage(
+                content=(
+                    f"FARMER IDENTITY: you are speaking with {farmer_name}, "
+                    "the logged-in farmer (from their account, available "
+                    "every session). Use their name naturally when it reads "
+                    "well; never claim not to know it and never ask for it."
+                )
             )
         )
     return messages

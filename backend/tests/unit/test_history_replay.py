@@ -84,6 +84,23 @@ def test_system_messages_carry_authoritative_datetime_and_context():
     assert len(build_system_messages("P", None, [], now=now)) == 2
 
 
+def test_farmer_identity_injected_from_db_not_conversation():
+    """The farmer's name must be authoritative from the account, always
+    present, regardless of whether it was ever said/saved/recalled in chat
+    (regression: farmer identity used to depend entirely on the model
+    choosing to save/recall it as a memory)."""
+    from app.agent.messages import build_system_messages
+
+    msgs = build_system_messages("P", None, [], farmer_name="Karim")
+    identity = msgs[-1].content
+    assert "Karim" in identity
+    assert "never ask for it" in identity
+
+    # No farmer_name -> no identity message added at all.
+    msgs_anon = build_system_messages("P", None, [])
+    assert not any("FARMER IDENTITY" in m.content for m in msgs_anon)
+
+
 def test_tool_call_traces_and_fill_result_roundtrip():
     from app.agent.messages import fill_trace_result, tool_call_traces
 

@@ -21,6 +21,7 @@ interface Props {
   tierName: string;
   amount: number;
   mobile: string;
+  provider: "mock" | "bdapps";
   onClose: () => void;
   onSuccess: (subscription: Subscription) => void;
 }
@@ -32,6 +33,7 @@ export function BdAppsCheckout({
   tierName,
   amount,
   mobile,
+  provider,
   onClose,
   onSuccess,
 }: Props) {
@@ -78,7 +80,9 @@ export function BdAppsCheckout({
         <div className="flex items-center justify-between border-b border-jute-300/55 bg-paper-100 px-4 py-3">
           <span className="flex items-center gap-2 text-sm font-semibold text-text-primary">
             <ShieldCheck size={16} className="text-primary-600" />
-            Subscribe with bdapps
+            {provider === "bdapps"
+              ? "Subscribe with BDApps"
+              : "Development subscription"}
           </span>
           <button
             type="button"
@@ -114,10 +118,18 @@ export function BdAppsCheckout({
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-text-muted">
-                We&apos;ll verify this account by OTP. Your subscription is stored
-                securely on the AgriSense server.
-              </p>
+              {provider === "bdapps" ? (
+                <p className="text-xs leading-relaxed text-text-muted">
+                  By verifying the OTP, you authorize a recurring ৳{amount}
+                  monthly charge to this Robi number. The subscription activates
+                  immediately and can be cancelled from this page.
+                </p>
+              ) : (
+                <p className="text-xs text-text-muted">
+                  This local development flow uses OTP 1234 and does not charge
+                  your mobile account.
+                </p>
+              )}
               {err && <p className="text-xs text-status-error">{err}</p>}
               <button
                 type="button"
@@ -140,6 +152,12 @@ export function BdAppsCheckout({
               <p className="text-sm text-text-primary">
                 Enter the code sent to {formatBdPhone(mobile)}.
               </p>
+              {provider === "bdapps" && (
+                <p className="text-xs leading-relaxed text-text-muted">
+                  Successful verification immediately activates the recurring
+                  ৳{amount}/month subscription.
+                </p>
+              )}
               {demoOtp && (
                 <p className="border border-jute-300 bg-jute-100 px-3 py-2 font-mono text-xs text-field-900">
                   Development OTP:{" "}
@@ -166,7 +184,9 @@ export function BdAppsCheckout({
                 className="atlas-button w-full disabled:opacity-60"
               >
                 {busy && <Loader2 size={15} className="animate-spin" />}
-                Verify & subscribe
+                {provider === "bdapps"
+                  ? `Verify & activate ৳${amount}/month`
+                  : "Verify development OTP"}
               </button>
             </div>
           )}

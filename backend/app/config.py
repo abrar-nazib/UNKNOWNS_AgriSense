@@ -29,7 +29,17 @@ class Settings(BaseSettings):
     MOCK_OTP_CODE: str = "1234"
     OTP_TTL_SECONDS: int = 300
     OTP_MAX_ATTEMPTS: int = 5
+    OTP_REQUEST_COOLDOWN_SECONDS: int = 60
     BDAPPS_BASE_URL: str = "https://developer.bdapps.com"
+    # Each BDApps subscription application has one provisioned tariff.
+    BDAPPS_PLUS_APPLICATION_ID: str = ""
+    BDAPPS_PLUS_PASSWORD: str = ""
+    BDAPPS_PLUS_APPLICATION_HASH: str = ""
+    BDAPPS_PRO_APPLICATION_ID: str = ""
+    BDAPPS_PRO_PASSWORD: str = ""
+    BDAPPS_PRO_APPLICATION_HASH: str = ""
+    # Legacy single-app values remain as a temporary Plus/Pro fallback based
+    # on BDAPPS_PLAN_ID, so existing deployments can migrate without downtime.
     BDAPPS_APPLICATION_ID: str = ""
     BDAPPS_PASSWORD: str = ""
     BDAPPS_APPLICATION_HASH: str = ""
@@ -47,10 +57,26 @@ class Settings(BaseSettings):
     OLLAMA_BASE_URL: str = "http://host.docker.internal:11434"
     OLLAMA_MODEL: str = "llama3.1"
 
-    # ---- Embeddings ----
-    EMBEDDINGS_PROVIDER: str = "fake"  # "fake" | "ollama"
+    # ---- Embeddings (long-term memory table) ----
+    EMBEDDINGS_PROVIDER: str = "fake"  # "fake" | "ollama" | "openai"
     EMBEDDING_DIM: int = 768
     OLLAMA_EMBED_MODEL: str = "nomic-embed-text"
+
+    # ---- LLM: OpenAI (embedding provider) ----
+    OPENAI_API_KEY: str = ""
+    OPENAI_EMBED_MODEL: str = "text-embedding-3-small"
+
+    # ---- Knowledge base (RAG) — separate table/provider from memory ----
+    # "openrouter" | "openai" | "ollama" | "fake"
+    KB_EMBEDDINGS_PROVIDER: str = "openrouter"
+    # OpenRouter model slug (vendor-prefixed); routed to OpenAI upstream.
+    KB_EMBED_MODEL: str = "openai/text-embedding-3-small"
+    KB_EMBEDDING_DIM: int = 1536  # text-embedding-3-small native dim
+    KB_TOP_K: int = 5
+    # Recursive chunking: ~1800 chars ≈ 450 tokens/chunk → top-5 ≈ 2.2k tokens
+    # of retrieved context per tool call (decent grounding, no context blowout).
+    KB_CHUNK_SIZE_CHARS: int = 1800
+    KB_CHUNK_OVERLAP_CHARS: int = 200
 
     # ---- Agent memory tuning ----
     HISTORY_LIMIT: int = 40

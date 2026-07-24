@@ -88,6 +88,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
             case "message_update":
               if (frame.message.role === "assistant") setStreamingTurnId(frame.message.id);
               setLive((prev) => upsertMessage(prev, frame.message));
+              if (turnSessionId != null) {
+                qc.setQueryData<Message[]>(
+                  qk.messages(turnSessionId),
+                  (previous = []) => upsertMessage(previous, frame.message),
+                );
+              }
               break;
             case "progress":
               setThinking((t) => [...t, frame]);

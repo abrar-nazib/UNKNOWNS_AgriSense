@@ -10,7 +10,10 @@ from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..config import settings
+from ..adapters.billing import (
+    BdAppsCredentials,
+    bdapps_credentials_for_plan,
+)
 from ..database import get_db
 from ..models import Subscription, User
 from .billing import PLANS
@@ -49,21 +52,28 @@ class BdAppsAck(BdAppsPayload):
 
 def _require_bdapps_credentials(
     application_id: str, password: str | None = None
-) -> None:
-    if not settings.BDAPPS_APPLICATION_ID:
+) -> BdAppsCredentials:
+    configured_apps = [
+        credentials
+        for plan_id in ("plus", "pro")
+        if (credentials := bdapps_credentials_for_plan(plan_id)).is_complete
+    ]
+    if not configured_apps:
         raise HTTPException(
             status_code=503,
             detail="BDApps application credentials are not configured.",
         )
-    app_matches = hmac.compare_digest(
-        application_id, settings.BDAPPS_APPLICATION_ID
-    )
-    password_matches = password is None or (
-        bool(settings.BDAPPS_PASSWORD)
-        and hmac.compare_digest(password, settings.BDAPPS_PASSWORD)
-    )
-    if not app_matches or not password_matches:
-        raise HTTPException(status_code=403, detail="Invalid BDApps callback.")
+
+    for credentials in configured_apps:
+        app_matches = hmac.compare_digest(
+            application_id, credentials.application_id
+        )
+        password_matches = password is None or hmac.compare_digest(
+            password, credentials.password
+        )
+        if app_matches and password_matches:
+            return credentials
+    raise HTTPException(status_code=403, detail="Invalid BDApps callback.")
 
 
 def _canonical_phone(subscriber_id: str) -> str | None:
@@ -91,9 +101,11 @@ async def receive_sms(payload: SmsReceiveIn) -> BdAppsAck:
     receiving contract without persisting private message content.
     """
 
-    _require_bdapps_credentials(payload.application_id)
+    credentials = _require_bdapps_credentials(payload.application_id)
     logger.info(
-        "BDApps inbound SMS acknowledged (request_id=%s, encoding=%s)",
+        "BDApps inbound SMS acknowledged "
+        "(plan=%s, request_id=%s, encoding=%s)",
+        credentials.plan_id,
         payload.request_id,
         payload.encoding,
     )
@@ -107,31 +119,56 @@ async def subscription_notification(
 ) -> BdAppsAck:
     """Synchronize asynchronous BDApps registration changes into Postgres."""
 
-    _require_bdapps_credentials(payload.application_id, payload.password)
-    phone = _canonical_phone(payload.subscriber_id)
-    if phone is None:
-        # Masked subscriber identifiers cannot be joined to a local account.
-        # Acknowledge them so BDApps does not retry indefinitely.
-        logger.warning("BDApps subscription notification had a masked subscriber")
-        return _ack()
-
-    user_result = await db.execute(select(User).where(User.phone == phone))
-    user = user_result.scalar_one_or_none()
-    if user is None:
-        logger.warning("BDApps subscription notification had no local user")
-        return _ack()
-
+    credentials = _require_bdapps_credentials(
+        payload.application_id, payload.password
+    )
+    provider_subscriber_id = payload.subscriber_id.strip()
     subscription_result = await db.execute(
-        select(Subscription).where(Subscription.user_id == user.id)
+        select(Subscription).where(
+            Subscription.provider == "bdapps",
+            Subscription.plan_id == credentials.plan_id,
+            Subscription.subscriber_id == provider_subscriber_id,
+        )
     )
     subscription = subscription_result.scalar_one_or_none()
+
+    user = None
+    if subscription is not None:
+        user_result = await db.execute(
+            select(User).where(User.id == subscription.user_id)
+        )
+        user = user_result.scalar_one_or_none()
+
+    if user is None:
+        phone = _canonical_phone(provider_subscriber_id)
+        if phone is not None:
+            user_result = await db.execute(
+                select(User).where(User.phone == phone)
+            )
+            user = user_result.scalar_one_or_none()
+
+    if user is None:
+        # A masked notification received before the user completes OTP cannot
+        # yet be correlated. Acknowledge it to prevent retries; OTP verification
+        # and later status polling remain authoritative.
+        logger.warning(
+            "BDApps subscription notification had no correlated local user"
+        )
+        return _ack()
+
+    if subscription is None:
+        subscription_result = await db.execute(
+            select(Subscription).where(Subscription.user_id == user.id)
+        )
+        subscription = subscription_result.scalar_one_or_none()
+
     provider_status = payload.status.upper().rstrip(".")
     now = datetime.now(timezone.utc)
 
     if provider_status == "REGISTERED":
-        plan = PLANS.get(settings.BDAPPS_PLAN_ID)
+        plan = PLANS.get(credentials.plan_id)
         if plan is None or plan.id == "free":
-            logger.error("BDAPPS_PLAN_ID does not identify a paid plan")
+            logger.error("BDApps callback does not identify a paid plan")
             return _ack()
         if subscription is None:
             subscription = Subscription(user_id=user.id)
@@ -140,11 +177,22 @@ async def subscription_notification(
         subscription.status = "active"
         subscription.provider = "bdapps"
         subscription.provider_status = provider_status
-        subscription.subscriber_id = user.phone
+        subscription.subscriber_id = provider_subscriber_id
         subscription.amount_bdt = plan.amount_bdt
         subscription.billing_cycle = payload.frequency.lower()
         subscription.started_at = subscription.started_at or now
         subscription.cancelled_at = None
+    elif (
+        subscription is not None
+        and subscription.plan_id != credentials.plan_id
+    ):
+        # A delayed cancellation/inactive notification from the old BDApps
+        # application must not cancel a newer plan.
+        logger.info(
+            "Ignored stale BDApps notification (callback_plan=%s, active_plan=%s)",
+            credentials.plan_id,
+            subscription.plan_id,
+        )
     elif provider_status == "UNREGISTERED" and subscription is not None:
         subscription.status = "cancelled"
         subscription.provider_status = provider_status

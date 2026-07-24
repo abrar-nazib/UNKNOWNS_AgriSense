@@ -12,11 +12,19 @@ interface Props {
   message: Message;
   live?: boolean; // is this the currently-streaming turn?
   thinking?: ProgressFrame[]; // live turn only
+  durationMs?: number | null; // completed turn, persisted timestamp delta
   activeTrace?: boolean; // panel currently showing this turn
   onToggleTrace?: (id: number) => void;
 }
 
-function MessageBubbleImpl({ message, live, thinking, activeTrace, onToggleTrace }: Props) {
+function MessageBubbleImpl({
+  message,
+  live,
+  thinking,
+  durationMs,
+  activeTrace,
+  onToggleTrace,
+}: Props) {
   if (message.role === "user") {
     return (
       <div className="flex animate-fade-in justify-end">
@@ -45,15 +53,14 @@ function MessageBubbleImpl({ message, live, thinking, activeTrace, onToggleTrace
           </div>
         )}
         {plan && <PlanCard plan={plan} />}
-        {(n > 0 || live) && (
-          <StatusPill
-            live={!!live}
-            calls={message.tool_trace}
-            thinking={thinking}
-            active={!!activeTrace}
-            onClick={() => onToggleTrace?.(message.id)}
-          />
-        )}
+        <StatusPill
+          live={!!live}
+          calls={message.tool_trace}
+          thinking={thinking}
+          durationMs={durationMs}
+          active={!!activeTrace}
+          onClick={() => onToggleTrace?.(message.id)}
+        />
         {message.model && <p className="mt-1.5 text-xs text-text-muted">{message.model}</p>}
       </div>
     </div>
@@ -69,6 +76,7 @@ export const MessageBubble = memo(MessageBubbleImpl, (prev, next) => {
     a.tool_trace === b.tool_trace &&
     a.model === b.model &&
     prev.live === next.live &&
+    prev.durationMs === next.durationMs &&
     prev.activeTrace === next.activeTrace &&
     prev.thinking === next.thinking
   );

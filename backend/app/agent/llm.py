@@ -69,12 +69,67 @@ class FakeEmbeddings(Embeddings):
         return self.embed_query(text)
 
 
-def build_embeddings() -> Embeddings:
-    if settings.EMBEDDINGS_PROVIDER.lower() == "ollama":
+def _build_embeddings_provider(provider: str, dim: int) -> Embeddings:
+    """Shared provider switch — each table picks its own provider + dim."""
+    provider = (provider or "").lower()
+    if provider == "openrouter":
+        if not settings.OPENROUTER_API_KEY:
+            raise RuntimeError(
+                "OPENROUTER_API_KEY is not set. OpenRouter embeddings require "
+                "the same key as the chat models (see .env.example) — or "
+                "switch the provider to 'fake'."
+            )
+        from langchain_openai import OpenAIEmbeddings
+
+        # OpenRouter's /embeddings is OpenAI-compatible but takes raw strings
+        # (no client-side tiktoken token arrays) and vendor-prefixed slugs.
+        # Native dim of text-embedding-3-small is 1536 — don't pass
+        # `dimensions`; not all routed providers honor it.
+        return OpenAIEmbeddings(
+            model=settings.KB_EMBED_MODEL,
+            api_key=settings.OPENROUTER_API_KEY,
+            base_url=settings.OPENROUTER_BASE_URL,
+            check_embedding_ctx_length=False,
+        )
+    if provider == "openai":
+        if not settings.OPENAI_API_KEY:
+            raise RuntimeError(
+                "OPENAI_API_KEY is not set. OpenAI embeddings require an API "
+                "key (see .env.example) — or switch the provider to 'fake'."
+            )
+        from langchain_openai import OpenAIEmbeddings
+
+        return OpenAIEmbeddings(
+            model=settings.OPENAI_EMBED_MODEL,
+            api_key=settings.OPENAI_API_KEY,
+            dimensions=dim,
+        )
+    if provider == "ollama":
         from langchain_ollama import OllamaEmbeddings
 
         return OllamaEmbeddings(
             model=settings.OLLAMA_EMBED_MODEL,
             base_url=settings.OLLAMA_BASE_URL,
         )
-    return FakeEmbeddings(dim=settings.EMBEDDING_DIM)
+    return FakeEmbeddings(dim=dim)
+
+
+def build_embeddings() -> Embeddings:
+    """Embeddings for the long-term memory table (768-dim by default)."""
+    return _build_embeddings_provider(
+        settings.EMBEDDINGS_PROVIDER, settings.EMBEDDING_DIM
+    )
+
+
+def build_kb_embeddings() -> Embeddings:
+    """Embeddings for the knowledge-base table.
+
+    Default: OpenRouter-routed ``openai/text-embedding-3-small`` (1536-dim) —
+    same API key as the chat models.
+
+    Kept separate from memory embeddings: the two pgvector tables have
+    different dimensions and may use different providers (PLAN.md D3).
+    """
+    return _build_embeddings_provider(
+        settings.KB_EMBEDDINGS_PROVIDER, settings.KB_EMBEDDING_DIM
+    )

@@ -9,9 +9,14 @@ plan artifact + right collapsible trace panel). Branch: `features/redesign`.
 - Billing is no longer seeded/local-only. The frontend calls authenticated FastAPI
   `/api/billing/*`; subscription state is persisted in Postgres.
 - Mock mode uses OTP `1234`; real mode is ready for BDApps credentials.
+- Plus and Pro use separate BDApps application credentials and expose availability through
+  `subscribable_plan_ids`; cancel-before-switch prevents simultaneous carrier subscriptions.
 - `/forgot-password` is linked from login and registration; profile password change is persisted.
 - The unauthenticated field-demo route and mock workspace have been removed. Authenticated users
   enter the real workspace from the landing page and can log out beside that button.
+- Tool traces are aggregated per user turn onto the final assistant reply for display. Live SSE
+  `message_update` rows win stale query snapshots, and completed empty tool-step bubbles collapse.
+  Every completed reply—including no-tool replies—has a clickable persisted-duration trace.
 - `npm run typecheck` and production `npm run build` pass.
 
 ## Locked decisions
@@ -51,7 +56,8 @@ src/styles/ theme via tailwind.config.ts + globals.css (Agronomic Instrument tok
 
 ## Agentic UX components (first-class)
 - **Streaming:** `stream.ts` consumes the authenticated backend SSE contract.
-- **Trace panel (Sefayet's headline spec):** right, **collapsible**; two groups — **THIS MESSAGE** (accent border + one-shot glow on newest call) vs **history** (dimmed, collapsed); each `ToolCallRow` = tool name · params sent · raw result (expand) · timing.
+- **Trace panel:** right, collapsible, focused on one user turn; each `ToolCallRow` shows tool name,
+  sent parameters, and expandable raw result. The final answer owns the complete turn trace.
 - **Steps/thinking:** `ProgressTimeline` from `progress` frames (memory→tool→summary) + working indicator.
 - **Missing-info:** `MissingFieldsChips` (location·size·soil·water·budget·season ✓/✗).
 - **States:** loading (skeleton/indicator), **Stop** (abort mid-stream), error banner, empty state.
@@ -67,8 +73,11 @@ src/styles/ theme via tailwind.config.ts + globals.css (Agronomic Instrument tok
 - [ ] **M7 · Uploads (staged)** — Composer attachments; mock leaf-disease + doc-ingest results.
 - [x] **M8 · Landing hero** — licensed Bangladesh paddy photo, field-brief overlay, and GSAP entrance.
 - [x] **M9 · BDApps subscription foundation** — persisted mock flow + real provider adapter.
-      Portal credentials and a live Robi-number test remain.
-- [ ] **M10 · Release readiness** — judge click-path rehearsal and README integration table.
+      Independent Plus/Pro app routing is complete; portal passwords, Pro ID, and live tests remain.
+- [x] **M10 · Reliable agent trace display** — cache write-through/live precedence, final-answer
+      turn aggregation, and `Thought for <duration>` status on every completed prompt; state
+      regression and backend streaming tests pass.
+- [ ] **M11 · Release readiness** — judge click-path rehearsal and README integration table.
 
 ## Skills, used surgically
 - Structure/logic: `nextjs-developer`, `react-expert`, `typescript-pro`. Styling: `ckm-ui-styling` (Tailwind/Radix primitives).

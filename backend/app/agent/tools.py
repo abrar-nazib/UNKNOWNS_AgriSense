@@ -6,12 +6,14 @@ import json
 import logging
 import operator
 from datetime import datetime, timezone
+from decimal import Decimal
 
 from typing import Optional
 
 from langchain_core.tools import tool
 from sqlalchemy import select
 
+from .. import finance_ref as finance_ref_mod
 from .. import geo as geo_mod
 from .. import patterns as patterns_mod
 from .. import soil as soil_mod
@@ -19,6 +21,7 @@ from ..adapters import czis as czis_mod
 from ..adapters import weather as weather_mod
 from ..config import settings
 from ..database import AsyncSessionLocal
+from ..engines import finance as finance_mod
 from ..engines import units as units_mod
 from ..models import Farm
 from . import memory as memory_mod
@@ -1039,6 +1042,138 @@ def build_czis_tools(user):
         czis_crop_context,
         czis_fertilizer_recommendation,
     ]
+
+
+# --------------------------------------------------------------------------- #
+# Financial projection (factory — Tier 0 #5, PLAN.md Task 7)
+# --------------------------------------------------------------------------- #
+def build_finance_tool(user):
+    """``calculate_financials`` — itemized cost/revenue/profit/ROI/break-even.
+
+    Fertilizer cost is REAL (live CZIS-computed dose x seeded fertilizer
+    price) when ``crop_id``+``variety_id`` are given; seed/labor/irrigation/
+    pesticide costs and the yield/price used for revenue are SEEDED
+    reference values (no live Bangladesh price feed exists yet — DAM's API
+    is down, see docs/PLAN.md D4) — every field is source-labeled so the
+    agent can tell the farmer exactly what's real vs a placeholder. A
+    farmer's own stated yield/price always overrides the seeded ones.
+    """
+
+    @tool
+    async def calculate_financials(
+        crop_name: str,
+        crop_id: int = 0,
+        variety_id: int = 0,
+        area_decimal: float = 0.0,
+        farmer_yield_kg_per_decimal: float = 0.0,
+        farmer_price_tk_per_kg: float = 0.0,
+    ) -> str:
+        """Itemized financial projection for growing ``crop_name`` on the
+        active farm: cost breakdown, expected yield/revenue/profit at
+        low/base/high scenarios, ROI %, and break-even yield/price.
+
+        Args:
+            crop_name: exact crop name as returned by czis_list_crops (e.g.
+                "Boro dhan", "Mustard", "Potato") — used to look up seeded
+                cost/price reference data.
+            crop_id: optional, from czis_list_crops. Pass WITH variety_id to
+                include the REAL CZIS-computed fertilizer dose as a cost item
+                (recommended — otherwise fertilizer cost is omitted).
+            variety_id: optional, from czis_crop_context (not the variety
+                name).
+            area_decimal: land area in decimals; 0 uses the farm's saved area.
+            farmer_yield_kg_per_decimal: pass ONLY if the farmer stated their
+                own expected yield — overrides the seeded reference and is
+                labeled farmer_estimate (use for "what if yield is X" too).
+            farmer_price_tk_per_kg: pass ONLY if the farmer stated their own
+                expected sale price — overrides the seeded farmgate reference,
+                labeled farmer_estimate (use for "what if price drops" too).
+
+        Every cost/yield/price is labeled by source: czis_computed (real),
+        seeded_demo_value (placeholder — say so explicitly), or
+        farmer_estimate. If this returns FINANCE_REFERENCE_UNKNOWN, no
+        placeholder data exists for that crop yet — ask the farmer for their
+        own local cost/price estimates instead of inventing numbers.
+        """
+        _emit("finance", f"projecting financials for {crop_name}")
+        point = await _farm_point(user)
+        if point is None:
+            return json.dumps(
+                {"error": "farm has no location yet — ask the farmer for upazila/union first"},
+                ensure_ascii=False,
+            )
+        area = float(area_decimal) or point.get("area_decimal")
+        if not area:
+            return json.dumps(
+                {"error": "no area known — ask the farmer for the plot size (decimals) or pass area_decimal"},
+                ensure_ascii=False,
+            )
+
+        ref = finance_ref_mod.crop_reference(crop_name)
+        if ref is None:
+            return (
+                f"FINANCE_REFERENCE_UNKNOWN: no seeded cost/price reference "
+                f"for '{crop_name}' yet. Do NOT invent costs, yield or price "
+                "— ask the farmer for their own local cost and expected "
+                "sale-price estimates and pass those as farmer_yield_kg_per_decimal"
+                "/farmer_price_tk_per_kg."
+            )
+
+        warnings: list[str] = []
+        fertilizer_items: list = []
+        if crop_id and variety_id:
+            try:
+                fert_data = await czis_mod.get_fertilizer_recommendation(
+                    int(crop_id), point["latitude"], point["longitude"],
+                    int(variety_id), area,
+                )
+                fertilizer_items = finance_mod.fertilizer_cost_items(
+                    fert_data["products"], finance_ref_mod.fertilizer_prices()
+                )
+            except czis_mod.CzisError as exc:
+                warnings.append(
+                    f"CZIS_UNAVAILABLE: {exc} — fertilizer cost omitted from "
+                    "this projection, not zero-cost."
+                )
+        else:
+            warnings.append(
+                "no crop_id/variety_id given — fertilizer cost is NOT included "
+                "in this projection (pass both, from czis_crop_context, for a "
+                "complete itemization)."
+            )
+
+        other_items = finance_mod.other_cost_items(
+            Decimal(str(area)), ref["other_costs_tk_per_decimal"]
+        )
+        cost_items = fertilizer_items + other_items
+
+        if farmer_yield_kg_per_decimal > 0:
+            v = Decimal(str(farmer_yield_kg_per_decimal))
+            yield_dict = {"low": v, "base": v, "high": v}
+            yield_source = "farmer_estimate"
+        else:
+            yield_dict = ref["yield_kg_per_decimal"]
+            yield_source = "seeded_demo_value"
+
+        if farmer_price_tk_per_kg > 0:
+            v = Decimal(str(farmer_price_tk_per_kg))
+            price_dict = {"low": v, "base": v, "high": v}
+            price_source = "farmer_estimate"
+        else:
+            price_dict = ref["farmgate_price_tk_per_kg"]
+            price_source = "seeded_demo_value"
+
+        projection = finance_mod.project_financials(
+            area, cost_items, yield_dict, price_dict, yield_source, price_source
+        )
+        payload = finance_mod.to_jsonable(projection)
+        payload["crop"] = crop_name
+        payload["category"] = ref.get("category", "")
+        payload["reference_source"] = finance_ref_mod.source()
+        payload["warnings"] = warnings
+        return json.dumps(payload, ensure_ascii=False)
+
+    return calculate_financials
 
 
 # --------------------------------------------------------------------------- #

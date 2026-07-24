@@ -1,0 +1,1551 @@
+{
+  "_source": "SEEDED_DEMO_VALUE — illustrative Bangladesh crop-economics placeholders (approximate, hand-estimated; NOT live data). DAM's live farmgate-price API returns 500s (see docs/PLAN.md D4), so cost/price baselines here are indicative only — to be replaced with a real BBS cost-of-production / DAM price feed once wired in. Every crop entry is source-labeled seeded_demo_value; a farmer's own stated yield or price always overrides these (label farmer_estimate). Costs are Tk per DECIMAL (1/100 acre, ~40.47 sq m) to match the app's area unit and EXCLUDE fertilizer — fertilizer cost comes from the live CZIS-computed dose x fertilizer_prices_tk_per_kg below. Yields are converted from typical t/ha (247.105 decimal/ha).",
+  "fertilizer_prices_tk_per_kg": {
+    "_source": "SEEDED_DEMO_VALUE — approximate BADC-subsidized retail rates, Tk/kg.",
+    "urea": 27,
+    "tsp": 34,
+    "dap": 40,
+    "mop": 25,
+    "potash": 25,
+    "gypsum": 8,
+    "zinc sulphate": 130,
+    "zinc": 130,
+    "boron": 220,
+    "boric acid": 220,
+    "magnesium sulphate": 35,
+    "ammonium sulphate": 30,
+    "_default_tk_per_kg": 35
+  },
+  "crops": {
+    "boro dhan": {
+      "category": "cereal",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 22.3,
+        "base": 26.3,
+        "high": 30.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 22,
+        "base": 26,
+        "high": 32
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "t. aman dhan": {
+      "category": "cereal",
+      "season": [
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 12.9,
+        "base": 16.2,
+        "high": 19.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 22,
+        "base": 26,
+        "high": 32
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "b. aman dhan": {
+      "category": "cereal",
+      "season": [
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 10.5,
+        "base": 12.9,
+        "high": 15.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 22,
+        "base": 26,
+        "high": 32
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "t. aus dhan": {
+      "category": "cereal",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 10.5,
+        "base": 12.9,
+        "high": 15.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 24,
+        "high": 30
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "b. aus dhan": {
+      "category": "cereal",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 8.9,
+        "base": 11.3,
+        "high": 13.8
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 24,
+        "high": 30
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "wheat": {
+      "category": "cereal",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 10.1,
+        "base": 12.1,
+        "high": 14.2
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 28,
+        "base": 32,
+        "high": 38
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "maize": {
+      "category": "cereal",
+      "season": [
+        "rabi",
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 26.3,
+        "base": 32.4,
+        "high": 38.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 22,
+        "high": 26
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 10,
+        "labor_tk": 70,
+        "irrigation_tk": 40,
+        "pesticide_tk": 12
+      }
+    },
+    "barley": {
+      "category": "cereal",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 7.3,
+        "base": 8.9,
+        "high": 10.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 26,
+        "base": 30,
+        "high": 36
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 12,
+        "labor_tk": 55,
+        "irrigation_tk": 25,
+        "pesticide_tk": 8
+      }
+    },
+    "kaon": {
+      "category": "cereal",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 3.2,
+        "base": 4.0,
+        "high": 4.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 35,
+        "base": 40,
+        "high": 48
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 40,
+        "irrigation_tk": 10,
+        "pesticide_tk": 6
+      }
+    },
+    "proso millet": {
+      "category": "cereal",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 2.8,
+        "base": 3.6,
+        "high": 4.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 35,
+        "base": 40,
+        "high": 48
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 40,
+        "irrigation_tk": 10,
+        "pesticide_tk": 6
+      }
+    },
+    "mustard": {
+      "category": "oilseed",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 4.5,
+        "base": 5.3,
+        "high": 6.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 70,
+        "base": 85,
+        "high": 100
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "sesame": {
+      "category": "oilseed",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 2.4,
+        "base": 3.2,
+        "high": 4.0
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 110,
+        "base": 130,
+        "high": 150
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "ground nut": {
+      "category": "oilseed",
+      "season": [
+        "rabi",
+        "kharif-1",
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 6.1,
+        "base": 7.3,
+        "high": 8.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 60,
+        "base": 75,
+        "high": 90
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "sunflower": {
+      "category": "oilseed",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 5.3,
+        "base": 6.5,
+        "high": 7.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 60,
+        "base": 70,
+        "high": 82
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "linseed": {
+      "category": "oilseed",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 2.8,
+        "base": 3.6,
+        "high": 4.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 75,
+        "base": 90,
+        "high": 105
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "soybean": {
+      "category": "oilseed",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 6.1,
+        "base": 7.3,
+        "high": 8.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 48,
+        "base": 55,
+        "high": 65
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 15,
+        "labor_tk": 45,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "black cumin": {
+      "category": "oilseed",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 1.6,
+        "base": 2.0,
+        "high": 2.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 300,
+        "base": 350,
+        "high": 420
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 40,
+        "labor_tk": 60,
+        "irrigation_tk": 15,
+        "pesticide_tk": 10
+      }
+    },
+    "lentil": {
+      "category": "pulse",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 4.0,
+        "base": 4.9,
+        "high": 6.1
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 80,
+        "base": 95,
+        "high": 115
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "gram / chickpea": {
+      "category": "pulse",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 4.5,
+        "base": 5.3,
+        "high": 6.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 65,
+        "base": 75,
+        "high": 90
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "grass pea": {
+      "category": "pulse",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 3.2,
+        "base": 4.0,
+        "high": 4.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 45,
+        "base": 55,
+        "high": 65
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "mungbean": {
+      "category": "pulse",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 3.6,
+        "base": 4.5,
+        "high": 5.3
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 78,
+        "base": 90,
+        "high": 105
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "black gram": {
+      "category": "pulse",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 3.2,
+        "base": 4.0,
+        "high": 4.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 72,
+        "base": 85,
+        "high": 100
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "cowpea": {
+      "category": "pulse",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 4.0,
+        "base": 4.9,
+        "high": 6.1
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 60,
+        "base": 70,
+        "high": 82
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 18,
+        "labor_tk": 35,
+        "irrigation_tk": 8,
+        "pesticide_tk": 7
+      }
+    },
+    "potato": {
+      "category": "tuber",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 72.8,
+        "base": 89.0,
+        "high": 105.2
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 12,
+        "base": 18,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 180,
+        "labor_tk": 90,
+        "irrigation_tk": 40,
+        "pesticide_tk": 30
+      }
+    },
+    "sweet potato": {
+      "category": "tuber",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 72.8
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 15,
+        "base": 20,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 60,
+        "labor_tk": 60,
+        "irrigation_tk": 20,
+        "pesticide_tk": 10
+      }
+    },
+    "colocasia": {
+      "category": "tuber",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 36.4,
+        "base": 48.6,
+        "high": 60.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 25,
+        "high": 32
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 50,
+        "labor_tk": 55,
+        "irrigation_tk": 20,
+        "pesticide_tk": 12
+      }
+    },
+    "aroid": {
+      "category": "tuber",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 28.3,
+        "base": 36.4,
+        "high": 44.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 15,
+        "base": 20,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 45,
+        "labor_tk": 50,
+        "irrigation_tk": 15,
+        "pesticide_tk": 10
+      }
+    },
+    "jute (deshi)": {
+      "category": "cash_crop",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 7.3,
+        "base": 8.9,
+        "high": 10.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 50,
+        "base": 60,
+        "high": 72
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 90,
+        "irrigation_tk": 10,
+        "pesticide_tk": 15
+      }
+    },
+    "jute (tosa)": {
+      "category": "cash_crop",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 8.1,
+        "base": 9.7,
+        "high": 11.3
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 52,
+        "base": 62,
+        "high": 75
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 90,
+        "irrigation_tk": 10,
+        "pesticide_tk": 15
+      }
+    },
+    "mesta": {
+      "category": "cash_crop",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 6.1,
+        "base": 7.3,
+        "high": 8.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 45,
+        "base": 55,
+        "high": 65
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 85,
+        "irrigation_tk": 10,
+        "pesticide_tk": 15
+      }
+    },
+    "kenaf": {
+      "category": "cash_crop",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 6.1,
+        "base": 7.3,
+        "high": 8.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 45,
+        "base": 55,
+        "high": 65
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 8,
+        "labor_tk": 85,
+        "irrigation_tk": 10,
+        "pesticide_tk": 15
+      }
+    },
+    "cotton": {
+      "category": "cash_crop",
+      "season": [
+        "kharif-1",
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 6.9,
+        "base": 8.1,
+        "high": 9.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 55,
+        "base": 65,
+        "high": 78
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 20,
+        "labor_tk": 100,
+        "irrigation_tk": 30,
+        "pesticide_tk": 55
+      }
+    },
+    "sugarcane": {
+      "category": "cash_crop",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 242.8,
+        "base": 283.3,
+        "high": 344.0
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 3.0,
+        "base": 3.5,
+        "high": 4.2
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 500,
+        "labor_tk": 150,
+        "irrigation_tk": 60,
+        "pesticide_tk": 25
+      }
+    },
+    "onion": {
+      "category": "spice",
+      "season": [
+        "rabi",
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 40.5,
+        "base": 48.6,
+        "high": 60.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 35,
+        "high": 55
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 100,
+        "labor_tk": 90,
+        "irrigation_tk": 35,
+        "pesticide_tk": 20
+      }
+    },
+    "garlic": {
+      "category": "spice",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 20.2,
+        "base": 24.3,
+        "high": 30.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 75,
+        "base": 90,
+        "high": 110
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 100,
+        "labor_tk": 90,
+        "irrigation_tk": 35,
+        "pesticide_tk": 20
+      }
+    },
+    "ginger": {
+      "category": "spice",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 48.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 50,
+        "base": 60,
+        "high": 75
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 250,
+        "labor_tk": 100,
+        "irrigation_tk": 30,
+        "pesticide_tk": 25
+      }
+    },
+    "turmeric": {
+      "category": "spice",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 28.3,
+        "base": 32.4,
+        "high": 38.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 45,
+        "base": 55,
+        "high": 68
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 200,
+        "labor_tk": 90,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "coriander": {
+      "category": "spice",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 3.2,
+        "base": 4.0,
+        "high": 4.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 100,
+        "base": 120,
+        "high": 145
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 30,
+        "labor_tk": 55,
+        "irrigation_tk": 15,
+        "pesticide_tk": 10
+      }
+    },
+    "chilli": {
+      "category": "spice",
+      "season": [
+        "rabi",
+        "kharif-1",
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 4.9,
+        "base": 6.1,
+        "high": 7.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 150,
+        "base": 180,
+        "high": 220
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 100,
+        "irrigation_tk": 30,
+        "pesticide_tk": 40
+      }
+    },
+    "tomato": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 80.9,
+        "base": 101.2,
+        "high": 121.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 18,
+        "high": 30
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "brinjal": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 64.7,
+        "base": 80.9,
+        "high": 101.2
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 12,
+        "base": 20,
+        "high": 30
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "cabbage": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 101.2,
+        "base": 121.4,
+        "high": 145.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "cauliflower": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 60.7,
+        "base": 72.8,
+        "high": 89.0
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 18,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "broccoli": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 48.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 45,
+        "base": 60,
+        "high": 80
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 60,
+        "labor_tk": 80,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "carrot": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 72.8
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 25,
+        "high": 35
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "radish": {
+      "category": "vegetable",
+      "season": [
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 60.7,
+        "base": 72.8,
+        "high": 89.0
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "knol khol (kohlrabi)": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 40.5,
+        "base": 48.6,
+        "high": 60.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 12,
+        "base": 18,
+        "high": 25
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "cucumber": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 76.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 12,
+        "base": 18,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "cucumber (khira)": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 76.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 14,
+        "base": 20,
+        "high": 30
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "pumpkin (sweet gourd)": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 64.7,
+        "base": 80.9,
+        "high": 101.2
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 15,
+        "high": 22
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "bottle gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 80.9,
+        "base": 101.2,
+        "high": 121.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "bitter gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 52.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 30,
+        "high": 42
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "ridge gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 40.5,
+        "base": 48.6,
+        "high": 60.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 14,
+        "base": 20,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "sponge gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 40.5,
+        "base": 48.6,
+        "high": 60.7
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 14,
+        "base": 20,
+        "high": 28
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "snake gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 52.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 25,
+        "high": 35
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "teasle gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 24.3,
+        "base": 32.4,
+        "high": 40.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 22,
+        "base": 30,
+        "high": 42
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 60,
+        "labor_tk": 85,
+        "irrigation_tk": 25,
+        "pesticide_tk": 20
+      }
+    },
+    "pointed gourd": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 24.3,
+        "base": 32.4,
+        "high": 40.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 28,
+        "high": 38
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 60,
+        "labor_tk": 85,
+        "irrigation_tk": 25,
+        "pesticide_tk": 20
+      }
+    },
+    "ash gourd": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 64.7,
+        "base": 80.9,
+        "high": 101.2
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "ladys finger": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 24.3,
+        "base": 32.4,
+        "high": 40.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 25,
+        "high": 35
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "spinach": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 52.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 15,
+        "high": 22
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "indian spinach": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 76.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "red amaranth": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 24.3,
+        "base": 32.4,
+        "high": 40.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 15,
+        "high": 22
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "stem amaranth": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 52.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 10,
+        "base": 15,
+        "high": 22
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "musk melon": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 48.6,
+        "base": 60.7,
+        "high": 76.9
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 20,
+        "base": 30,
+        "high": 42
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "water melon": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 80.9,
+        "base": 101.2,
+        "high": 121.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 8,
+        "base": 12,
+        "high": 18
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "garden pea": {
+      "category": "vegetable",
+      "season": [
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 20.2,
+        "base": 24.3,
+        "high": 30.4
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 30,
+        "base": 40,
+        "high": 55
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 30,
+        "labor_tk": 60,
+        "irrigation_tk": 15,
+        "pesticide_tk": 12
+      }
+    },
+    "yard long bean": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 24.3,
+        "base": 32.4,
+        "high": 40.5
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 22,
+        "base": 30,
+        "high": 42
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    },
+    "country bean": {
+      "category": "vegetable",
+      "season": [
+        "kharif-1",
+        "kharif-2",
+        "rabi"
+      ],
+      "yield_kg_per_decimal": {
+        "low": 32.4,
+        "base": 40.5,
+        "high": 52.6
+      },
+      "farmgate_price_tk_per_kg": {
+        "low": 18,
+        "base": 25,
+        "high": 35
+      },
+      "other_costs_tk_per_decimal": {
+        "seed_tk": 35,
+        "labor_tk": 75,
+        "irrigation_tk": 30,
+        "pesticide_tk": 20
+      }
+    }
+  }
+}

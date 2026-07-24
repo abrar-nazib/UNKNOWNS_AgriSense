@@ -30,6 +30,7 @@ from .messages import (
 from .tools import (
     build_czis_tools,
     build_farm_tools,
+    build_finance_tool,
     build_memory_tools,
     build_patterns_tool,
     build_soil_tool,
@@ -118,6 +119,21 @@ SYSTEM_PROMPT = (
     "and never guess historical weather either.\n"
     "- Explain recommendations by naming the specific inputs behind them "
     "(the farmer's stated facts and retrieved data).\n"
+    "- Finance: whenever the farmer asks about cost, profit, revenue, ROI or "
+    "break-even for a crop, call calculate_financials — NEVER compute or "
+    "state these numbers yourself. Pass crop_id+variety_id (from "
+    "czis_crop_context) when you have them so fertilizer cost is included "
+    "from the real CZIS dose; without them fertilizer cost is omitted (say "
+    "so). Present the itemized cost breakdown and the low/base/high "
+    "scenario, and state plainly which numbers are czis_computed (real), "
+    "seeded_demo_value (placeholder pending a real price feed — say this "
+    "explicitly), or farmer_estimate. A farmer's own stated yield or price "
+    "always overrides the seeded ones — pass it via "
+    "farmer_yield_kg_per_decimal / farmer_price_tk_per_kg (also how to "
+    "answer 'what if the price drops' questions). If it returns "
+    "FINANCE_REFERENCE_UNKNOWN, say no reference data exists for that crop "
+    "and ask the farmer for their own cost/price estimates — never invent "
+    "numbers.\n"
     "\n"
     "Other tools: get_current_time, calculator for arithmetic, save_memory/"
     "recall_memory for durable personal facts (preferences, experiences) — "
@@ -182,23 +198,24 @@ async def stream_agent_turn(
         soil_tool = build_soil_tool(user)
         patterns_tool = build_patterns_tool(user)
         czis_tools = build_czis_tools(user)
+        finance_tool = build_finance_tool(user)
         memory_tools = build_memory_tools(user.id, db)
         tool_groups = {
             "intake": static_tools + farm_tools + [soil_tool],
             "advisor": static_tools
             + [weather_tool]
             + farm_tools
-            + [soil_tool, patterns_tool]
+            + [soil_tool, patterns_tool, finance_tool]
             + czis_tools
             + memory_tools,
             # Dedicated crop-recommendation specialist: everything needed to
             # ground a ranked shortlist (profile + soil survey + recorded
-            # pattern economics + CZIS catalog/varieties + weather), same
-            # hard six-field gate.
+            # pattern economics + CZIS catalog/varieties + weather + costed
+            # projection), same hard six-field gate.
             "recommender": static_tools
             + [weather_tool]
             + farm_tools
-            + [soil_tool, patterns_tool]
+            + [soil_tool, patterns_tool, finance_tool]
             + czis_tools,
         }
         all_tool_names = sorted(

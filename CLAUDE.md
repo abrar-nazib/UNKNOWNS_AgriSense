@@ -33,7 +33,7 @@ whose crop advice ignores the weather it just fetched will be noticed.
 | 2 | Live weather grounding | Calls a **real** weather API by location; uses actual rainfall/temp, no invented forecasts | ✅ DONE (Task 1) — `get_weather` tool → Open-Meteo (keyless), 16-day daily incl. ET0, geocode w/ bundled-centroid fallback, WEATHER_UNAVAILABLE on outage (never invents) |
 | 3 | Crop recommendation | Ranks ≥3 candidate crops w/ suitability, water need, risk, rough profit | ❌ TODO (Task 5) |
 | 4 | Season plan | Dated calendar: sowing window, fertilizer timing, irrigation, weed/pest checkpoints, harvest | ❌ TODO (Task 6) |
-| 5 | Financial projection | Itemized cost + yield, revenue, net profit, ROI, break-even; internally consistent (change input → outputs change) | ❌ TODO (Task 7) |
+| 5 | Financial projection | Itemized cost + yield, revenue, net profit, ROI, break-even; internally consistent (change input → outputs change) | ✅ DONE (Task 7) — standalone `calculate_financials` tool (advisor + recommender), pure-`Decimal` engine [backend/app/engines/finance.py](backend/app/engines/finance.py): itemized fertilizer cost (REAL, live CZIS dose x seeded Tk/kg — skips "or"-alternative rows) + seeded seed/labor/irrigation/pesticide costs; low/base/high yield×price → revenue/profit/ROI; break-even yield & price. Seeded reference for **68 common BD crops** (cereals/oilseeds/pulses/tubers/cash crops/spices/vegetables — perennial/orchard crops out of scope) in [backend/app/data/finance_reference.json](backend/app/data/finance_reference.json)/[backend/app/finance_ref.py](backend/app/finance_ref.py), explicitly labeled `seeded_demo_value` (no live BD price feed exists — DAM's API 500s, PLAN.md D4) pending a real feed; a farmer's own stated yield/price always overrides (`farmer_estimate`, also serves what-if questions). Invariants gold-tested: itemized costs sum exactly to total, profit ≡ revenue − cost every scenario, ROI sign matches profit sign, doubling area doubles cost/revenue/profit but leaves ROI% unchanged |
 | 6 | Explained reasoning | Every recommendation names the specific farm inputs + retrieved data it rests on | ⚠️ partial (prompt enforces naming inputs; weather cites real values; full grounding lands with Tasks 3-7) |
 | 7 | Knowledge base + RAG | Agronomic data (extension manuals, fertilizer/crop/soil refs) ingested into a KB; agent retrieves; crop/fertilizer/plan advice grounded in retrieval, not model recall | ❌ TODO (Task 4 — FRG 2024 corpus; extraction sanity-checked in [docs/FRG_PDF_EXTRACTION.md](docs/FRG_PDF_EXTRACTION.md)) |
 | 8 | Visible agent trace | UI exposes every tool call, params sent, raw values returned | ✅ DONE (tool-trace chips + `message_update` frames) |
@@ -110,6 +110,18 @@ that runs end-to-end in a 4-minute demo.
   upazila sorted most-profitable-first, PATTERNS_UNKNOWN sentinel when
   uncovered. THE grounding source for "rough profit" claims —
   `gm_tk_per_decimal x area_decimal` via the calculator tool, never invented.
+- **Financial projection (Task 7)**: `calculate_financials` tool (advisor +
+  recommender) → pure-`Decimal` engine [backend/app/engines/finance.py](backend/app/engines/finance.py). Fertilizer
+  cost is REAL when `crop_id`+`variety_id` are given (live CZIS dose x seeded
+  Tk/kg, skipping "or"-alternative rows to avoid double-counting); seed/labor/
+  irrigation/pesticide costs and the yield/price used for revenue come from
+  [backend/app/data/finance_reference.json](backend/app/data/finance_reference.json) (68 common BD crops, `seeded_demo_value`
+  — no live BD price feed exists yet, DAM's API 500s per PLAN.md D4) via
+  [backend/app/finance_ref.py](backend/app/finance_ref.py). Every field is source-labeled; a farmer's own stated
+  yield/price always overrides the seeded ones (`farmer_estimate` — also the
+  what-if mechanism). Returns itemized costs, low/base/high revenue/profit/
+  ROI, break-even yield & price; FINANCE_REFERENCE_UNKNOWN sentinel for
+  uncovered (perennial/orchard) crops — never invents numbers.
 - **Weather (Task 1)**: `get_weather` tool → [backend/app/adapters/weather.py](backend/app/adapters/weather.py)
   (Open-Meteo, keyless, 16-day max, ET0, retry + WEATHER_UNAVAILABLE sentinel,
   evidence metadata). **Coordinates-first**: default = the active farm's stored
@@ -196,8 +208,8 @@ docker compose down -v && docker compose up -d --build   # full reset (wipes db)
 - **Tests** (regression guard, run before/after changes): from `backend/`,
   `docker compose exec backend sh -c "pip install -r requirements-dev.txt && \
   TEST_DATABASE_URL=postgresql+asyncpg://argi:argi_dev_password@db:5432/argi_test pytest -q"`
-  (or `make test`). 187 tests: unit (security/phone/tools/weather adapter/czis
-  adapter/geo
+  (or `make test`). 208 tests: unit (security/phone/tools/weather adapter/czis
+  adapter/finance engine/geo
   gazetteer/unit
   conversion), integration (auth rotation/blacklist, chat ownership, farm tools +
   cross-user isolation), streaming (SSE tool_trace→message_update→done, weather

@@ -29,9 +29,22 @@ class User(Base):
     __tablename__ = "users"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    username: Mapped[str] = mapped_column(String(150), unique=True, index=True)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    # Display name — not unique (two farmers can share a name).
+    username: Mapped[str] = mapped_column(String(150), index=True)
+    # Mobile number is the unique identity + login credential (rural users
+    # have phones, not email). Stored canonical as 11-digit "01XXXXXXXXX".
+    phone: Mapped[str] = mapped_column(String(20), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
+
+    # Registration address — BBS/CZIS geocodes stored alongside display names
+    # so the agent can feed upazila_code straight into CZIS/weather tools.
+    division_name: Mapped[str] = mapped_column(String(80), default="")
+    division_code: Mapped[str] = mapped_column(String(8), default="")
+    district_name: Mapped[str] = mapped_column(String(80), default="")
+    district_code: Mapped[str] = mapped_column(String(8), default="")
+    upazila_name: Mapped[str] = mapped_column(String(80), default="")
+    upazila_code: Mapped[str] = mapped_column(String(12), default="")
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), default=_utcnow, server_default=func.now()
     )

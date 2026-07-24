@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy import or_, select
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
@@ -18,6 +18,7 @@ from ..schemas import (
     RegisterRequest,
     TokenPair,
     UserOut,
+    user_out,
 )
 from ..security import (
     TokenError,
@@ -56,30 +57,34 @@ async def register(payload: RegisterRequest, db: AsyncSession = Depends(get_db))
             status_code=400, detail="Password must be at least 8 characters."
         )
 
-    dup = await db.execute(
-        select(User).where(
-            or_(User.username == payload.username, User.email == payload.email)
-        )
-    )
+    # payload.phone is already normalized to 01XXXXXXXXX by the schema validator.
+    dup = await db.execute(select(User).where(User.phone == payload.phone))
     if dup.scalar_one_or_none() is not None:
         raise HTTPException(
-            status_code=400, detail="Username or email already taken."
+            status_code=400, detail="This mobile number is already registered."
         )
 
     user = User(
         username=payload.username,
-        email=payload.email,
+        phone=payload.phone,
         hashed_password=hash_password(payload.password1),
+        division_name=payload.division_name,
+        division_code=payload.division_code,
+        district_name=payload.district_name,
+        district_code=payload.district_code,
+        upazila_name=payload.upazila_name,
+        upazila_code=payload.upazila_code,
     )
     db.add(user)
     await db.commit()
     await db.refresh(user)
-    return UserOut(id=user.id, username=user.username, email=user.email)
+    return user_out(user)
 
 
 @router.post("/login", response_model=TokenPair)
 async def login(payload: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).where(User.username == payload.username))
+    # payload.phone is normalized to 01XXXXXXXXX by the schema validator.
+    result = await db.execute(select(User).where(User.phone == payload.phone))
     user = result.scalar_one_or_none()
     if user is None or not verify_password(payload.password, user.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials.")
@@ -159,4 +164,4 @@ async def logout(
 
 @router.get("/me", response_model=UserOut)
 async def me(user: User = Depends(get_current_user)):
-    return UserOut(id=user.id, username=user.username, email=user.email)
+    return user_out(user)

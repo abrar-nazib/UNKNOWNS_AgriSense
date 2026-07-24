@@ -1,8 +1,10 @@
 "use client";
 
-import { LogOut, MessageSquare, Plus, Trash2 } from "lucide-react";
+import { LogOut, MessageSquare, Plus, Trash2, User } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useAuth } from "@/lib/auth";
+import { formatBdPhone } from "@/lib/phone";
 import { useDeleteSession, useSessions } from "@/lib/hooks";
 import type { Session } from "@/lib/types";
 import { LeafMark } from "@/components/ui/LeafMark";
@@ -136,14 +138,24 @@ export function Sidebar({
       </nav>
 
       <div className="border-t border-border px-3 py-3">
-        <div className="mb-2 px-1.5">
-          <p className="truncate text-sm font-medium text-text-primary">
-            {user?.username ?? "…"}
-          </p>
-          {user?.email && (
-            <p className="truncate text-xs text-text-muted">{user.email}</p>
-          )}
-        </div>
+        <Link
+          href="/profile"
+          className="mb-2 flex items-center gap-2 rounded-lg px-1.5 py-1.5 transition hover:bg-primary-50"
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-primary-700">
+            <User size={16} strokeWidth={1.75} />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate text-sm font-medium text-text-primary">
+              {user?.username ?? "…"}
+            </span>
+            {user?.phone && (
+              <span className="block truncate text-xs text-text-muted">
+                {formatBdPhone(user.phone)}
+              </span>
+            )}
+          </span>
+        </Link>
         <button
           type="button"
           onClick={() => logout()}

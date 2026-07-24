@@ -135,22 +135,28 @@ async function json<T>(res: Response): Promise<T> {
 // ---------------------------------------------------------------------------
 
 export async function apiLogin(
-  username: string,
+  phone: string,
   password: string,
 ): Promise<TokenPair> {
   const res = await apiFetch("/api/auth/login", {
     method: "POST",
     auth: false,
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ phone, password }),
   });
   return json<TokenPair>(res);
 }
 
 export interface RegisterPayload {
-  username: string;
-  email: string;
+  username: string; // display name
+  phone: string;
   password1: string;
   password2: string;
+  division_name: string;
+  division_code: string;
+  district_name: string;
+  district_code: string;
+  upazila_name: string;
+  upazila_code: string;
 }
 
 export async function apiRegister(payload: RegisterPayload): Promise<AuthUser> {

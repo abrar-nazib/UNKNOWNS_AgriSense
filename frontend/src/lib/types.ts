@@ -1,9 +1,19 @@
 // Shared domain types, mirrored from docs/API_CONTRACT.md (frozen).
 
+export interface Address {
+  division_name: string;
+  division_code: string;
+  district_name: string;
+  district_code: string;
+  upazila_name: string;
+  upazila_code: string;
+}
+
 export interface AuthUser {
   id: number;
   username: string;
-  email: string;
+  phone: string;
+  address: Address;
 }
 
 export interface TokenPair {

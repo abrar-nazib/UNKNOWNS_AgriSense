@@ -5,21 +5,23 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { isValidBdPhone } from "@/lib/phone";
 import { getAccess } from "@/lib/tokens";
+import type { Address } from "@/lib/types";
+import { AddressPicker, EMPTY_ADDRESS } from "@/components/address/AddressPicker";
 import { LeafMark } from "@/components/ui/LeafMark";
 import { PasswordInput } from "@/components/ui/PasswordInput";
 import { TextInput } from "@/components/ui/TextInput";
-
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function RegisterPage() {
   const router = useRouter();
   const { register, login } = useAuth();
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
   const [password1, setPassword1] = useState("");
   const [password2, setPassword2] = useState("");
+  const [address, setAddress] = useState<Address>(EMPTY_ADDRESS);
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -30,12 +32,15 @@ export default function RegisterPage() {
 
   const mark = (k: string) => setTouched((t) => ({ ...t, [k]: true }));
 
+  const addressComplete = Boolean(
+    address.division_code && address.district_code && address.upazila_code,
+  );
+
   const errors = {
-    username:
-      touched.username && !username.trim() ? "Username is required." : undefined,
-    email:
-      touched.email && !EMAIL_RE.test(email)
-        ? "Enter a valid email address."
+    name: touched.name && !name.trim() ? "Your name is required." : undefined,
+    phone:
+      touched.phone && !isValidBdPhone(phone)
+        ? "Enter a valid mobile number (e.g. 01712345678)."
         : undefined,
     password1:
       touched.password1 && password1.length < 8
@@ -45,21 +50,27 @@ export default function RegisterPage() {
       touched.password2 && password2 !== password1
         ? "Passwords do not match."
         : undefined,
+    address:
+      touched.address && !addressComplete
+        ? "Select your division, district and upazila."
+        : undefined,
   };
 
   const valid =
-    username.trim() &&
-    EMAIL_RE.test(email) &&
+    name.trim() &&
+    isValidBdPhone(phone) &&
     password1.length >= 8 &&
-    password1 === password2;
+    password1 === password2 &&
+    addressComplete;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setTouched({
-      username: true,
-      email: true,
+      name: true,
+      phone: true,
       password1: true,
       password2: true,
+      address: true,
     });
     setFormError(null);
     if (!valid) return;
@@ -67,14 +78,15 @@ export default function RegisterPage() {
     setSubmitting(true);
     try {
       await register({
-        username: username.trim(),
-        email: email.trim(),
+        username: name.trim(),
+        phone: phone.trim(),
         password1,
         password2,
+        ...address,
       });
       // Auto-login on success, then head to chat. Falls back to /login.
       try {
-        await login(username.trim(), password1);
+        await login(phone.trim(), password1);
         router.replace("/chat");
       } catch {
         router.replace("/login");
@@ -106,23 +118,38 @@ export default function RegisterPage() {
 
           <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
             <TextInput
-              label="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              onBlur={() => mark("username")}
-              error={errors.username}
-              autoComplete="username"
+              label="Your name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              onBlur={() => mark("name")}
+              error={errors.name}
+              autoComplete="name"
               autoFocus
             />
             <TextInput
-              label="Email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onBlur={() => mark("email")}
-              error={errors.email}
-              autoComplete="email"
+              label="Mobile number"
+              type="tel"
+              inputMode="numeric"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              onBlur={() => mark("phone")}
+              error={errors.phone}
+              autoComplete="tel"
+              placeholder="01XXXXXXXXX"
             />
+
+            <div className="flex flex-col gap-2">
+              <span className="text-sm font-medium text-text-primary">
+                Your location
+              </span>
+              <AddressPicker
+                value={address}
+                onChange={setAddress}
+                onBlur={() => mark("address")}
+                error={errors.address}
+              />
+            </div>
+
             <PasswordInput
               label="Password"
               value={password1}

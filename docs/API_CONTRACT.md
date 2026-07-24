@@ -5,13 +5,27 @@ Auth = `Authorization: Bearer <access_token>` header on every non-auth-public ro
 
 ## Auth
 
+> **Identity = mobile number.** Rural users have phones, not email. The mobile
+> number is the unique key + login credential; `username` is a non-unique
+> display name. Phone is normalized to canonical 11-digit `01XXXXXXXXX`
+> (accepts `+880…`/`880…`/dropped-leading-zero on input). Address is captured
+> at registration; each level carries BOTH a name and its CZIS/BBS geocode.
+
 ### POST /api/auth/register
-Req: `{ "username": str, "email": str, "password1": str, "password2": str }`
-- 400 if `password1 != password2`, weak password, or username/email taken.
-Res 201: `{ "id": int, "username": str, "email": str }`
+Req:
+```
+{ "username": str,            // display name (not unique)
+  "phone": str,               // BD mobile, e.g. "01712345678"
+  "password1": str, "password2": str,
+  "division_name": str, "division_code": str,     // e.g. "Rajshahi", "50"
+  "district_name": str, "district_code": str,     // e.g. "Rajshahi", "5081"
+  "upazila_name":  str, "upazila_code":  str }     // e.g. "Tanore", "508194"
+```
+- 400 if `password1 != password2`, weak password, invalid phone, or phone already registered.
+Res 201: `UserOut` (see Shapes).
 
 ### POST /api/auth/login
-Req: `{ "username": str, "password": str }`
+Req: `{ "phone": str, "password": str }`
 Res 200: `{ "access_token": str, "refresh_token": str, "token_type": "bearer" }`
 - 401 on bad creds.
 
@@ -26,7 +40,7 @@ Req: `{ "refresh_token": str }` (access token in header)
 Res 204. Blacklists the refresh token `jti` (and the current access `jti`).
 
 ### GET /api/auth/me
-Res 200: `{ "id": int, "username": str, "email": str }` (401 if unauthenticated).
+Res 200: `UserOut` (see Shapes). 401 if unauthenticated.
 
 ## Chat (all require Bearer)
 
@@ -54,6 +68,14 @@ Res 204. (404 if not owned)
 ## Shapes
 
 ```
+UserOut = {
+  id: int, username: str, phone: str,   // phone canonical "01XXXXXXXXX"
+  address: {
+    division_name: str, division_code: str,
+    district_name: str, district_code: str,
+    upazila_name:  str, upazila_code:  str
+  }
+}
 Session = {
   id: int, title: str, message_count: int,
   created_at: iso8601, updated_at: iso8601

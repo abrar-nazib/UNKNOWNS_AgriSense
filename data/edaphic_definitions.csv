@@ -1,0 +1,47 @@
+type,category,note
+landtype,High land,Land above normal inundation level
+landtype,Medium high land-1,Land normally inundated upto 30 cm depth
+landtype,Medium high land-2,Land normally inundated 30 - 90 cm depth
+landtype,Medium Low land,Land normally inundated 90 - 180 cm depth
+landtype,Low land,Land normally inundated 180 - 275 cm depth
+landtype,Very low land,Land normally inundated over 275 cm depth
+texture,Sand,"Sand (>70%), Silt (<30%), Clay (<15%)"
+texture,Sandy Loam,"Sand (43-85%), Silt (<50%), Clay (<20%)"
+texture,Loam,"Sand (<52%), Silt (>28%), Clay (<27%)"
+texture,Clay Loam,"Sand (<80%), Silt (<73%), Clay (20-40%)"
+texture,Clay,"Sand (<65%), Silt (<60%), Clay (>35%)"
+consistency,Loose,"Soil is non-coherent (single grain structure) and it breaks under very gentle pressure, i.e., Sandy soils."
+consistency,Friable,"Weakly resistant to pressure and soil materials breaks easily under gentle to moderate pressure i.e., sandy loam / loam"
+consistency,Firm,"Very resistant to pressure and soil materials is not easily broken between the thumbs and fore finger, i.e., Clay loam and clay"
+drainage,Well Drained,"Water removed from the soil readily/instantly, but not rapidly. Well drained soils commonly retain optimum amounts of moisture for plant growth after rain or application of irrigation water."
+drainage,Moderately Well Drained,"Water removed from the soil rather slowly, so that the profile is wet for a short but significant length of time. Moderately well drained soils commonly have slowly permeable layer or relatively high water table at a depth of 1 meter in the rainy season."
+drainage,Imperfectly Drained,Water removed from the soil slowly. The soil remains intermittently wet in the rainy season but flood water will not remain on the surface for more than 15 days continuously. The ground water table remains within 1 meter from the surface for a certain period of time in the rainy season.
+drainage,Poorly Drained,Water removed from the soil so slowly that soil remains flooded from 15 days to few months. The land may even remain wet after the rainy season.
+drainage,Very Poorly Drained,The soil remains submerged under water for more than 8 months in a year and it remains wet almost throughout the year.
+reaction,Extremely Acidic,pH: <4.5
+reaction,Strongly Acidic,pH: 4.5 - 5.5
+reaction,Moderately Acidic,pH: 5.6 - 6.5
+reaction,Neutral,pH: 6.6 - 7.3
+reaction,Moderately Alkaline,pH: 7.4 - 8.4
+reaction,Strongly Alkaline,pH: 8.5 - 9.0
+reaction,Extremely Alkaline,pH: >9.0
+moisture,Low,Plant available soil moisture content lasts for Less than one month
+moisture,Medium,Plant available soil moisture content lasts for one to two months
+moisture,High,Plant available soil moisture content lasts for two to three months
+moisture,Very High,Plant available soil moisture content lasts for more than three months
+salinity,Non Saline,EC: < 2 dS/m
+salinity,Very Slightly Saline,EC: 2 - 4 dS/m
+salinity,Slightly Saline,EC: 4 - 8 dS/m
+salinity,Moderately Saline,EC: 8 - 12 dS/m
+salinity,Strongly Saline,EC: 12 - 15 dS/m
+salinity,Extremely Saline,EC: >15 dS/m
+recession,Very Early,Surface water drains out from soil by Mid-September to Mid-October (between 15 September to 14 October).
+recession,Early,Surface water drains out from soil between Mid-October to Mid-November (15 October to 14 November).
+recession,Normal,Surface water drains out from soil between Mid-November to Mid-December (15 November to 14 December).
+recession,Late,Surface water drains out from soil between Mid-December to end December (15 December to 30 December).
+recession,Very Late,Surface water drains out from soil after December (after 30 December).
+relief,Level,< 3 % slope
+relief,Slightly undulating,3 - 8 % slope
+relief,Moderately undulating,8 - 16 % slope
+relief,Undulating,16 - 30 % slope
+relief,Sloppy,> 30 % slope

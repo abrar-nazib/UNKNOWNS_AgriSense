@@ -1,0 +1,5 @@
+.vscode/
+data/bamis/pdfs/
+data/bamis/text/
+**.pyc
+.DS_Store

@@ -1,0 +1,498 @@
+division_code,division_name,district_code,district_name,upazila_code,upazila_name,upazila_name_bn
+10,Barishal,1004,Barguna,100409,Amtali,আমতলী
+10,Barishal,1004,Barguna,100419,Bamna,বামনা
+10,Barishal,1004,Barguna,100428,Barguna Sadar,বরগুনা সদর
+10,Barishal,1004,Barguna,100447,Betagi,বেতাগী
+10,Barishal,1004,Barguna,100485,Patharghata,পাথরঘাটা
+10,Barishal,1004,Barguna,100492,Taltali,তালতলী
+10,Barishal,1006,Barishal,100602,Agailjhara,আগৈলঝাড়া
+10,Barishal,1006,Barishal,100603,Babuganj,বাবুগঞ্জ
+10,Barishal,1006,Barishal,100607,Bakerganj,বাকেরগঞ্জ
+10,Barishal,1006,Barishal,100610,Banaripara,বানারীপাড়া
+10,Barishal,1006,Barishal,100651,Barishal Sadar (Kotwali),বরিশাল সদর
+10,Barishal,1006,Barishal,100632,Gaurnadi,গৌরনদী
+10,Barishal,1006,Barishal,100636,Hizla,হিজলা
+10,Barishal,1006,Barishal,100662,Mehendiganj,মেহেন্দিগঞ্জ
+10,Barishal,1006,Barishal,100669,Muladi,মুলাদী
+10,Barishal,1006,Barishal,100694,Wazirpur,উজিরপুর
+10,Barishal,1009,Bhola,100918,Bhola Sadar,ভোলা সদর
+10,Barishal,1009,Bhola,100921,Borhanuddin,বোরহানউদ্দিন
+10,Barishal,1009,Bhola,100925,Charfasson,চরফ্যাশন
+10,Barishal,1009,Bhola,100929,Daulatkhan,দৌলতখান
+10,Barishal,1009,Bhola,100954,Lalmohan,লালমোহন
+10,Barishal,1009,Bhola,100965,Manpura,মনপুরা
+10,Barishal,1009,Bhola,100991,Tazumuddin,তজুমদ্দিন
+10,Barishal,1042,Jhalokathi,104240,Jhalokathi Sadar,ঝালকাঠি সদর
+10,Barishal,1042,Jhalokathi,104243,Kanthalia,কাঠালিয়া
+10,Barishal,1042,Jhalokathi,104273,Nalchhity,নলছিটি
+10,Barishal,1042,Jhalokathi,104284,Rajapur,রাজাপুর
+10,Barishal,1078,Patuakhali,107838,Bauphal,বাউফল
+10,Barishal,1078,Patuakhali,107852,Dashmina,দশমিনা
+10,Barishal,1078,Patuakhali,107855,Dumki,দুমকী
+10,Barishal,1078,Patuakhali,107857,Galachipa,গলাচিপা
+10,Barishal,1078,Patuakhali,107866,Kalapara,কলাপাড়া
+10,Barishal,1078,Patuakhali,107876,Mirzaganj,মির্জাগঞ্জ
+10,Barishal,1078,Patuakhali,107895,Patuakhali Sadar,পটুয়াখালী সদর
+10,Barishal,1078,Patuakhali,107897,Rangabali,রাঙ্গাবালী
+10,Barishal,1079,Pirojpur,107914,Bhandaria,ভান্ডারিয়া
+10,Barishal,1079,Pirojpur,107990,Indurkani,ইন্দুরকানী
+10,Barishal,1079,Pirojpur,107947,Kawkhali,কাউখালী
+10,Barishal,1079,Pirojpur,107958,Mathbaria,মঠবাড়ীয়া
+10,Barishal,1079,Pirojpur,107976,Nazirpur,নাজিরপুর
+10,Barishal,1079,Pirojpur,107987,Nesarabad (Swarupkati),নেছারাবাদ (স্বরুপকাঠী)
+10,Barishal,1079,Pirojpur,107980,Pirojpur Sadar,পিরোজপুর সদর
+20,Chattogram,2003,Bandarban,200304,Alikadam,আলীকদম
+20,Chattogram,2003,Bandarban,200314,Bandarban Sadar,বান্দরবান সদর
+20,Chattogram,2003,Bandarban,200351,Lama,লামা
+20,Chattogram,2003,Bandarban,200373,Naikhongchhari,নাইক্ষ্যংছড়ি
+20,Chattogram,2003,Bandarban,200389,Rowangchhari,রোয়াংছড়ি
+20,Chattogram,2003,Bandarban,200391,Ruma,রুমা
+20,Chattogram,2003,Bandarban,200395,Thanchi,থানচি
+20,Chattogram,2012,Brahamanbaria,201202,Akhaura,আখাউড়া
+20,Chattogram,2012,Brahamanbaria,201233,Ashuganj,আশুগঞ্জ
+20,Chattogram,2012,Brahamanbaria,201204,Banchharampur,বাঞ্ছারামপুর
+20,Chattogram,2012,Brahamanbaria,201207,Bijoynagar,বিজয়নগর
+20,Chattogram,2012,Brahamanbaria,201213,Brahmanbaria Sadar,ব্রাহ্মণবাড়িয়া সদর
+20,Chattogram,2012,Brahamanbaria,201263,Kasba,কসবা
+20,Chattogram,2012,Brahamanbaria,201285,Nabinagar,নবীনগর
+20,Chattogram,2012,Brahamanbaria,201290,Nasirnagar,নাসিরনগর
+20,Chattogram,2012,Brahamanbaria,201294,Sarail,সরাইল
+20,Chattogram,2013,Chandpur,201322,Chandpur Sadar,চাঁদপুর সদর
+20,Chattogram,2013,Chandpur,201345,Faridganj,ফরিদগঞ্জ
+20,Chattogram,2013,Chandpur,201347,Haimchar,হাইমচর
+20,Chattogram,2013,Chandpur,201349,Hajiganj,হাজীগঞ্জ
+20,Chattogram,2013,Chandpur,201358,Kachua,কচুয়া
+20,Chattogram,2013,Chandpur,201376,Matlab Dakshin,মতলব দক্ষিণ
+20,Chattogram,2013,Chandpur,201379,Matlab Uttar,মতলব উত্তর
+20,Chattogram,2013,Chandpur,201395,Shahrasti,শাহরাস্তি
+20,Chattogram,2015,Chattogram,201504,Anowara,আনোয়ারা
+20,Chattogram,2015,Chattogram,201508,Banshkhali,বাঁশখালী
+20,Chattogram,2015,Chattogram,201512,Boalkhali,বোয়ালখালী
+20,Chattogram,2015,Chattogram,201518,Chandanaish,চন্দনাইশ
+20,Chattogram,2015,Chattogram,201533,Fatikchhari,ফটিকছড়ি
+20,Chattogram,2015,Chattogram,201537,Hathazari,হাটহাজারী
+20,Chattogram,2015,Chattogram,201539,Karnafuli,কর্ণফুলী
+20,Chattogram,2015,Chattogram,201547,Lohagara,লোহাগাড়া
+20,Chattogram,2015,Chattogram,201553,Mirsharai,মীরসরাই
+20,Chattogram,2015,Chattogram,201561,Patiya,পটিয়া
+20,Chattogram,2015,Chattogram,201570,Rangunia,রাঙ্গুনিয়া
+20,Chattogram,2015,Chattogram,201574,Raozan,রাউজান
+20,Chattogram,2015,Chattogram,201578,Sandwip,সন্দ্বীপ
+20,Chattogram,2015,Chattogram,201582,Satkania,সাতকানিয়া
+20,Chattogram,2015,Chattogram,201586,Sitakunda,সীতাকুন্ড
+20,Chattogram,2022,Cox'sbazar,202216,Chakaria,চকরিয়া
+20,Chattogram,2022,Cox'sbazar,202224,Cox'sbazar Sadar,কক্সবাজার সদর
+20,Chattogram,2022,Cox'sbazar,202232,Eidgaon,ঈদগাঁও
+20,Chattogram,2022,Cox'sbazar,202245,Kutubdia,কুতুবদিয়া
+20,Chattogram,2022,Cox'sbazar,202249,Maheshkhali,মহেশখালী
+20,Chattogram,2022,Cox'sbazar,202256,Pekua,পেকুয়া
+20,Chattogram,2022,Cox'sbazar,202266,Ramu,রামু
+20,Chattogram,2022,Cox'sbazar,202290,Teknaf,টেকনাফ
+20,Chattogram,2022,Cox'sbazar,202294,Ukhia,উখিয়া
+20,Chattogram,2019,Cumilla,201967,Adarsha Sadar,আদর্শ সদর
+20,Chattogram,2019,Cumilla,201909,Barura,বরুড়া
+20,Chattogram,2019,Cumilla,201915,Brahmanpara,ব্রাহ্মণপাড়া
+20,Chattogram,2019,Cumilla,201918,Burichang,বুড়িচং
+20,Chattogram,2019,Cumilla,201927,Chandina,চান্দিনা
+20,Chattogram,2019,Cumilla,201931,Chauddagram,চৌদ্দগ্রাম
+20,Chattogram,2019,Cumilla,201936,Daudkandi,দাউদকান্দি
+20,Chattogram,2019,Cumilla,201940,Debidwar,দেবিদ্বার
+20,Chattogram,2019,Cumilla,201954,Homna,হোমনা
+20,Chattogram,2019,Cumilla,201972,Laksam,লাকসাম
+20,Chattogram,2019,Cumilla,201973,Lalmai,লালমাই
+20,Chattogram,2019,Cumilla,201974,Manoharganj,মনোহরগঞ্জ
+20,Chattogram,2019,Cumilla,201975,Meghna,মেঘনা
+20,Chattogram,2019,Cumilla,201981,Muradnagar,মুরাদনগর
+20,Chattogram,2019,Cumilla,201987,Nangalkot,নাঙ্গলকোট
+20,Chattogram,2019,Cumilla,201933,Sadar Dakshin,সদর দক্ষিণ
+20,Chattogram,2019,Cumilla,201994,Titas,তিতাস
+20,Chattogram,2030,Feni,203014,Chhagalnaiya,ছাগলনাইয়া
+20,Chattogram,2030,Feni,203025,Daganbhuiyan,দাগনভূঞা
+20,Chattogram,2030,Feni,203029,Feni Sadar,ফেনী সদর
+20,Chattogram,2030,Feni,203041,Fulgazi,ফুলগাজী
+20,Chattogram,2030,Feni,203051,Parshuram,পরশুরাম
+20,Chattogram,2030,Feni,203094,Sonagazi,সোনাগাজী
+20,Chattogram,2046,Khagrachhari,204643,Dighinala,দিঘীনালা
+20,Chattogram,2046,Khagrachhari,204647,Guimara,গুইমারা
+20,Chattogram,2046,Khagrachhari,204649,Khagrachhari Sadar,খাগড়াছড়ি সদর
+20,Chattogram,2046,Khagrachhari,204661,Lakshmichhari,লক্ষীছড়ি
+20,Chattogram,2046,Khagrachhari,204665,Mahalchhari,মহালছড়ি
+20,Chattogram,2046,Khagrachhari,204667,Manikchhari,মানিকছড়ি
+20,Chattogram,2046,Khagrachhari,204670,Matiranga,মাটিরাঙ্গা
+20,Chattogram,2046,Khagrachhari,204677,Panchhari,পানছড়ি
+20,Chattogram,2046,Khagrachhari,204680,Ramgarh,রামগড়
+20,Chattogram,2051,Lakshmipur,205133,Kamalnagar,কমলনগর
+20,Chattogram,2051,Lakshmipur,205143,Lakshmipur Sadar,লক্ষ্মীপুর সদর
+20,Chattogram,2051,Lakshmipur,205165,Ramganj,রামগঞ্জ
+20,Chattogram,2051,Lakshmipur,205173,Ramgati,রামগতি
+20,Chattogram,2051,Lakshmipur,205158,Roypur,রায়পুর
+20,Chattogram,2075,Noakhali,207507,Begumganj,বেগমগঞ্জ
+20,Chattogram,2075,Noakhali,207510,Chatkhil,চাটখিল
+20,Chattogram,2075,Noakhali,207521,Companiganj,কোম্পানীগঞ্জ
+20,Chattogram,2075,Noakhali,207536,Hatiya,হাতিয়া
+20,Chattogram,2075,Noakhali,207547,Kabirhat,কবিরহাট
+20,Chattogram,2075,Noakhali,207587,Noakhali Sadar,নোয়াখালী সদর
+20,Chattogram,2075,Noakhali,207580,Senbagh,সেনবাগ
+20,Chattogram,2075,Noakhali,207583,Sonaimuri,সোনাইমুড়ী
+20,Chattogram,2075,Noakhali,207585,Subarnachar,সুবর্ণচর
+20,Chattogram,2084,Rangamati,208407,Baghaichhari,বাঘাইছড়ি
+20,Chattogram,2084,Rangamati,208421,Barkal,বরকল
+20,Chattogram,2084,Rangamati,208429,Belaichhari,বিলাইছড়ি
+20,Chattogram,2084,Rangamati,208447,Juraichhari,জুরাছড়ি
+20,Chattogram,2084,Rangamati,208436,Kaptai,কাপ্তাই
+20,Chattogram,2084,Rangamati,208425,Kawkhali,কাউখালী
+20,Chattogram,2084,Rangamati,208458,Langadu,লংগদু
+20,Chattogram,2084,Rangamati,208475,Naniarchar,নানিয়ারচর
+20,Chattogram,2084,Rangamati,208478,Rajasthali,রাজস্থলী
+20,Chattogram,2084,Rangamati,208487,Rangamati Sadar,রাঙ্গামাটি সদর
+30,Dhaka,3026,Dhaka,302614,Dhamrai,ধামরাই
+30,Dhaka,3026,Dhaka,302618,Dohar,দোহার
+30,Dhaka,3026,Dhaka,302638,Keraniganj,কেরাণীগঞ্জ
+30,Dhaka,3026,Dhaka,302662,Nawabganj,নবাবগঞ্জ
+30,Dhaka,3026,Dhaka,302672,Savar,সাভার
+30,Dhaka,3029,Faridpur,302903,Alfadanga,আলফাডাঙ্গা
+30,Dhaka,3029,Faridpur,302910,Bhanga,ভাঙ্গা
+30,Dhaka,3029,Faridpur,302918,Boalmari,বোয়ালমারী
+30,Dhaka,3029,Faridpur,302921,Charbhadrasan,চরভদ্রাসন
+30,Dhaka,3029,Faridpur,302947,Faridpur Sadar,ফরিদপুর সদর
+30,Dhaka,3029,Faridpur,302956,Madhukhali,মধুখালী
+30,Dhaka,3029,Faridpur,302962,Nagarkanda,নগরকান্দা
+30,Dhaka,3029,Faridpur,302984,Sadarpur,সদরপুর
+30,Dhaka,3029,Faridpur,302990,Saltha,সালথা
+30,Dhaka,3033,Gazipur,303331,Gazipur City Corporation,গাজীপুর সিটি কর্পোরেশন
+30,Dhaka,3033,Gazipur,303330,Gazipur Sadar,গাজীপুর সদর
+30,Dhaka,3033,Gazipur,303332,Kaliakair,কালিয়াকৈর
+30,Dhaka,3033,Gazipur,303334,Kaliganj,কালীগঞ্জ
+30,Dhaka,3033,Gazipur,303336,Kapasia,কাপাসিয়া
+30,Dhaka,3033,Gazipur,303386,Sreepur,শ্রীপুর
+30,Dhaka,3035,Gopalganj,303532,Gopalganj Sadar,গোপালগঞ্জ সদর
+30,Dhaka,3035,Gopalganj,303543,Kashiani,কাশিয়ানী
+30,Dhaka,3035,Gopalganj,303551,Kotalipara,কোটালীপাড়া
+30,Dhaka,3035,Gopalganj,303558,Muksudpur,মুকসুদপুর
+30,Dhaka,3035,Gopalganj,303591,Tungipara,টুঙ্গিপাড়া
+30,Dhaka,3048,Kishoreganj,304802,Austagram,অষ্টগ্রাম
+30,Dhaka,3048,Kishoreganj,304806,Bajitpur,বাজিতপুর
+30,Dhaka,3048,Kishoreganj,304811,Bhairab,ভৈরব
+30,Dhaka,3048,Kishoreganj,304827,Hossainpur,হোসেনপুর
+30,Dhaka,3048,Kishoreganj,304833,Itna,ইটনা
+30,Dhaka,3048,Kishoreganj,304842,Karimganj,করিমগঞ্জ
+30,Dhaka,3048,Kishoreganj,304845,Katiadi,কটিয়াদী
+30,Dhaka,3048,Kishoreganj,304849,Kishoreganj Sadar,কিশোরগঞ্জ সদর
+30,Dhaka,3048,Kishoreganj,304854,Kuliarchar,কুলিয়ারচর
+30,Dhaka,3048,Kishoreganj,304859,Mithamain,মিঠামইন
+30,Dhaka,3048,Kishoreganj,304876,Nikli,নিকলী
+30,Dhaka,3048,Kishoreganj,304879,Pakundia,পাকুন্দিয়া
+30,Dhaka,3048,Kishoreganj,304892,Tarail,তাড়াইল
+30,Dhaka,3054,Madaripur,305418,Dasar,ডাসার
+30,Dhaka,3054,Madaripur,305440,Kalkini,কালকিনি
+30,Dhaka,3054,Madaripur,305454,Madaripur Sadar,মাদারীপুর সদর
+30,Dhaka,3054,Madaripur,305480,Rajoir,রাজৈর
+30,Dhaka,3054,Madaripur,305487,Shibchar,শিবচর
+30,Dhaka,3056,Manikganj,305610,Daulatpur,দৌলতপুর
+30,Dhaka,3056,Manikganj,305622,Ghior,ঘিওর
+30,Dhaka,3056,Manikganj,305628,Harirampur,হরিরামপুর
+30,Dhaka,3056,Manikganj,305646,Manikganj Sadar,মানিকগঞ্জ সদর
+30,Dhaka,3056,Manikganj,305670,Saturia,সাটুরিয়া
+30,Dhaka,3056,Manikganj,305678,Shibalaya,শিবালয়
+30,Dhaka,3056,Manikganj,305682,Singair,সিংগাইর
+30,Dhaka,3059,Munshiganj,305924,Gazaria,গজারিয়া
+30,Dhaka,3059,Munshiganj,305944,Lohajang,লৌহজং
+30,Dhaka,3059,Munshiganj,305956,Munshiganj Sadar,মুন্সীগঞ্জ সদর
+30,Dhaka,3059,Munshiganj,305974,Serajdikhan,সিরাজদিখান
+30,Dhaka,3059,Munshiganj,305984,Sreenagar,শ্রীনগর
+30,Dhaka,3059,Munshiganj,305994,Tongibari,টংগিবাড়ী
+30,Dhaka,3067,Narayanganj,306702,Araihazar,আড়াইহাজার
+30,Dhaka,3067,Narayanganj,306706,Bandar,বন্দর
+30,Dhaka,3067,Narayanganj,306758,Narayanganj Sadar,নারায়নগঞ্জ সদর
+30,Dhaka,3067,Narayanganj,306768,Rupganj,রূপগঞ্জ
+30,Dhaka,3067,Narayanganj,306704,Sonargaon,সোনারগাঁ
+30,Dhaka,3068,Narsingdi,306807,Belabo,বেলাবো
+30,Dhaka,3068,Narsingdi,306852,Manohardi,মনোহরদী
+30,Dhaka,3068,Narsingdi,306860,Narsingdi Sadar,নরসিংদী সদর
+30,Dhaka,3068,Narsingdi,306863,Palash,পলাশ
+30,Dhaka,3068,Narsingdi,306864,Roypura,রায়পুরা
+30,Dhaka,3068,Narsingdi,306876,Shibpur,শিবপুর
+30,Dhaka,3082,Rajbari,308207,Baliakandi,বালিয়াকান্দি
+30,Dhaka,3082,Rajbari,308229,Goalanda,গোয়ালন্দ
+30,Dhaka,3082,Rajbari,308247,Kalukhali,কালুখালী
+30,Dhaka,3082,Rajbari,308273,Pangsha,পাংশা
+30,Dhaka,3082,Rajbari,308276,Rajbari Sadar,রাজবাড়ী সদর
+30,Dhaka,3086,Shariatpur,308614,Bhedarganj,ভেদরগঞ্জ
+30,Dhaka,3086,Shariatpur,308625,Damudya,ডামুড্যা
+30,Dhaka,3086,Shariatpur,308636,Gosairhat,গোসাইরহাট
+30,Dhaka,3086,Shariatpur,308665,Naria,নড়িয়া
+30,Dhaka,3086,Shariatpur,308669,Shariatpur Sadar,শরিয়তপুর সদর
+30,Dhaka,3086,Shariatpur,308694,Zanjira,জাজিরা
+30,Dhaka,3093,Tangail,309309,Basail,বাসাইল
+30,Dhaka,3093,Tangail,309319,Bhuapur,ভূঞাপুর
+30,Dhaka,3093,Tangail,309323,Delduar,দেলদুয়ার
+30,Dhaka,3093,Tangail,309325,Dhanbari,ধনবাড়ী
+30,Dhaka,3093,Tangail,309328,Ghatail,ঘাটাইল
+30,Dhaka,3093,Tangail,309338,Gopalpur,গোপালপুর
+30,Dhaka,3093,Tangail,309347,Kalihati,কালিহাতী
+30,Dhaka,3093,Tangail,309357,Madhupur,মধুপুর
+30,Dhaka,3093,Tangail,309366,Mirzapur,মির্জাপুর
+30,Dhaka,3093,Tangail,309376,Nagarpur,নাগরপুর
+30,Dhaka,3093,Tangail,309385,Sakhipur,সখিপুর
+30,Dhaka,3093,Tangail,309395,Tangail Sadar,টাঙ্গাইল সদর
+40,Khulna,4001,Bagerhat,400108,Bagerhat Sadar,বাগেরহাট সদর
+40,Khulna,4001,Bagerhat,400114,Chitalmari,চিতলমারী
+40,Khulna,4001,Bagerhat,400134,Fakirhat,ফকিরহাট
+40,Khulna,4001,Bagerhat,400138,Kachua,কচুয়া
+40,Khulna,4001,Bagerhat,400156,Mollahat,মোল্লাহাট
+40,Khulna,4001,Bagerhat,400158,Mongla,মোংলা
+40,Khulna,4001,Bagerhat,400160,Morrelganj,মোরেলগঞ্জ
+40,Khulna,4001,Bagerhat,400173,Rampal,রামপাল
+40,Khulna,4001,Bagerhat,400177,Sarankhola,শরণখোলা
+40,Khulna,4018,Chuadanga,401807,Alamdanga,আলমডাঙ্গা
+40,Khulna,4018,Chuadanga,401823,Chuadanga Sadar,চুয়াডাঙ্গা সদর
+40,Khulna,4018,Chuadanga,401831,Damurhuda,দামুড়হুদা
+40,Khulna,4018,Chuadanga,401855,Jibannagar,জীবননগর
+40,Khulna,4041,Jashore,404104,Abhaynagar,অভয়নগর
+40,Khulna,4041,Jashore,404109,Bagherpara,বাঘারপাড়া
+40,Khulna,4041,Jashore,404111,Chaugachha,চৌগাছা
+40,Khulna,4041,Jashore,404147,Jashore Sadar,যশোর সদর
+40,Khulna,4041,Jashore,404123,Jhikargachha,ঝিকরগাছা
+40,Khulna,4041,Jashore,404138,Keshabpur,কেশবপুর
+40,Khulna,4041,Jashore,404161,Manirampur,মণিরামপুর
+40,Khulna,4041,Jashore,404190,Sharsha,শার্শা
+40,Khulna,4044,Jhenaidah,404414,Harinakunda,হরিণাকুন্ডু
+40,Khulna,4044,Jhenaidah,404419,Jhenaidah Sadar,ঝিনাইদহ সদর
+40,Khulna,4044,Jhenaidah,404433,Kaliganj,কালীগঞ্জ
+40,Khulna,4044,Jhenaidah,404442,Kotchandpur,কোটচাঁদপুর
+40,Khulna,4044,Jhenaidah,404471,Maheshpur,মহেশপুর
+40,Khulna,4044,Jhenaidah,404480,Shailkupa,শৈলকুপা
+40,Khulna,4047,Khulna,404712,Batiaghata,বটিয়াঘাটা
+40,Khulna,4047,Khulna,404717,Dacope,দাকোপ
+40,Khulna,4047,Khulna,404740,Dighalia,দিঘলিয়া
+40,Khulna,4047,Khulna,404730,Dumuria,ডুমুরিয়া
+40,Khulna,4047,Khulna,404753,Koyra,কয়রা
+40,Khulna,4047,Khulna,404764,Paikgachha,পাইকগাছা
+40,Khulna,4047,Khulna,404769,Phultala,ফুলতলা
+40,Khulna,4047,Khulna,404775,Rupsa,রূপসা
+40,Khulna,4047,Khulna,404794,Terokhada,তেরখাদা
+40,Khulna,4050,Kushtia,405015,Bheramara,ভেড়ামারা
+40,Khulna,4050,Kushtia,405039,Daulatpur,দৌলতপুর
+40,Khulna,4050,Kushtia,405063,Khoksa,খোকসা
+40,Khulna,4050,Kushtia,405071,Kumarkhali,কুমারখালী
+40,Khulna,4050,Kushtia,405079,Kushtia Sadar,কুষ্টিয়া সদর
+40,Khulna,4050,Kushtia,405094,Mirpur,মিরপুর
+40,Khulna,4055,Magura,405557,Magura Sadar,মাগুরা সদর
+40,Khulna,4055,Magura,405566,Mohammadpur,মহম্মদপুর
+40,Khulna,4055,Magura,405585,Shalikha,শালিখা
+40,Khulna,4055,Magura,405595,Sreepur,শ্রীপুর
+40,Khulna,4057,Meherpur,405747,Gangni,গাংনী
+40,Khulna,4057,Meherpur,405787,Meherpur Sadar,মেহেরপুর সদর
+40,Khulna,4057,Meherpur,405760,Mujibnagar,মুজিবনগর
+40,Khulna,4065,Narail,406528,Kalia,কালিয়া
+40,Khulna,4065,Narail,406552,Lohagara,লোহাগড়া
+40,Khulna,4065,Narail,406576,Narail Sadar,নড়াইল সদর
+40,Khulna,4087,Satkhira,408704,Assasuni,আশাশুনি
+40,Khulna,4087,Satkhira,408725,Debhata,দেবহাটা
+40,Khulna,4087,Satkhira,408743,Kalaroa,কলারোয়া
+40,Khulna,4087,Satkhira,408747,Kaliganj,কালিগঞ্জ
+40,Khulna,4087,Satkhira,408782,Satkhira Sadar,সাতক্ষীরা সদর
+40,Khulna,4087,Satkhira,408786,Shyamnagar,শ্যামনগর
+40,Khulna,4087,Satkhira,408790,Tala,তালা
+45,Mymensingh,4539,Jamalpur,453907,Bakshiganj,বকশীগঞ্জ
+45,Mymensingh,4539,Jamalpur,453915,Dewanganj,দেওয়ানগঞ্জ
+45,Mymensingh,4539,Jamalpur,453929,Islampur,ইসলামপুর
+45,Mymensingh,4539,Jamalpur,453936,Jamalpur Sadar,জামালপুর সদর
+45,Mymensingh,4539,Jamalpur,453958,Madarganj,মাদারগঞ্জ
+45,Mymensingh,4539,Jamalpur,453961,Melandaha,মেলান্দহ
+45,Mymensingh,4539,Jamalpur,453985,Sarishabari,সরিষাবাড়ী
+45,Mymensingh,4561,Mymensingh,456113,Bhaluka,ভালুকা
+45,Mymensingh,4561,Mymensingh,456116,Dhobaura,ধোবাউড়া
+45,Mymensingh,4561,Mymensingh,456120,Fulbaria,ফুলবাড়ীয়া
+45,Mymensingh,4561,Mymensingh,456122,Gaffargaon,গফরগাঁও
+45,Mymensingh,4561,Mymensingh,456123,Gauripur,গৌরীপুর
+45,Mymensingh,4561,Mymensingh,456124,Haluaghat,হালুয়াঘাট
+45,Mymensingh,4561,Mymensingh,456131,Ishwarganj,ঈশ্বরগঞ্জ
+45,Mymensingh,4561,Mymensingh,456165,Muktagachha,মুক্তাগাছা
+45,Mymensingh,4561,Mymensingh,456152,Mymensingh Sadar,ময়মনসিংহ সদর
+45,Mymensingh,4561,Mymensingh,456172,Nandail,নান্দাইল
+45,Mymensingh,4561,Mymensingh,456181,Phulpur,ফুলপুর
+45,Mymensingh,4561,Mymensingh,456188,Tarakanda,তারাকান্দা
+45,Mymensingh,4561,Mymensingh,456194,Trishal,ত্রিশাল
+45,Mymensingh,4572,Netrakona,457204,Atpara,আটপাড়া
+45,Mymensingh,4572,Netrakona,457209,Barhatta,বারহাট্টা
+45,Mymensingh,4572,Netrakona,457218,Durgapur,দুর্গাপুর
+45,Mymensingh,4572,Netrakona,457240,Kalmakanda,কলমাকান্দা
+45,Mymensingh,4572,Netrakona,457247,Kendua,কেন্দুয়া
+45,Mymensingh,4572,Netrakona,457238,Khaliajuri,খালিয়াজুরী
+45,Mymensingh,4572,Netrakona,457256,Madan,মদন
+45,Mymensingh,4572,Netrakona,457263,Mohanganj,মোহনগঞ্জ
+45,Mymensingh,4572,Netrakona,457274,Netrakona Sadar,নেত্রকোণা সদর
+45,Mymensingh,4572,Netrakona,457283,Purbadhala,পূর্বধলা
+45,Mymensingh,4589,Sherpur,458937,Jhenaigati,ঝিনাইগাতী
+45,Mymensingh,4589,Sherpur,458967,Nakla,নকলা
+45,Mymensingh,4589,Sherpur,458970,Nalitabari,নালিতাবাড়ী
+45,Mymensingh,4589,Sherpur,458988,Sherpur Sadar,শেরপুর সদর
+45,Mymensingh,4589,Sherpur,458990,Sreebardi,শ্রীবরদী
+50,Rajshahi,5010,Bogura,501006,Adamdighi,আদমদিঘি
+50,Rajshahi,5010,Bogura,501020,Bogura Sadar,বগুড়া সদর
+50,Rajshahi,5010,Bogura,501027,Dhunat,ধুনট
+50,Rajshahi,5010,Bogura,501033,Dhupchanchia,দুপচাচিঁয়া
+50,Rajshahi,5010,Bogura,501040,Gabtali,গাবতলী
+50,Rajshahi,5010,Bogura,501054,Kahaloo,কাহালু
+50,Rajshahi,5010,Bogura,501067,Nandigram,নন্দিগ্রাম
+50,Rajshahi,5010,Bogura,501081,Sariakandi,সারিয়াকান্দি
+50,Rajshahi,5010,Bogura,501085,Shajahanpur,শাজাহানপুর
+50,Rajshahi,5010,Bogura,501088,Sherpur,শেরপুর
+50,Rajshahi,5010,Bogura,501094,Shibganj,শিবগঞ্জ
+50,Rajshahi,5010,Bogura,501095,Sonatola,সোনাতলা
+50,Rajshahi,5070,Chapainawabganj,507018,Bholahat,ভোলাহাট
+50,Rajshahi,5070,Chapainawabganj,507066,Chapainawabganj Sadar,চাঁপাইনবাবগঞ্জ সদর
+50,Rajshahi,5070,Chapainawabganj,507037,Gomastapur,গোমস্তাপুর
+50,Rajshahi,5070,Chapainawabganj,507056,Nachole,নাচোল
+50,Rajshahi,5070,Chapainawabganj,507088,Shibganj,শিবগঞ্জ
+50,Rajshahi,5038,Joypurhat,503813,Akkelpur,আক্কেলপুর
+50,Rajshahi,5038,Joypurhat,503847,Joypurhat Sadar,জয়পুরহাট সদর
+50,Rajshahi,5038,Joypurhat,503858,Kalai,কালাই
+50,Rajshahi,5038,Joypurhat,503861,Khetlal,ক্ষেতলাল
+50,Rajshahi,5038,Joypurhat,503874,Panchbibi,পাঁচবিবি
+50,Rajshahi,5064,Naogaon,506403,Atrai,আত্রাই
+50,Rajshahi,5064,Naogaon,506406,Badalgachhi,বদলগাছী
+50,Rajshahi,5064,Naogaon,506428,Dhamoirhat,ধামইরহাট
+50,Rajshahi,5064,Naogaon,506450,Mahadebpur,মহাদেবপুর
+50,Rajshahi,5064,Naogaon,506447,Manda,মান্দা
+50,Rajshahi,5064,Naogaon,506460,Naogaon Sadar,নওগাঁ সদর
+50,Rajshahi,5064,Naogaon,506469,Niamatpur,নিয়ামতপুর
+50,Rajshahi,5064,Naogaon,506475,Patnitala,পত্নীতলা
+50,Rajshahi,5064,Naogaon,506479,Porsha,পোরশা
+50,Rajshahi,5064,Naogaon,506485,Raninagar,রাণীনগর
+50,Rajshahi,5064,Naogaon,506486,Sapahar,সাপাহার
+50,Rajshahi,5069,Natore,506909,Bagatipara,বাগাতিপাড়া
+50,Rajshahi,5069,Natore,506915,Baraigram,বড়াইগ্রাম
+50,Rajshahi,5069,Natore,506941,Gurudaspur,গুরুদাসপুর
+50,Rajshahi,5069,Natore,506944,Lalpur,লালপুর
+50,Rajshahi,5069,Natore,506955,Naldanga,নলডাঙ্গা
+50,Rajshahi,5069,Natore,506963,Natore Sadar,নাটোর সদর
+50,Rajshahi,5069,Natore,506991,Singra,সিংড়া
+50,Rajshahi,5076,Pabna,507605,Atgharia,আটঘরিয়া
+50,Rajshahi,5076,Pabna,507616,Bera,বেড়া
+50,Rajshahi,5076,Pabna,507619,Bhangura,ভাঙ্গুড়া
+50,Rajshahi,5076,Pabna,507622,Chatmohar,চাটমোহর
+50,Rajshahi,5076,Pabna,507633,Faridpur,ফরিদপুর
+50,Rajshahi,5076,Pabna,507639,Ishwardi,ঈশ্বরদী
+50,Rajshahi,5076,Pabna,507655,Pabna Sadar,পাবনা সদর
+50,Rajshahi,5076,Pabna,507672,Santhia,সাঁথিয়া
+50,Rajshahi,5076,Pabna,507683,Sujanagar,সুজানগর
+50,Rajshahi,5081,Rajshahi,508110,Bagha,বাঘা
+50,Rajshahi,5081,Rajshahi,508112,Baghmara,বাগমারা
+50,Rajshahi,5081,Rajshahi,508125,Charghat,চারঘাট
+50,Rajshahi,5081,Rajshahi,508131,Durgapur,দুর্গাপুর
+50,Rajshahi,5081,Rajshahi,508134,Godagari,গোদাগাড়ী
+50,Rajshahi,5081,Rajshahi,508153,Mohanpur,মোহনপুর
+50,Rajshahi,5081,Rajshahi,508172,Paba,পবা
+50,Rajshahi,5081,Rajshahi,508182,Puthia,পুঠিয়া
+50,Rajshahi,5081,Rajshahi,508194,Tanore,তানোর
+50,Rajshahi,5088,Sirajganj,508811,Belkuchi,বেলকুচি
+50,Rajshahi,5088,Sirajganj,508827,Chauhali,চৌহালি
+50,Rajshahi,5088,Sirajganj,508844,Kamarkhanda,কামারখন্দ
+50,Rajshahi,5088,Sirajganj,508850,Kazipur,কাজীপুর
+50,Rajshahi,5088,Sirajganj,508861,Royganj,রায়গঞ্জ
+50,Rajshahi,5088,Sirajganj,508867,Shahjadpur,শাহজাদপুর
+50,Rajshahi,5088,Sirajganj,508878,Sirajganj Sadar,সিরাজগঞ্জ সদর
+50,Rajshahi,5088,Sirajganj,508889,Tarash,তাড়াশ
+50,Rajshahi,5088,Sirajganj,508894,Ullahpara,উল্লাপাড়া
+55,Rangpur,5527,Dinajpur,552717,Biral,বিরল
+55,Rangpur,5527,Dinajpur,552710,Birampur,বিরামপুর
+55,Rangpur,5527,Dinajpur,552712,Birganj,বীরগঞ্জ
+55,Rangpur,5527,Dinajpur,552721,Bochaganj,বোচাগঞ্জ
+55,Rangpur,5527,Dinajpur,552730,Chirirbandar,চিরিরবন্দর
+55,Rangpur,5527,Dinajpur,552764,Dinajpur Sadar,দিনাজপুর সদর
+55,Rangpur,5527,Dinajpur,552738,Fulbari,ফুলবাড়ী
+55,Rangpur,5527,Dinajpur,552743,Ghoraghat,ঘোড়াঘাট
+55,Rangpur,5527,Dinajpur,552747,Hakimpur,হাকিমপুর
+55,Rangpur,5527,Dinajpur,552756,Kaharole,কাহারোল
+55,Rangpur,5527,Dinajpur,552760,Khansama,খানসামা
+55,Rangpur,5527,Dinajpur,552769,Nawabganj,নবাবগঞ্জ
+55,Rangpur,5527,Dinajpur,552777,Parbatipur,পার্বতীপুর
+55,Rangpur,5532,Gaibandha,553221,Fulchhari,ফুলছড়ি
+55,Rangpur,5532,Gaibandha,553224,Gaibandha Sadar,গাইবান্ধা সদর
+55,Rangpur,5532,Gaibandha,553230,Gobindaganj,গোবিন্দগঞ্জ
+55,Rangpur,5532,Gaibandha,553267,Palashbari,পলাশবাড়ী
+55,Rangpur,5532,Gaibandha,553282,Sadullapur,সাদুল্লাপুর
+55,Rangpur,5532,Gaibandha,553288,Saghata,সাঘাটা
+55,Rangpur,5532,Gaibandha,553291,Sundarganj,সুন্দরগঞ্জ
+55,Rangpur,5549,Kurigram,554906,Bhurungamari,ভূরুঙ্গামারী
+55,Rangpur,5549,Kurigram,554908,Char Rajibpur,চর রাজিবপুর
+55,Rangpur,5549,Kurigram,554909,Chilmari,চিলমারী
+55,Rangpur,5549,Kurigram,554952,Kurigram Sadar,কুড়িগ্রাম সদর
+55,Rangpur,5549,Kurigram,554961,Nageshwari,নাগেশ্বরী
+55,Rangpur,5549,Kurigram,554918,Phulbari,ফুলবাড়ী
+55,Rangpur,5549,Kurigram,554977,Rajarhat,রাজারহাট
+55,Rangpur,5549,Kurigram,554979,Raumari,রৌমারী
+55,Rangpur,5549,Kurigram,554994,Ulipur,উলিপুর
+55,Rangpur,5552,Lalmonirhat,555202,Aditmari,আদিতমারী
+55,Rangpur,5552,Lalmonirhat,555233,Hatibandha,হাতীবান্ধা
+55,Rangpur,5552,Lalmonirhat,555239,Kaliganj,কালীগঞ্জ
+55,Rangpur,5552,Lalmonirhat,555255,Lalmonirhat Sadar,লালমনিরহাট সদর
+55,Rangpur,5552,Lalmonirhat,555270,Patgram,পাটগ্রাম
+55,Rangpur,5573,Nilphamari,557312,Dimla,ডিমলা
+55,Rangpur,5573,Nilphamari,557315,Domar,ডোমার
+55,Rangpur,5573,Nilphamari,557336,Jaldhaka,জলঢাকা
+55,Rangpur,5573,Nilphamari,557345,Kishoreganj,কিশোরগঞ্জ
+55,Rangpur,5573,Nilphamari,557364,Nilphamari Sadar,নীলফামারী সদর
+55,Rangpur,5573,Nilphamari,557385,Saidpur,সৈয়দপুর
+55,Rangpur,5577,Panchagarh,557704,Atwari,আটোয়ারী
+55,Rangpur,5577,Panchagarh,557725,Boda,বোদা
+55,Rangpur,5577,Panchagarh,557734,Debiganj,দেবীগঞ্জ
+55,Rangpur,5577,Panchagarh,557773,Panchagarh Sadar,পঞ্চগড় সদর
+55,Rangpur,5577,Panchagarh,557790,Tentulia,তেঁতুলিয়া
+55,Rangpur,5585,Rangpur,558503,Badarganj,বদরগঞ্জ
+55,Rangpur,5585,Rangpur,558527,Gangachara,গংগাচড়া
+55,Rangpur,5585,Rangpur,558542,Kaunia,কাউনিয়া
+55,Rangpur,5585,Rangpur,558558,Mithapukur,মিঠাপুকুর
+55,Rangpur,5585,Rangpur,558573,Pirgachha,পীরগাছা
+55,Rangpur,5585,Rangpur,558576,Pirganj,পীরগঞ্জ
+55,Rangpur,5585,Rangpur,558550,Rangpur City Corporation,রংপুর সিটি কর্পোরেশন
+55,Rangpur,5585,Rangpur,558549,Rangpur Sadar,রংপুর সদর
+55,Rangpur,5585,Rangpur,558592,Taraganj,তারাগঞ্জ
+55,Rangpur,5594,Thakurgaon,559408,Baliadangi,বালিয়াডাঙ্গী
+55,Rangpur,5594,Thakurgaon,559451,Haripur,হরিপুর
+55,Rangpur,5594,Thakurgaon,559482,Pirganj,পীরগঞ্জ
+55,Rangpur,5594,Thakurgaon,559486,Ranisankail,রাণীশংকৈল
+55,Rangpur,5594,Thakurgaon,559494,Thakurgaon Sadar,ঠাকুরগাঁও সদর
+60,Sylhet,6036,Habiganj,603602,Ajmiriganj,আজমিরীগঞ্জ
+60,Sylhet,6036,Habiganj,603605,Bahubal,বাহুবল
+60,Sylhet,6036,Habiganj,603611,Baniachong,বানিয়াচং
+60,Sylhet,6036,Habiganj,603626,Chunarughat,চুনারুঘাট
+60,Sylhet,6036,Habiganj,603644,Habiganj Sadar,হবিগঞ্জ সদর
+60,Sylhet,6036,Habiganj,603668,Lakhai,লাখাই
+60,Sylhet,6036,Habiganj,603671,Madhabpur,মাধবপুর
+60,Sylhet,6036,Habiganj,603677,Nabiganj,নবীগঞ্জ
+60,Sylhet,6036,Habiganj,603687,Shayestaganj,শায়েস্তাগঞ্জ
+60,Sylhet,6058,Maulvibazar,605814,Barlekha,বড়লেখা
+60,Sylhet,6058,Maulvibazar,605835,Juri,জুড়ী
+60,Sylhet,6058,Maulvibazar,605856,Kamalganj,কমলগঞ্জ
+60,Sylhet,6058,Maulvibazar,605865,Kulaura,কুলাউড়া
+60,Sylhet,6058,Maulvibazar,605874,Maulvibazar Sadar,মৌলভীবাজার সদর
+60,Sylhet,6058,Maulvibazar,605880,Rajnagar,রাজনগর
+60,Sylhet,6058,Maulvibazar,605883,Sreemangal,শ্রীমঙ্গল
+60,Sylhet,6090,Sunamganj,609018,Bishwambarpur,বিশ্বম্ভরপুর
+60,Sylhet,6090,Sunamganj,609023,Chhatak,ছাতক
+60,Sylhet,6090,Sunamganj,609029,Derai,দিরাই
+60,Sylhet,6090,Sunamganj,609032,Dharampasha,ধর্মপাশা
+60,Sylhet,6090,Sunamganj,609033,Dowarabazar,দোয়ারাবাজার
+60,Sylhet,6090,Sunamganj,609047,Jagannathpur,জগন্নাথপুর
+60,Sylhet,6090,Sunamganj,609050,Jamalganj,জামালগঞ্জ
+60,Sylhet,6090,Sunamganj,609063,Madhyanagar,মধ্যনগর
+60,Sylhet,6090,Sunamganj,609086,Shalla,শাল্লা
+60,Sylhet,6090,Sunamganj,609027,Shantiganj,শান্তিগঞ্জ
+60,Sylhet,6090,Sunamganj,609089,Sunamganj Sadar,সুনামগঞ্জ সদর
+60,Sylhet,6090,Sunamganj,609092,Tahirpur,তাহিরপুর
+60,Sylhet,6091,Sylhet,609108,Balaganj,বালাগঞ্জ
+60,Sylhet,6091,Sylhet,609117,Beanibazar,বিয়ানীবাজার
+60,Sylhet,6091,Sylhet,609120,Bishwanath,বিশ্বনাথ
+60,Sylhet,6091,Sylhet,609127,Companiganj,কোম্পানীগঞ্জ
+60,Sylhet,6091,Sylhet,609131,Dakshin Surma,দক্ষিণ সুরমা
+60,Sylhet,6091,Sylhet,609135,Fenchuganj,ফেঞ্চুগঞ্জ
+60,Sylhet,6091,Sylhet,609138,Golapganj,গোলাপগঞ্জ
+60,Sylhet,6091,Sylhet,609141,Gowainghat,গোয়াইনঘাট
+60,Sylhet,6091,Sylhet,609153,Jaintiapur,জৈন্তাপুর
+60,Sylhet,6091,Sylhet,609159,Kanaighat,কানাইঘাট
+60,Sylhet,6091,Sylhet,609160,Osmani Nagar,ওসমানী নগর
+60,Sylhet,6091,Sylhet,609162,Sylhet Sadar,সিলেট সদর
+60,Sylhet,6091,Sylhet,609194,Zakiganj,জকিগঞ্জ

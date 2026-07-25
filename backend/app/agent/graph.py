@@ -367,6 +367,19 @@ async def _classify(text: str) -> str:
         return heuristic
     try:
         model = build_chat_model(settings.OPENROUTER_MODEL_LITE)
+        from .schemas import IntentClassification
+        try:
+            structured_model = model.with_structured_output(IntentClassification)
+            res = await structured_model.ainvoke(
+                [SystemMessage(content=_CLASSIFY_PROMPT), HumanMessage(content=text)]
+            )
+            if isinstance(res, IntentClassification) and res.intent in AGENTS:
+                return res.intent
+            if isinstance(res, dict) and res.get("intent") in AGENTS:
+                return res["intent"]
+        except Exception:
+            pass
+
         resp = await model.ainvoke(
             [SystemMessage(content=_CLASSIFY_PROMPT), HumanMessage(content=text)]
         )
@@ -440,12 +453,14 @@ def _last_human_text(messages: list) -> str:
     return ""
 
 
-def build_graph(tool_groups: dict[str, list]):
+def build_graph(tool_groups: dict[str, list], checkpointer=None):
     """Compile the multi-node workflow.
 
     ``tool_groups`` maps agent name -> the tools that agent may call. The
     shared ToolNode executes the union; binding restricts what each agent
     sees. Each agent gets its own LLM (see ``_node_models``).
+    Optionally accepts a LangGraph ``checkpointer`` (e.g. MemorySaver or
+    AsyncPostgresSaver).
     """
     models = _node_models()
     plain: dict[str, object] = {}
@@ -489,8 +504,6 @@ def build_graph(tool_groups: dict[str, list]):
                     MAX_TURNS,
                 )
                 active = plain[name]
-                # Without an explicit instruction the tool-less model can
-                # return empty content — tell it plainly what to do.
                 forced_final = [
                     SystemMessage(
                         content=(
@@ -509,12 +522,6 @@ def build_graph(tool_groups: dict[str, list]):
                         tool for tool in active_tools if tool.name not in _RESEARCH_TOOL_NAMES
                     ]
                 active = plain[name].bind_tools(active_tools)
-                # Compel the required grounding calls, in order, on this node's
-                # first tool rounds. A lite specialist otherwise sometimes
-                # answers from memory or skips/reorders the sequence. The
-                # recommender, planner, and finance each force their first
-                # deterministic validation tool; external research is never a
-                # forced prefix.
                 sequence = FORCED_TOOL_SEQUENCE.get(name)
                 if sequence and used < len(sequence):
                     active = plain[name].bind_tools(
@@ -522,9 +529,6 @@ def build_graph(tool_groups: dict[str, list]):
                         tool_choice=sequence[used],
                     )
                 else:
-                # Ordered prefix satisfied — this hook supports future
-                # conditional mandatory tools without making research itself
-                # mandatory.
                     mandatory = FORCED_UNORDERED_TOOLS.get(name)
                     if mandatory:
                         missing = [
@@ -551,11 +555,6 @@ def build_graph(tool_groups: dict[str, list]):
                 len(messages),
             )
             directive = SystemMessage(content=NODE_DIRECTIVES[name])
-            # Reply language comes from graph STATE (set by classify each
-            # user message); fall back to detecting from the last human
-            # message when the graph is driven without a classify pass.
-            # Placed LAST so recency keeps it authoritative even in long
-            # conversations.
             lang = state.get("reply_language") or detect_reply_language(
                 _last_human_text(messages)
             )
@@ -599,4 +598,14 @@ def build_graph(tool_groups: dict[str, list]):
     builder.add_conditional_edges(
         "tools", route_back_to_agent, {name: name for name in AGENTS}
     )
-    return builder.compile()
+    return builder.compile(checkpointer=checkpointer)
+
+
+def compile_agrisense_graph(checkpointer=None):
+    """Factory helper to build and compile the AgriSense graph with default tools."""
+    return build_graph({}, checkpointer=checkpointer)
+
+
+# Compiled default graph object for direct inspection & visualization
+app_graph = compile_agrisense_graph()
+

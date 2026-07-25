@@ -190,18 +190,31 @@ async def auto_extract_memories(
                 )
             ),
         ]
-        resp = await model.ainvoke(prompt)
-        raw = resp.content if isinstance(resp.content, str) else str(resp.content)
-        for fact in _parse_fact_list(raw):
-            if len(fact) > 400:
+        facts_list: list[str] = []
+        try:
+            from .schemas import ExtractedMemories
+            structured_model = model.with_structured_output(ExtractedMemories)
+            result = await structured_model.ainvoke(prompt)
+            if isinstance(result, ExtractedMemories):
+                facts_list = result.facts
+            elif isinstance(result, dict) and "facts" in result:
+                facts_list = result["facts"]
+        except Exception:
+            resp = await model.ainvoke(prompt)
+            raw = resp.content if isinstance(resp.content, str) else str(resp.content)
+            facts_list = _parse_fact_list(raw)
+
+        for fact in facts_list:
+            fact_str = str(fact).strip()
+            if not fact_str or len(fact_str) > 400:
                 continue
-            vector = await _get_embeddings().aembed_query(fact)
+            vector = await _get_embeddings().aembed_query(fact_str)
             if await _is_duplicate(db, user_id, vector, DUPLICATE_DISTANCE_THRESHOLD):
                 continue
-            row = LongTermMemory(user_id=user_id, content=fact, embedding=vector)
+            row = LongTermMemory(user_id=user_id, content=fact_str, embedding=vector)
             db.add(row)
             await db.commit()
-            saved.append(fact)
+            saved.append(fact_str)
     except Exception:
         log.warning("auto_extract_memories failed", exc_info=True)
         try:

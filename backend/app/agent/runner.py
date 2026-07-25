@@ -168,6 +168,22 @@ async def _message_count(db: AsyncSession, session_id: int) -> int:
     return int(result.scalar_one())
 
 
+def trim_tool_messages_in_history(messages: list) -> list:
+    """Trim large intermediate ToolMessage payloads from prior history turns."""
+    trimmed = []
+    for msg in messages:
+        if isinstance(msg, ToolMessage) and str(getattr(msg, "tool_call_id", "") or "").startswith("hist_"):
+            content_str = str(msg.content or "")
+            if len(content_str) > 500:
+                msg = ToolMessage(
+                    content=content_str[:500] + " ... [trimmed history tool output]",
+                    tool_call_id=msg.tool_call_id,
+                    name=getattr(msg, "name", None),
+                )
+        trimmed.append(msg)
+    return trimmed
+
+
 async def stream_agent_turn(
     db: AsyncSession,
     user: User,
@@ -227,6 +243,31 @@ async def stream_agent_turn(
         await db.refresh(user_msg)
         yield {"type": "message", "message": serialize_message(user_msg)}
 
+        # ---- semantic query cache lookup (fast path) -------------------- #
+        if not os.environ.get("TESTING"):
+            try:
+                from .cache import semantic_cache
+                from .memory import _get_embeddings
+                query_vec = await _get_embeddings().aembed_query(message)
+                cached = semantic_cache.get(message, query_vec)
+                if cached:
+                    resp_text, _cached_intent = cached
+                    db_msg = ChatMessage(
+                        session_id=session.id,
+                        role="assistant",
+                        content=resp_text,
+                        tool_trace=[],
+                        model="semantic-cache",
+                    )
+                    db.add(db_msg)
+                    await db.commit()
+                    await db.refresh(db_msg)
+                    yield {"type": "message", "message": serialize_message(db_msg)}
+                    yield {"type": "done"}
+                    return
+            except Exception:
+                pass
+
         # ---- build tool groups (per specialist node) -------------------- #
         static_tools = build_static_tools()
         weather_tool = build_weather_tool(user)
@@ -248,8 +289,6 @@ async def stream_agent_turn(
         research_tools = build_research_tools(user)
         tool_groups = {
             "intake": static_tools + farm_tools + [soil_tool],
-            # KB retrieval is an advisor tool (D1 Rev 3: capabilities land as
-            # tools unless they need their own conversation policy).
             "advisor": static_tools
             + [weather_tool]
             + farm_tools
@@ -257,10 +296,6 @@ async def stream_agent_turn(
             + czis_tools
             + kb_tools
             + memory_tools,
-            # Dedicated crop-recommendation specialist: everything needed to
-            # ground a ranked shortlist (profile + soil survey + recorded
-            # pattern economics + CZIS catalog/varieties + weather), same
-            # hard six-field gate.
             "recommender": static_tools
             + [weather_tool]
             + farm_tools
@@ -268,15 +303,11 @@ async def stream_agent_turn(
             + czis_tools
             + kb_tools
             + research_tools,
-            # Season-plan node validates the requested crop through its
-            # deterministic plan tool before optional research becomes usable.
             "planner": static_tools
             + farm_tools
             + [soil_tool, season_plan_tool, scheduler_tool, financial_tool, scenario_tool]
             + kb_tools
             + research_tools,
-            # Finance validates a deterministic projection before optional
-            # research becomes usable. calculator is already in static_tools.
             "finance": static_tools
             + farm_tools
             + [financial_tool, scenario_tool]
@@ -315,12 +346,11 @@ async def stream_agent_turn(
             .limit(settings.HISTORY_LIMIT)
         )
         history = list(reversed(hist_result.scalars().all()))
-        total_count = await _message_count(db, session.id)
 
         lc_messages: list = build_system_messages(
             SYSTEM_PROMPT, session.summary, recalled, farmer_name=user.username
         )
-        lc_messages.extend(history_to_lc_messages(history))
+        lc_messages.extend(trim_tool_messages_in_history(history_to_lc_messages(history)))
 
         # ---- multimodal: nudge the advisor to diagnose attached photos --- #
         if attachment_refs:
